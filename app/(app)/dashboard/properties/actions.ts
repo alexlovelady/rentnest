@@ -33,6 +33,9 @@ export async function createProperty(data: z.infer<typeof PropertySchema>) {
     where: { property: { landlordId: user.id }, isActive: true },
   });
   const limit = PLAN_LIMITS[user.plan] ?? 0;
+  if (unitCount >= limit) {
+    throw new Error(`Your ${user.plan} plan allows up to ${limit} units. Please upgrade to add more.`);
+  }
 
   const property = await prisma.property.create({
     data: { ...parsed, landlordId: user.id },

@@ -2,7 +2,9 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
 
-const secret = new TextEncoder().encode(process.env.TENANT_JWT_SECRET || "fallback-secret");
+const secret = new TextEncoder().encode(
+  process.env.TENANT_JWT_SECRET ?? (() => { throw new Error("TENANT_JWT_SECRET env var is not set"); })()
+);
 
 export interface TenantSession {
   tenantId: string;

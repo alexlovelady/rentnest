@@ -19,6 +19,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Payment not found or already paid" }, { status: 400 });
   }
 
+  // Verify this payment belongs to the authenticated tenant's lease
+  if (payment.leaseId !== session.leaseId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
   const landlord = await prisma.landlord.findUnique({ where: { id: session.landlordId } });
   if (!landlord?.stripeConnectId || !landlord.stripeConnectReady) {
     return NextResponse.json({ error: "Landlord has not set up online payments" }, { status: 400 });
@@ -39,6 +44,7 @@ export async function POST(req: NextRequest) {
         },
         quantity: 1,
       }],
+      payment_intent_data: { metadata: { rentPaymentId: payment.id } },
       metadata: { rentPaymentId: payment.id },
       after_completion: { type: "redirect", redirect: { url: `${process.env.NEXT_PUBLIC_APP_URL}/tenant-portal?paid=1` } },
     },

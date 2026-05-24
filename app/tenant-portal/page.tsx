@@ -97,7 +97,7 @@ export default async function TenantPortalPage() {
       )}
 
       {/* Quick links */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <Link href="/tenant-portal/maintenance/new" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
           <Wrench size={20} className="mx-auto text-gray-400 mb-1" />
           <p className="text-xs font-medium text-gray-700">Maintenance</p>

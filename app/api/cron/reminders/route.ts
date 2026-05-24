@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resend, FROM, APP_URL } from "@/lib/resend";
+import { applyLateFees } from "@/lib/rent";
 import { addDays, isAfter, isBefore, differenceInDays } from "date-fns";
 
 export async function POST(req: NextRequest) {
@@ -10,6 +11,12 @@ export async function POST(req: NextRequest) {
   }
 
   const now = new Date();
+
+  // 0. Apply late fees for all landlords with overdue payments
+  const activeLandlords = await prisma.landlord.findMany({ where: { plan: { not: "cancelled" } }, select: { id: true } });
+  for (const l of activeLandlords) {
+    await applyLateFees(l.id);
+  }
 
   // 1. Rent due reminders — 3 days before due
   const upcomingPayments = await prisma.rentPayment.findMany({
@@ -53,10 +60,14 @@ export async function POST(req: NextRequest) {
     const gracePassed = isAfter(now, addDays(payment.dueDate, grace));
     if (!gracePassed) continue;
 
+    // Only send overdue tenant reminders on day 1, 7, 14, 30 past grace period to avoid daily spam
+    const daysPastGrace = differenceInDays(now, addDays(payment.dueDate, grace));
+    const shouldNotify = daysPastGrace === 1 || daysPastGrace === 7 || daysPastGrace === 14 || daysPastGrace === 30;
+
     if (!landlordOverdue[payment.landlordId]) landlordOverdue[payment.landlordId] = [];
     landlordOverdue[payment.landlordId].push(payment);
 
-    if (payment.tenant?.email) {
+    if (shouldNotify && payment.tenant?.email) {
       const addr = `${payment.lease.unit.property.address}, Unit ${payment.lease.unit.unitNumber}`;
       await resend.emails.send({
         from: FROM,
