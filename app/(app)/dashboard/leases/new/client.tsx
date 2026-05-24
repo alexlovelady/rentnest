@@ -12,7 +12,14 @@ interface Tenant { id: string; name: string; email: string | null }
 
 const STEPS = ["Unit", "Tenants", "Terms", "Review"];
 
-export function NewLeaseClient() {
+interface LateFeeDefaults {
+  lateFeeEnabled: boolean;
+  lateFeeType: "flat" | "percent";
+  lateFeeAmount: string;
+  lateFeeGracePeriodDays: string;
+}
+
+export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedUnitId = searchParams.get("unitId") || "";
@@ -34,10 +41,10 @@ export function NewLeaseClient() {
     securityDeposit: "",
     securityDepositPaid: false,
     rentDueDay: "1",
-    lateFeeEnabled: false,
-    lateFeeType: "flat" as "flat" | "percent",
-    lateFeeAmount: "",
-    lateFeeGracePeriodDays: "5",
+    lateFeeEnabled: defaults?.lateFeeEnabled ?? false,
+    lateFeeType: (defaults?.lateFeeType ?? "flat") as "flat" | "percent",
+    lateFeeAmount: defaults?.lateFeeAmount ?? "",
+    lateFeeGracePeriodDays: defaults?.lateFeeGracePeriodDays ?? "5",
     petsAllowed: false,
     petDeposit: "",
     petRent: "",

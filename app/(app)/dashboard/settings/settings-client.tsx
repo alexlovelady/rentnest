@@ -48,6 +48,20 @@ export function SettingsClient({ user, daysLeft }: Props) {
     setSaving(null);
   }
 
+  async function saveLateFees(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSaving("latefee");
+    const fd = new FormData(e.currentTarget);
+    await updateLateFeeDefaults({
+      feePassthrough: fd.has("feePassthrough"),
+      defaultLateFeeEnabled: fd.has("defaultLateFeeEnabled"),
+      defaultLateFeeType: fd.get("defaultLateFeeType") as "flat" | "percent",
+      defaultLateFeeAmount: Number(fd.get("defaultLateFeeAmount") || 0),
+      defaultLateFeeGraceDays: Number(fd.get("defaultLateFeeGraceDays") || 5),
+    });
+    setSaving(null);
+  }
+
   async function startConnect() {
     setConnectLoading(true);
     const res = await fetch("/api/connect/onboard", { method: "POST" });
@@ -147,6 +161,41 @@ export function SettingsClient({ user, daysLeft }: Props) {
           ) : (
             <Button onClick={startConnect} disabled={connectLoading}>{connectLoading ? "Loading…" : "Connect Bank Account"}</Button>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Payment Defaults */}
+      <Card>
+        <CardHeader><CardTitle>Payment Defaults</CardTitle></CardHeader>
+        <CardContent>
+          <form onSubmit={saveLateFees} className="space-y-5">
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Stripe Fee Passthrough</p>
+              <label className="flex items-start gap-2 text-sm cursor-pointer">
+                <input type="checkbox" name="feePassthrough" defaultChecked={user.feePassthrough} className="accent-[#C4622D] mt-0.5" />
+                <span className="text-gray-600">Pass Stripe processing fees (~2.9% + $0.30) to the tenant. The tenant pays a slightly higher amount so you receive the full rent.</span>
+              </label>
+            </div>
+            <div className="border-t border-gray-100 pt-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Default Late Fee Policy</p>
+              <p className="text-xs text-gray-500 mb-3">Applied automatically when creating new leases. You can override per lease.</p>
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input type="checkbox" name="defaultLateFeeEnabled" defaultChecked={user.defaultLateFeeEnabled} className="accent-[#C4622D]" />
+                  Enable late fees by default on new leases
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <Select label="Fee type" name="defaultLateFeeType" defaultValue={user.defaultLateFeeType}>
+                    <option value="flat">Flat ($)</option>
+                    <option value="percent">Percent (%)</option>
+                  </Select>
+                  <Input label={user.defaultLateFeeType === "percent" ? "Amount (%)" : "Amount ($)"} type="number" name="defaultLateFeeAmount" defaultValue={user.defaultLateFeeAmount} min={0} step="0.01" />
+                  <Input label="Grace period (days)" type="number" name="defaultLateFeeGraceDays" defaultValue={user.defaultLateFeeGraceDays} min={0} max={30} />
+                </div>
+              </div>
+            </div>
+            <Button type="submit" size="sm" disabled={saving === "latefee"}>{saving === "latefee" ? "Saving…" : "Save Payment Defaults"}</Button>
+          </form>
         </CardContent>
       </Card>
 

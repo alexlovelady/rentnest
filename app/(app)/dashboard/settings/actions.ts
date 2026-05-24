@@ -17,10 +17,11 @@ const NotificationSchema = z.object({
 });
 
 const LateFeeSchema = z.object({
+  feePassthrough: z.coerce.boolean(),
   defaultLateFeeEnabled: z.coerce.boolean(),
   defaultLateFeeType: z.enum(["flat", "percent"]),
-  defaultLateFeeAmount: z.coerce.number(),
-  defaultLateFeeGraceDays: z.coerce.number(),
+  defaultLateFeeAmount: z.coerce.number().min(0),
+  defaultLateFeeGraceDays: z.coerce.number().min(0).max(30),
 });
 
 export async function updateAccount(data: z.infer<typeof AccountSchema>) {

@@ -30,7 +30,16 @@ export async function POST(req: NextRequest) {
   }
 
   const addr = `${payment.lease.unit.property.address}, Unit ${payment.lease.unit.unitNumber}`;
-  const amountCents = Math.round(payment.totalAmount * 100);
+
+  // Gross-up amount if landlord passes Stripe processing fee to tenant
+  let amountCents = Math.round(payment.totalAmount * 100);
+  let productDescription = `${new Date(payment.periodYear, payment.periodMonth - 1).toLocaleString("en-US", { month: "long", year: "numeric" })}`;
+  if (landlord.feePassthrough) {
+    // Stripe fee: 2.9% + $0.30 — solve for gross amount so landlord receives exactly totalAmount
+    const grossAmount = (payment.totalAmount + 0.30) / (1 - 0.029);
+    amountCents = Math.round(grossAmount * 100);
+    productDescription += " (includes Stripe processing fee)";
+  }
 
   // TODO: migrate to PaymentIntent with transfer_data.destination for Stripe Connect v2
   // For now, using Payment Links for simplicity
@@ -40,7 +49,7 @@ export async function POST(req: NextRequest) {
         price_data: {
           currency: "usd",
           unit_amount: amountCents,
-          product_data: { name: `Rent — ${addr}`, description: `${new Date(payment.periodYear, payment.periodMonth - 1).toLocaleString("en-US", { month: "long", year: "numeric" })}` },
+          product_data: { name: `Rent — ${addr}`, description: productDescription },
         },
         quantity: 1,
       }],
