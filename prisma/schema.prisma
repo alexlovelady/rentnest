@@ -1,0 +1,216 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Landlord {
+  id            String   @id @default(cuid())
+  firebaseUid   String   @unique
+  name          String
+  email         String   @unique
+  phone         String?
+  stripeId      String?
+  plan          String   @default("trial")
+  trialEndsAt   DateTime?
+  timezone      String   @default("America/Chicago")
+  stripeConnectId     String?
+  stripeConnectReady  Boolean  @default(false)
+  feePassthrough      Boolean  @default(false)
+  notifyOnPayment     Boolean  @default(true)
+  notifyOnMaintenance Boolean  @default(true)
+  notifyOnOverdue     Boolean  @default(true)
+  defaultLateFeeEnabled Boolean @default(false)
+  defaultLateFeeType    String  @default("flat")
+  defaultLateFeeAmount  Float   @default(50)
+  defaultLateFeeGraceDays Int   @default(5)
+  createdAt     DateTime @default(now())
+
+  properties    Property[]
+  expenses      Expense[]
+  documents     Document[]
+}
+
+model Property {
+  id            String   @id @default(cuid())
+  landlordId    String
+  nickname      String
+  address       String
+  city          String
+  state         String
+  zip           String
+  propertyType  String   @default("single_family")
+  yearBuilt     Int?
+  squareFeet    Int?
+  photoUrl      String?
+  notes         String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  landlord      Landlord @relation(fields: [landlordId], references: [id])
+  units         Unit[]
+  expenses      Expense[]
+  documents     Document[]
+}
+
+model Unit {
+  id            String   @id @default(cuid())
+  propertyId    String
+  unitNumber    String   @default("1")
+  bedrooms      Int      @default(1)
+  bathrooms     Float    @default(1)
+  squareFeet    Int?
+  notes         String?
+  isActive      Boolean  @default(true)
+  property      Property @relation(fields: [propertyId], references: [id])
+  leases        Lease[]
+  maintenanceRequests MaintenanceRequest[]
+}
+
+model Tenant {
+  id            String   @id @default(cuid())
+  landlordId    String
+  name          String
+  email         String?
+  phone         String?
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  notes         String?
+  portalToken   String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  leases        LeaseTenant[]
+  maintenanceRequests MaintenanceRequest[]
+  rentPayments  RentPayment[]
+}
+
+model Lease {
+  id              String   @id @default(cuid())
+  unitId          String
+  landlordId      String
+  startDate       DateTime
+  endDate         DateTime?
+  leaseType       String   @default("fixed")
+  monthlyRent     Float
+  securityDeposit Float    @default(0)
+  securityDepositPaid Boolean @default(false)
+  securityDepositHeld Float @default(0)
+  lateFeeEnabled  Boolean  @default(false)
+  lateFeeType     String   @default("flat")
+  lateFeeAmount   Float    @default(0)
+  lateFeeGracePeriodDays Int @default(5)
+  rentDueDay      Int      @default(1)
+  petsAllowed     Boolean  @default(false)
+  petDeposit      Float    @default(0)
+  petRent         Float    @default(0)
+  status          String   @default("active")
+  terminatedAt    DateTime?
+  terminationReason String?
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  unit            Unit     @relation(fields: [unitId], references: [id])
+  tenants         LeaseTenant[]
+  rentPayments    RentPayment[]
+  documents       Document[]
+  maintenanceRequests MaintenanceRequest[]
+}
+
+model LeaseTenant {
+  id        String @id @default(cuid())
+  leaseId   String
+  tenantId  String
+  isPrimary Boolean @default(false)
+  lease     Lease  @relation(fields: [leaseId], references: [id])
+  tenant    Tenant @relation(fields: [tenantId], references: [id])
+  @@unique([leaseId, tenantId])
+}
+
+model RentPayment {
+  id              String   @id @default(cuid())
+  leaseId         String
+  tenantId        String?
+  landlordId      String
+  amount          Float
+  lateFee         Float    @default(0)
+  lateFeeApplied  Boolean  @default(false)
+  totalAmount     Float
+  paymentMethod   String   @default("online")
+  status          String   @default("pending")
+  periodMonth     Int
+  periodYear      Int
+  paidAt          DateTime?
+  dueDate         DateTime
+  stripePaymentId String?
+  stripePaymentUrl String?
+  notes           String?
+  receiptSent     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  lease           Lease    @relation(fields: [leaseId], references: [id])
+  tenant          Tenant?  @relation(fields: [tenantId], references: [id])
+}
+
+model MaintenanceRequest {
+  id              String   @id @default(cuid())
+  unitId          String
+  leaseId         String?
+  tenantId        String?
+  landlordId      String
+  title           String
+  description     String
+  category        String   @default("other")
+  priority        String   @default("normal")
+  status          String   @default("open")
+  scheduledFor    DateTime?
+  vendorName      String?
+  vendorPhone     String?
+  estimatedCost   Float?
+  actualCost      Float?
+  submittedAt     DateTime @default(now())
+  acknowledgedAt  DateTime?
+  resolvedAt      DateTime?
+  resolutionNotes String?
+  photoUrls       String[]
+  resolvedPhotoUrls String[]
+  lastUpdateSentAt DateTime?
+
+  unit            Unit     @relation(fields: [unitId], references: [id])
+  lease           Lease?   @relation(fields: [leaseId], references: [id])
+  tenant          Tenant?  @relation(fields: [tenantId], references: [id])
+}
+
+model Expense {
+  id            String   @id @default(cuid())
+  landlordId    String
+  propertyId    String?
+  category      String
+  description   String
+  amount        Float
+  date          DateTime
+  vendor        String?
+  receiptUrl    String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  landlord      Landlord @relation(fields: [landlordId], references: [id])
+  property      Property? @relation(fields: [propertyId], references: [id])
+}
+
+model Document {
+  id            String   @id @default(cuid())
+  landlordId    String
+  propertyId    String?
+  leaseId       String?
+  name          String
+  docType       String   @default("other")
+  fileUrl       String
+  fileType      String?
+  notes         String?
+  uploadedAt    DateTime @default(now())
+  landlord      Landlord @relation(fields: [landlordId], references: [id])
+  property      Property? @relation(fields: [propertyId], references: [id])
+  lease         Lease?   @relation(fields: [leaseId], references: [id])
+}
