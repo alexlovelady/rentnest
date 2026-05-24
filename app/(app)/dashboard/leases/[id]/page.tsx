@@ -29,7 +29,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
   const statusColor = lease.status === "active" ? "green" : lease.status === "terminated" ? "red" : "gray";
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto">
       <Link href="/dashboard/leases" className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-6">
         <ArrowLeft size={14} /> Leases
       </Link>
@@ -90,6 +90,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
         {lease.rentPayments.length === 0 ? (
           <p className="text-sm text-gray-500">No rent charges yet. Generate rent charges from the Rent page.</p>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-xs text-gray-500 border-b border-gray-100">
@@ -116,6 +117,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

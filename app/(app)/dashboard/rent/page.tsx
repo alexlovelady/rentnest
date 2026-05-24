@@ -28,20 +28,20 @@ export default async function RentPage() {
   const totalPending = [...pending, ...overdue].reduce((s, p) => s + p.totalAmount, 0);
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto">
+        <div className="flex flex-wrap items-start justify-between mb-6 gap-3">
         <div>
           <h1 className="text-2xl font-bold text-[#1A2332]">Rent Collection</h1>
           <p className="text-sm text-gray-500">{monthName(month)} {year}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <SendRemindersButton />
           <RecordPaymentModal />
           <GenerateRentButton month={month} year={year} />
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-green-50 border border-green-200 rounded-xl p-5">
           <p className="text-sm text-green-700 font-medium">Collected</p>
           <p className="text-2xl font-bold text-green-800 mt-1">{formatCurrency(totalPaid)}</p>
@@ -66,6 +66,7 @@ export default async function RentPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr className="text-xs text-gray-500">
@@ -104,6 +105,7 @@ export default async function RentPage() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

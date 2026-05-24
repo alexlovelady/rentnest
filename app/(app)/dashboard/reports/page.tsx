@@ -69,7 +69,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   ];
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-[#1A2332]">Reports</h1>
         <select className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm" defaultValue={year} onChange={(e) => { window.location.href = `/dashboard/reports?year=${e.target.value}&report=${report}`; }}>
@@ -91,7 +91,8 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
             <h2 className="font-semibold text-gray-900">Rent Roll — {new Date().toLocaleDateString()}</h2>
             <DownloadCSVButton data={rentRollCsv} filename="rent-roll.csv" />
           </div>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
             <thead className="bg-gray-50 border-b border-gray-100 text-xs text-gray-500">
               <tr>
                 <th className="text-left px-6 py-3">Property</th>
@@ -122,12 +123,13 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
               </tr>
             </tfoot>
           </table>
+          </div>
         </div>
       )}
 
       {report === "income" && (
         <div className="space-y-6">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-green-50 border border-green-200 rounded-xl p-5">
               <p className="text-sm text-green-700">Total Income</p>
               <p className="text-2xl font-bold text-green-800">{formatCurrency(totalIncome)}</p>

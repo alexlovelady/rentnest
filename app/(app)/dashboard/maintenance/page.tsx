@@ -41,7 +41,7 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
   const emergencies = requests.filter((r) => r.priority === "emergency" && r.status !== "resolved");
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-[#1A2332]">Maintenance</h1>
         <NewMaintenanceModal />

@@ -84,7 +84,7 @@ export function NewLeaseClient() {
   const selectedTenants = tenants.filter((t) => form.tenantIds.includes(t.id));
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
+    <div className="p-4 md:p-8 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-[#1A2332] mb-2">New Lease</h1>
 
       <div className="flex gap-2 mb-8">
@@ -154,7 +154,7 @@ export function NewLeaseClient() {
               Enable late fees
             </label>
             {form.lateFeeEnabled && (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <Select label="Fee type" value={form.lateFeeType} onChange={(e) => setForm((f) => ({ ...f, lateFeeType: e.target.value as "flat" | "percent" }))}>
                   <option value="flat">Flat fee</option>
                   <option value="percent">Percent</option>

@@ -31,7 +31,7 @@ export default async function DocumentsPage() {
   const leases = await prisma.lease.findMany({ where: { landlordId: user.id, status: "active" }, include: { unit: { include: { property: true } }, tenants: { include: { tenant: true } } } });
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-[#1A2332]">Documents</h1>
         <UploadDocumentModal properties={properties} leases={leases} />

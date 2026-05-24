@@ -36,7 +36,7 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
   const total = expenses.reduce((s, e) => s + e.amount, 0);
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-[#1A2332]">Expenses</h1>
@@ -58,6 +58,7 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr className="text-xs text-gray-500">
@@ -88,6 +89,7 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
               </tr>
             </tfoot>
           </table>
+          </div>
         </div>
       )}
     </div>

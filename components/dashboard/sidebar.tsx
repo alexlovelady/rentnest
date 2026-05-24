@@ -1,10 +1,11 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   Home, Building2, Users, FileText, DollarSign, Wrench,
-  Receipt, FolderOpen, BarChart3, Settings, LogOut
+  Receipt, FolderOpen, BarChart3, Settings, LogOut, Menu, X,
 } from "lucide-react";
 
 const nav = [
@@ -27,12 +28,10 @@ async function handleSignOut() {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
-  return (
-    <aside className="w-56 bg-[#1A2332] flex flex-col h-full">
-      <div className="px-5 py-5 border-b border-white/10">
-        <span className="text-white font-bold text-lg tracking-tight">RentNest</span>
-      </div>
+  const navLinks = (
+    <>
       <nav className="flex-1 py-4 space-y-0.5 px-2 overflow-y-auto">
         {nav.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
@@ -40,6 +39,7 @@ export function Sidebar() {
             <Link
               key={href}
               href={href}
+              onClick={() => setOpen(false)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
                 active
@@ -62,6 +62,42 @@ export function Sidebar() {
           Sign out
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-56 bg-[#1A2332] flex-col h-full shrink-0">
+        <div className="px-5 py-5 border-b border-white/10">
+          <span className="text-white font-bold text-lg tracking-tight">RentNest</span>
+        </div>
+        {navLinks}
+      </aside>
+
+      {/* Mobile top bar */}
+      <header className="md:hidden fixed top-0 inset-x-0 z-30 bg-[#1A2332] h-14 px-4 flex items-center justify-between">
+        <span className="text-white font-bold text-lg tracking-tight">RentNest</span>
+        <button onClick={() => setOpen(true)} className="text-white p-1 -mr-1" aria-label="Open menu">
+          <Menu size={22} />
+        </button>
+      </header>
+
+      {/* Mobile drawer */}
+      {open && (
+        <div className="md:hidden fixed inset-0 z-40 flex">
+          <aside className="w-64 bg-[#1A2332] flex flex-col h-full">
+            <div className="px-5 h-14 border-b border-white/10 flex items-center justify-between">
+              <span className="text-white font-bold text-lg tracking-tight">RentNest</span>
+              <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white -mr-1" aria-label="Close menu">
+                <X size={20} />
+              </button>
+            </div>
+            {navLinks}
+          </aside>
+          <div className="flex-1 bg-black/50" onClick={() => setOpen(false)} />
+        </div>
+      )}
+    </>
   );
 }

@@ -60,7 +60,7 @@ export default async function DashboardPage() {
     : null;
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-[#1A2332]">Good morning, {user.name.split(" ")[0]}</h1>
         <p className="text-sm text-gray-500">{monthName(month)} {year} overview</p>
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
       )}
 
       {/* Rent summary */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <Link href="/dashboard/rent" className="bg-green-50 border border-green-200 rounded-xl p-5 hover:shadow-sm transition">
           <p className="text-sm text-green-700 font-medium flex items-center gap-1.5"><DollarSign size={14} /> Collected</p>
           <p className="text-2xl font-bold text-green-800 mt-1">{formatCurrency(paid.reduce((s, p) => s + p.totalAmount, 0))}</p>

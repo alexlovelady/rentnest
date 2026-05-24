@@ -44,7 +44,7 @@ export default function LandingPage() {
       {/* Problem */}
       <section className="bg-white py-20 px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {[
               { icon: "📊", title: "Spreadsheets aren't built for this", body: "Tracking rent payments, security deposits, and expenses across multiple units in Excel means something always falls through the cracks." },
               { icon: "📧", title: "Payment requests are embarrassing", body: "Texting your tenant a Venmo link every month is fine when you have one unit. At three, it's chaos." },
@@ -122,7 +122,7 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-3" style={{ fontFamily: "var(--font-lora, serif)" }}>Simple pricing</h2>
           <p className="text-gray-500 mb-12">All plans include every feature. No per-lease fees. No percentage of rent.</p>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
               { id: "starter", name: "Starter", price: "$19", period: "/month", units: "Up to 5 units", features: ["All features included", "Tenant portal", "Online rent collection", "Document storage", "Maintenance tracking"] },
               { id: "grow", name: "Grow", price: "$49", period: "/month", units: "Up to 20 units", features: ["Everything in Starter", "Up to 20 units", "Income & expense reports", "Schedule E export"], highlight: true },
@@ -155,7 +155,7 @@ export default function LandingPage() {
 
       {/* Testimonials */}
       <section className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto grid grid-cols-3 gap-6">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
           {[
             { quote: "I was still using a Google Sheet and Venmo. Setting up RentNest took 20 minutes. My tenants actually prefer paying online.", name: "David K.", detail: "3-unit landlord, Austin TX" },
             { quote: "The maintenance tracking is worth it alone. I used to miss things. Now every request has a paper trail.", name: "Michelle T.", detail: "7-unit landlord, Columbus OH" },

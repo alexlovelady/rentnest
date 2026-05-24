@@ -38,7 +38,7 @@ export default async function LeasesPage({ searchParams }: { searchParams: Promi
   const filters = ["active", "terminated", "expired"];
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-[#1A2332]">Leases</h1>
         <Link href="/dashboard/leases/new">
