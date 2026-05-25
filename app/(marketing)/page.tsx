@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, Home, CreditCard, Wrench, FileText, BarChart2, Bell } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -8,7 +8,7 @@ export default function LandingPage() {
       <nav className="border-b border-[#1A2332]/10 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <span className="font-bold text-lg text-[#1A2332]">RentNest</span>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link href="/login" className="text-sm text-gray-600 hover:text-[#1A2332]">Sign in</Link>
             <Link href="/signup" className="bg-[#C4622D] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#a8522a] transition">
               Start Free Trial
@@ -18,31 +18,33 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="max-w-4xl mx-auto px-6 py-24 text-center">
-        <h1 className="text-5xl font-bold leading-tight mb-6" style={{ fontFamily: "var(--font-lora, serif)" }}>
-          The simple landlord software<br />Cozy used to be.
+      <section className="max-w-3xl mx-auto px-6 py-16 sm:py-24 text-center">
+        <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-6" style={{ fontFamily: "var(--font-lora, serif)" }}>
+          The simple landlord software Cozy used to be.
         </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
           Collect rent online, track maintenance, store leases, and give your tenants a portal — for $19 a month.
           No per-lease fees. No percentage of rent. Ever.
         </p>
-        <div className="flex items-center justify-center gap-4">
-          <Link href="/signup" className="bg-[#C4622D] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-[#a8522a] transition shadow-sm">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <Link href="/signup" className="w-full sm:w-auto bg-[#C4622D] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-[#a8522a] transition shadow-sm text-center">
             Start Free 14-Day Trial
           </Link>
-          <a href="#features" className="text-[#1A2332] text-lg hover:text-[#C4622D] transition">
+          <a href="#features" className="text-[#1A2332] text-base sm:text-lg hover:text-[#C4622D] transition">
             See how it works →
           </a>
         </div>
-        <div className="flex items-center justify-center gap-6 mt-8 text-sm text-gray-500">
-          {["No per-lease fees", "No percentage of rent", "Cancel anytime", "Free 14-day trial"].map((t) => (
-            <span key={t} className="flex items-center gap-1.5"><Check size={14} className="text-[#5B7B5E]" />{t}</span>
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-8 text-sm text-gray-500">
+          {["No per-lease fees", "No % of rent", "Cancel anytime", "Free 14-day trial"].map((t) => (
+            <span key={t} className="flex items-center gap-1.5">
+              <Check size={13} className="text-[#5B7B5E] flex-shrink-0" />{t}
+            </span>
           ))}
         </div>
       </section>
 
       {/* Problem */}
-      <section className="bg-white py-20 px-6">
+      <section className="bg-white py-16 sm:py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {[
@@ -80,55 +82,98 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto space-y-16">
-          {[
-            {
-              title: "Online rent collection that's actually simple",
-              body: "Tenants pay by bank transfer or card through their portal. Money goes straight to your account. You get notified. That's it. No percentage taken, no per-transaction platform fees beyond standard card processing.",
-              badge: "Most popular",
-            },
-            {
-              title: "A real portal for your tenants",
-              body: "Every tenant gets a link to their portal: pay rent, submit maintenance requests, view their lease. Fewer texts to you. Happier tenants. Works on any phone — no app download required.",
-            },
-            {
-              title: "Maintenance, tracked from report to resolution",
-              body: "Tenants submit with photos. You get notified. Schedule a vendor, track the cost, close it out. Every unit's history is right there when you need it.",
-            },
-            {
-              title: "Expense tracking for tax time",
-              body: "Log every repair, mortgage payment, insurance bill, and supply purchase. At year end, export your Schedule E report. Your accountant will thank you.",
-            },
-          ].map((f, i) => (
-            <div key={f.title} className={`flex gap-12 items-center ${i % 2 === 1 ? "flex-row-reverse" : ""}`}>
-              <div className="flex-1">
-                {f.badge && (
-                  <span className="bg-[#C4622D]/10 text-[#C4622D] text-xs font-medium px-2 py-1 rounded-full mb-3 inline-block">{f.badge}</span>
-                )}
-                <h3 className="text-xl font-bold mb-3" style={{ fontFamily: "var(--font-lora, serif)" }}>{f.title}</h3>
-                <p className="text-gray-600">{f.body}</p>
+      <section id="features" className="py-16 sm:py-20 px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-3" style={{ fontFamily: "var(--font-lora, serif)" }}>
+              Everything you need. Nothing you don&apos;t.
+            </h2>
+            <p className="text-gray-500 max-w-xl mx-auto">
+              One flat monthly fee covers every feature. No add-ons, no per-unit pricing, no surprises.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {[
+              {
+                icon: CreditCard,
+                badge: "Most popular",
+                title: "Online rent collection",
+                body: "Tenants pay by bank transfer or card through their portal. Money goes straight to your account. No percentage taken — only standard Stripe card processing fees when tenants pay by card.",
+                callouts: ["Automated payment reminders", "Late fee tracking", "Full payment history"],
+              },
+              {
+                icon: Home,
+                title: "Tenant portal",
+                body: "Every tenant gets a link to their portal: pay rent, submit maintenance requests, view their lease. Fewer texts to you. Works on any phone — no app download required.",
+                callouts: ["No app to download", "One-click access via email", "Mobile-first design"],
+              },
+              {
+                icon: Wrench,
+                title: "Maintenance tracking",
+                body: "Tenants submit requests with details and photos. You get notified, schedule a vendor, track the cost, and close it out. Every unit's full history is always there.",
+                callouts: ["Photo attachments", "Vendor & cost tracking", "Status updates to tenants"],
+              },
+              {
+                icon: BarChart2,
+                title: "Expense tracking & reports",
+                body: "Log every repair, mortgage payment, insurance bill, and supply purchase by Schedule E category. At year end, export your report. Your accountant will thank you.",
+                callouts: ["Schedule E categories", "Per-property filtering", "CSV export"],
+              },
+              {
+                icon: FileText,
+                title: "Document storage",
+                body: "Leases, addendums, inspection reports, and insurance certificates — all stored and organized by property. Share documents with tenants directly from the portal.",
+                callouts: ["Lease & addendum storage", "Per-unit organization", "Tenant-visible docs"],
+              },
+              {
+                icon: Bell,
+                title: "Automated reminders",
+                body: "Rent due soon? We remind your tenants automatically. Late payments get a follow-up. You stay informed without having to chase anyone.",
+                callouts: ["Due-date reminders", "Overdue follow-ups", "Configurable timing"],
+              },
+            ].map((f) => (
+              <div key={f.title} className="bg-[#FDFAF5] rounded-2xl p-6 border border-[#1A2332]/8">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-[#C4622D]/10 flex items-center justify-center flex-shrink-0">
+                    <f.icon size={18} className="text-[#C4622D]" />
+                  </div>
+                  <div>
+                    {f.badge && (
+                      <span className="bg-[#C4622D]/10 text-[#C4622D] text-xs font-medium px-2 py-0.5 rounded-full mb-1.5 inline-block">{f.badge}</span>
+                    )}
+                    <h3 className="font-bold text-[#1A2332]" style={{ fontFamily: "var(--font-lora, serif)" }}>{f.title}</h3>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">{f.body}</p>
+                <ul className="space-y-1.5">
+                  {f.callouts.map((c) => (
+                    <li key={c} className="flex items-center gap-2 text-xs text-gray-500">
+                      <Check size={12} className="text-[#5B7B5E] flex-shrink-0" />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <div className="flex-1 bg-gray-100 rounded-2xl h-48 flex items-center justify-center text-gray-300 text-sm">
-                Screenshot placeholder
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-20 px-6 bg-[#FDFAF5]">
+      <section id="pricing" className="py-16 sm:py-20 px-6 bg-[#FDFAF5]">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-3" style={{ fontFamily: "var(--font-lora, serif)" }}>Simple pricing</h2>
           <p className="text-gray-500 mb-12">All plans include every feature. No per-lease fees. No percentage of rent.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-start">
             {[
               { id: "starter", name: "Starter", price: "$19", period: "/month", units: "Up to 5 units", features: ["All features included", "Tenant portal", "Online rent collection", "Document storage", "Maintenance tracking"] },
               { id: "grow", name: "Grow", price: "$49", period: "/month", units: "Up to 20 units", features: ["Everything in Starter", "Up to 20 units", "Income & expense reports", "Schedule E export"], highlight: true },
               { id: "portfolio", name: "Portfolio", price: "$99", period: "/month", units: "Unlimited units", features: ["Everything in Grow", "Unlimited units", "Priority support", "CSV data export"] },
             ].map((plan) => (
-              <div key={plan.id} className={`rounded-2xl p-6 border ${plan.highlight ? "bg-[#1A2332] text-white border-[#1A2332] scale-105 shadow-xl" : "bg-white border-gray-200"}`}>
+              <div key={plan.id} className={`rounded-2xl p-6 border ${plan.highlight ? "bg-[#1A2332] text-white border-[#1A2332] shadow-xl sm:-mt-4 sm:-mb-4" : "bg-white border-gray-200"}`}>
+                {plan.highlight && (
+                  <p className="text-xs font-semibold text-[#C4622D] mb-2 uppercase tracking-wide">Most popular</p>
+                )}
                 <h3 className={`font-bold text-lg mb-1 ${plan.highlight ? "text-white" : "text-[#1A2332]"}`}>{plan.name}</h3>
                 <div className="flex items-end gap-0.5 mb-1">
                   <span className="text-3xl font-bold">{plan.price}</span>
@@ -149,13 +194,15 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <p className="text-sm text-gray-500 mt-8">All plans include a 14-day free trial. No credit card required. Cancel any time.</p>
+          <p className="text-sm text-gray-500 mt-10">All plans include a 14-day free trial. No credit card required. Cancel any time.</p>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <section className="py-16 sm:py-20 px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-10" style={{ fontFamily: "var(--font-lora, serif)" }}>What landlords are saying</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {[
             { quote: "I was still using a Google Sheet and Venmo. Setting up RentNest took 20 minutes. My tenants actually prefer paying online.", name: "David K.", detail: "3-unit landlord, Austin TX" },
             { quote: "The maintenance tracking is worth it alone. I used to miss things. Now every request has a paper trail.", name: "Michelle T.", detail: "7-unit landlord, Columbus OH" },
@@ -167,11 +214,12 @@ export default function LandingPage() {
               <p className="text-xs text-gray-400">{t.detail}</p>
             </div>
           ))}
+          </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="py-20 px-6 bg-[#FDFAF5]">
+      {/* FAQ */
+      <section className="py-16 sm:py-20 px-6 bg-[#FDFAF5]">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12" style={{ fontFamily: "var(--font-lora, serif)" }}>Questions</h2>
           <div className="space-y-6">
@@ -192,9 +240,9 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="bg-[#1A2332] text-white py-20 px-6 text-center">
+      <section className="bg-[#1A2332] text-white py-16 sm:py-20 px-6 text-center">
         <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "var(--font-lora, serif)" }}>Ready to run a cleaner rental business?</h2>
-        <p className="text-gray-300 mb-8">Join landlords who replaced the spreadsheet and Venmo requests with something that actually works.</p>
+        <p className="text-gray-300 mb-8 max-w-xl mx-auto">Join landlords who replaced the spreadsheet and Venmo requests with something that actually works.</p>
         <Link href="/signup" className="bg-[#C4622D] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-[#a8522a] transition inline-block">
           Start Free Trial — No Credit Card Required
         </Link>
@@ -202,7 +250,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="bg-[#FDFAF5] border-t border-[#1A2332]/10 px-6 py-8">
-        <div className="max-w-5xl mx-auto flex items-center justify-between text-sm text-gray-400">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-400">
           <span className="font-bold text-[#1A2332]">RentNest</span>
           <span>© 2026 RentNest. All rights reserved.</span>
         </div>
