@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { StatusWorkflowPanel } from "./status-workflow-panel";
+import { CommentsPanel } from "./comments-panel";
 
 const priorityColor = { emergency: "red", high: "orange", normal: "yellow", low: "gray" } as const;
 const statusColor = { open: "yellow", in_progress: "blue", scheduled: "blue", resolved: "green", closed: "gray" } as const;
@@ -19,6 +20,7 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
     include: {
       unit: { include: { property: true } },
       tenant: true,
+      comments: { orderBy: { createdAt: "asc" } },
     },
   });
 
@@ -74,6 +76,7 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
               </div>
             )}
           </div>
+          <CommentsPanel requestId={req.id} initialComments={req.comments} />
         </div>
 
         <div>

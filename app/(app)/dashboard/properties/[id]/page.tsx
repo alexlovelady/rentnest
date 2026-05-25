@@ -6,6 +6,8 @@ import { ArrowLeft, MapPin, Home, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { AddUnitModal } from "./add-unit-modal";
+import { EditPropertyModal } from "./edit-property-modal";
+import { EditUnitModal } from "./edit-unit-modal";
 
 export default async function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -44,13 +46,16 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
           <div>
             <h1 className="text-xl font-bold text-[#1A2332]">{property.nickname}</h1>
             <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-              <MapPin size={12} /> {property.address}, {property.city}, {property.state} {property.zip}
+              <MapPin size={12} /> {property.address}{property.address2 ? `, ${property.address2}` : ""}, {property.city}, {property.state} {property.zip}
             </p>
             <p className="text-xs text-gray-400 mt-1 capitalize">{property.propertyType.replace("_", " ")}</p>
           </div>
-          <div className="text-right">
-            <p className="text-lg font-semibold">{formatCurrency(totalRent)}<span className="text-sm font-normal text-gray-500">/mo</span></p>
-            <p className="text-xs text-gray-500">{property.units.filter(u => u.leases.length > 0).length}/{property.units.length} occupied</p>
+          <div className="flex items-start gap-3">
+            <div className="text-right">
+              <p className="text-lg font-semibold">{formatCurrency(totalRent)}<span className="text-sm font-normal text-gray-500">/mo</span></p>
+              <p className="text-xs text-gray-500">{property.units.filter(u => u.leases.length > 0).length}/{property.units.length} occupied</p>
+            </div>
+            <EditPropertyModal property={property} />
           </div>
         </div>
       </div>
@@ -79,18 +84,21 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
                   <p className="text-xs text-gray-500">{unit.bedrooms}bd / {unit.bathrooms}ba{unit.squareFeet ? ` · ${unit.squareFeet} sqft` : ""}</p>
                 </div>
               </div>
-              <div className="text-right">
-                {lease ? (
-                  <>
-                    <p className="text-sm font-medium">{formatCurrency(lease.monthlyRent)}/mo</p>
-                    <p className="text-xs text-gray-500">{tenants}</p>
-                    {lease.endDate && (
-                      <p className="text-xs text-gray-400">Lease ends {formatDate(lease.endDate)}</p>
-                    )}
-                  </>
-                ) : (
-                  <Badge variant="yellow">Vacant</Badge>
-                )}
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  {lease ? (
+                    <>
+                      <p className="text-sm font-medium">{formatCurrency(lease.monthlyRent)}/mo</p>
+                      <p className="text-xs text-gray-500">{tenants}</p>
+                      {lease.endDate && (
+                        <p className="text-xs text-gray-400">Lease ends {formatDate(lease.endDate)}</p>
+                      )}
+                    </>
+                  ) : (
+                    <Badge variant="yellow">Vacant</Badge>
+                  )}
+                </div>
+                <EditUnitModal unit={unit} />
               </div>
             </Link>
           );

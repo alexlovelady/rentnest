@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { formatCurrency, formatDate, monthName } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { DownloadCSVButton } from "./download-csv-button";
+import { ReportYearSelect } from "./report-year-select";
 
 export default async function ReportsPage({ searchParams }: { searchParams: Promise<{ year?: string; report?: string }> }) {
   const { year: yearStr, report = "rent-roll" } = await searchParams;
@@ -72,9 +73,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-[#1A2332]">Reports</h1>
-        <select className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm" defaultValue={year} onChange={(e) => { window.location.href = `/dashboard/reports?year=${e.target.value}&report=${report}`; }}>
-          {[2023, 2024, 2025, 2026].map((y) => <option key={y} value={y}>{y}</option>)}
-        </select>
+        <ReportYearSelect currentYear={year} currentReport={report} />
       </div>
 
       <div className="flex gap-2 mb-6">

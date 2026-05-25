@@ -8,12 +8,14 @@ import { z } from "zod";
 const PropertySchema = z.object({
   nickname: z.string().min(1),
   address: z.string().min(1),
+  address2: z.string().optional().nullable(),
   city: z.string().min(1),
   state: z.string().min(1),
   zip: z.string().min(1),
   propertyType: z.string().default("single_family"),
-  yearBuilt: z.coerce.number().optional().nullable(),
   squareFeet: z.coerce.number().optional().nullable(),
+  unitBedrooms: z.coerce.number().min(0).optional(),
+  unitBathrooms: z.coerce.number().min(0).optional(),
   notes: z.string().optional(),
 });
 
@@ -43,7 +45,12 @@ export async function createProperty(data: z.infer<typeof PropertySchema>) {
 
   // Auto-create one unit for single-family homes
   await prisma.unit.create({
-    data: { propertyId: property.id, unitNumber: "1" },
+    data: {
+      propertyId: property.id,
+      unitNumber: "1",
+      bedrooms: parsed.unitBedrooms ?? 1,
+      bathrooms: parsed.unitBathrooms ?? 1,
+    },
   });
 
   revalidatePath("/dashboard/properties");
@@ -52,10 +59,10 @@ export async function createProperty(data: z.infer<typeof PropertySchema>) {
 
 export async function updateProperty(id: string, data: z.infer<typeof PropertySchema>) {
   const user = await requireServerUser();
-  const parsed = PropertySchema.parse(data);
+  const { unitBedrooms, unitBathrooms, ...rest } = PropertySchema.parse(data);
   const property = await prisma.property.updateMany({
     where: { id, landlordId: user.id },
-    data: parsed,
+    data: rest,
   });
   revalidatePath(`/dashboard/properties/${id}`);
   return property;

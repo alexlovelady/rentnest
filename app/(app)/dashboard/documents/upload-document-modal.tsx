@@ -7,7 +7,7 @@ import { Select } from "@/components/ui/select";
 import { Upload } from "lucide-react";
 import { createDocument } from "./actions";
 import { useRouter } from "next/navigation";
-import { storage } from "@/lib/firebase";
+import { getFirebaseStorage } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface Property { id: string; nickname: string }
@@ -18,6 +18,7 @@ export function UploadDocumentModal({ properties, leases }: { properties: Proper
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [uploadProgress, setUploadProgress] = useState("");
+  const [selectedFileName, setSelectedFileName] = useState<string>("");
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -35,7 +36,7 @@ export function UploadDocumentModal({ properties, leases }: { properties: Proper
       if (file) {
         setUploadProgress("Uploading file…");
         const timestamp = Date.now();
-        const storageRef = ref(storage, `documents/${timestamp}_${file.name}`);
+        const storageRef = ref(getFirebaseStorage(), `documents/${timestamp}_${file.name}`);
         await uploadBytes(storageRef, file);
         fileUrl = await getDownloadURL(storageRef);
         fileType = file.name.split(".").pop() || "";
@@ -76,7 +77,22 @@ export function UploadDocumentModal({ properties, leases }: { properties: Proper
           </Select>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">File</label>
-            <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.docx" required className="text-sm text-gray-600" />
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png,.docx"
+              required
+              className="hidden"
+              onChange={(e) => setSelectedFileName(e.target.files?.[0]?.name || "")}
+            />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Upload size={14} />
+              {selectedFileName ? selectedFileName : "Choose file…"}
+            </button>
           </div>
           <Select label="Property (optional)" name="propertyId">
             <option value="">Not property-specific</option>

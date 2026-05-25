@@ -77,6 +77,30 @@ export async function updateMaintenanceStatus(id: string, status: string, notes?
   revalidatePath(`/dashboard/maintenance/${id}`);
 }
 
+export async function addMaintenanceComment(
+  requestId: string,
+  body: string,
+  attachmentUrl?: string,
+  attachmentName?: string,
+) {
+  const user = await requireServerUser();
+  const req = await prisma.maintenanceRequest.findFirst({ where: { id: requestId, landlordId: user.id } });
+  if (!req) throw new Error("Not found");
+
+  const comment = await prisma.maintenanceComment.create({
+    data: {
+      maintenanceRequestId: requestId,
+      landlordId: user.id,
+      body,
+      attachmentUrl: attachmentUrl || null,
+      attachmentName: attachmentName || null,
+    },
+  });
+
+  revalidatePath(`/dashboard/maintenance/${requestId}`);
+  return comment;
+}
+
 export async function updateMaintenanceDetails(id: string, data: {
   vendorName?: string;
   vendorPhone?: string;

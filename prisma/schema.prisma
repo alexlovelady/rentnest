@@ -39,6 +39,7 @@ model Property {
   landlordId    String
   nickname      String
   address       String
+  address2      String?
   city          String
   state         String
   zip           String
@@ -181,6 +182,19 @@ model MaintenanceRequest {
   unit            Unit     @relation(fields: [unitId], references: [id])
   lease           Lease?   @relation(fields: [leaseId], references: [id])
   tenant          Tenant?  @relation(fields: [tenantId], references: [id])
+  comments        MaintenanceComment[]
+}
+
+model MaintenanceComment {
+  id                   String   @id @default(cuid())
+  maintenanceRequestId String
+  landlordId           String
+  body                 String
+  attachmentUrl        String?
+  attachmentName       String?
+  createdAt            DateTime @default(now())
+
+  request MaintenanceRequest @relation(fields: [maintenanceRequestId], references: [id])
 }
 
 model Expense {

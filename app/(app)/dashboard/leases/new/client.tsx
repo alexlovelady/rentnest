@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { createLease } from "../actions";
+import { createTenant } from "../../tenants/actions";
 
 interface Unit { id: string; unitNumber: string; propertyId: string; property: { nickname: string } }
 interface Tenant { id: string; name: string; email: string | null }
@@ -29,6 +30,10 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showNewTenant, setShowNewTenant] = useState(false);
+  const [newTenantForm, setNewTenantForm] = useState({ name: "", email: "", phone: "" });
+  const [newTenantLoading, setNewTenantLoading] = useState(false);
+  const [newTenantError, setNewTenantError] = useState("");
 
   const [form, setForm] = useState({
     unitId: preselectedUnitId,
@@ -45,6 +50,7 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
     lateFeeType: (defaults?.lateFeeType ?? "flat") as "flat" | "percent",
     lateFeeAmount: defaults?.lateFeeAmount ?? "",
     lateFeeGracePeriodDays: defaults?.lateFeeGracePeriodDays ?? "5",
+    leaseDuration: "12",
     petsAllowed: false,
     petDeposit: "",
     petRent: "",
@@ -63,6 +69,27 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
         : [...f.tenantIds, id];
       return { ...f, tenantIds: ids, primaryTenantId: ids[0] || "" };
     });
+  }
+
+  async function handleCreateTenant(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newTenantForm.name.trim()) return;
+    setNewTenantLoading(true);
+    setNewTenantError("");
+    try {
+      const tenant = await createTenant({ name: newTenantForm.name, email: newTenantForm.email, phone: newTenantForm.phone });
+      setTenants((prev) => [...prev, { id: tenant.id, name: tenant.name, email: tenant.email }]);
+      setForm((f) => {
+        const ids = [...f.tenantIds, tenant.id];
+        return { ...f, tenantIds: ids, primaryTenantId: f.primaryTenantId || tenant.id };
+      });
+      setNewTenantForm({ name: "", email: "", phone: "" });
+      setShowNewTenant(false);
+    } catch (err: unknown) {
+      setNewTenantError(err instanceof Error ? err.message : "Failed to create tenant");
+    } finally {
+      setNewTenantLoading(false);
+    }
   }
 
   async function handleSubmit() {
@@ -118,22 +145,61 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
         {step === 1 && (
           <div className="space-y-4">
             <h2 className="font-semibold text-gray-900">Add Tenants</h2>
-            <p className="text-sm text-gray-500">Select existing tenants or create new ones first from the Tenants page.</p>
-            <div className="divide-y divide-gray-100 border border-gray-100 rounded-lg max-h-60 overflow-y-auto">
-              {tenants.map((t) => (
-                <label key={t.id} className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50">
-                  <input type="checkbox" checked={form.tenantIds.includes(t.id)} onChange={() => toggleTenant(t.id)} className="accent-[#C4622D]" />
-                  <div>
-                    <p className="text-sm font-medium">{t.name}</p>
-                    <p className="text-xs text-gray-400">{t.email || "No email"}</p>
-                  </div>
-                </label>
-              ))}
-            </div>
+            {tenants.length > 0 && (
+              <div className="divide-y divide-gray-100 border border-gray-100 rounded-lg max-h-60 overflow-y-auto">
+                {tenants.map((t) => (
+                  <label key={t.id} className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50">
+                    <input type="checkbox" checked={form.tenantIds.includes(t.id)} onChange={() => toggleTenant(t.id)} className="accent-[#C4622D]" />
+                    <div>
+                      <p className="text-sm font-medium">{t.name}</p>
+                      <p className="text-xs text-gray-400">{t.email || "No email"}</p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            )}
             {form.tenantIds.length > 1 && (
               <Select label="Primary tenant" value={form.primaryTenantId} onChange={(e) => setForm((f) => ({ ...f, primaryTenantId: e.target.value }))}>
                 {selectedTenants.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
               </Select>
+            )}
+
+            {showNewTenant ? (
+              <form onSubmit={handleCreateTenant} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                <p className="text-sm font-medium text-gray-700">New tenant</p>
+                {newTenantError && <p className="text-sm text-red-500">{newTenantError}</p>}
+                <Input
+                  label="Full name"
+                  value={newTenantForm.name}
+                  onChange={(e) => setNewTenantForm((f) => ({ ...f, name: e.target.value }))}
+                  required
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <Input
+                    label="Email (optional)"
+                    type="email"
+                    value={newTenantForm.email}
+                    onChange={(e) => setNewTenantForm((f) => ({ ...f, email: e.target.value }))}
+                  />
+                  <Input
+                    label="Phone (optional)"
+                    value={newTenantForm.phone}
+                    onChange={(e) => setNewTenantForm((f) => ({ ...f, phone: e.target.value }))}
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button type="button" variant="secondary" size="sm" onClick={() => { setShowNewTenant(false); setNewTenantError(""); }}>Cancel</Button>
+                  <Button type="submit" size="sm" disabled={newTenantLoading}>{newTenantLoading ? "Creating…" : "Create & select"}</Button>
+                </div>
+              </form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowNewTenant(true)}
+                className="text-sm text-[#C4622D] hover:underline"
+              >
+                + Create new tenant
+              </button>
             )}
           </div>
         )}
@@ -146,11 +212,47 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
               <option value="month_to_month">Month-to-month</option>
             </Select>
             <div className="grid grid-cols-2 gap-3">
-              <Input label="Start date" type="date" value={form.startDate} onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))} required />
+              <Input label="Start date" type="date" value={form.startDate} onChange={(e) => {
+                const start = e.target.value;
+                setForm((f) => {
+                  if (f.leaseDuration && f.leaseDuration !== "custom" && start) {
+                    const d = new Date(start + "T00:00:00");
+                    d.setMonth(d.getMonth() + Number(f.leaseDuration));
+                    d.setDate(d.getDate() - 1);
+                    return { ...f, startDate: start, endDate: d.toISOString().slice(0, 10) };
+                  }
+                  return { ...f, startDate: start };
+                });
+              }} required />
               {form.leaseType === "fixed" && (
-                <Input label="End date" type="date" value={form.endDate} onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))} />
+                <Select label="Duration" value={form.leaseDuration} onChange={(e) => {
+                  const dur = e.target.value;
+                  setForm((f) => {
+                    if (dur !== "custom" && f.startDate) {
+                      const d = new Date(f.startDate + "T00:00:00");
+                      d.setMonth(d.getMonth() + Number(dur));
+                      d.setDate(d.getDate() - 1);
+                      return { ...f, leaseDuration: dur, endDate: d.toISOString().slice(0, 10) };
+                    }
+                    return { ...f, leaseDuration: dur };
+                  });
+                }}>
+                  <option value="">Select…</option>
+                  <option value="3">3 months</option>
+                  <option value="6">6 months</option>
+                  <option value="12">12 months</option>
+                  <option value="18">18 months</option>
+                  <option value="24">24 months</option>
+                  <option value="custom">Custom end date</option>
+                </Select>
               )}
             </div>
+            {form.leaseType === "fixed" && (form.leaseDuration === "custom" || !form.leaseDuration) && (
+              <Input label="End date" type="date" value={form.endDate} onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))} />
+            )}
+            {form.leaseType === "fixed" && form.leaseDuration && form.leaseDuration !== "custom" && form.endDate && (
+              <p className="text-xs text-gray-500">End date: {new Date(form.endDate + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <Input label="Monthly rent ($)" type="number" value={form.monthlyRent} onChange={(e) => setForm((f) => ({ ...f, monthlyRent: e.target.value }))} required />
               <Input label="Security deposit ($)" type="number" value={form.securityDeposit} onChange={(e) => setForm((f) => ({ ...f, securityDeposit: e.target.value }))} />

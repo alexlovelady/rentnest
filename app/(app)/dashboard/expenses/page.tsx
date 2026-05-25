@@ -2,11 +2,7 @@ import { requireServerUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { AddExpenseModal } from "./add-expense-modal";
-
-const SCHEDULE_E_CATEGORIES = [
-  "mortgage", "taxes", "insurance", "repairs", "maintenance",
-  "utilities", "management", "advertising", "legal", "supplies", "other",
-];
+import { ExpenseFilters } from "./expense-filters";
 
 export default async function ExpensesPage({ searchParams }: { searchParams: Promise<{ property?: string; category?: string; year?: string }> }) {
   const { property: propertyFilter, category: categoryFilter, year: yearFilter } = await searchParams;
@@ -45,13 +41,7 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
         <AddExpenseModal properties={properties} />
       </div>
 
-      <div className="flex gap-3 mb-6 flex-wrap text-sm">
-        <select className="border border-gray-200 rounded-lg px-3 py-1.5" defaultValue={propertyFilter || ""} onChange={(e) => { const url = new URL(window.location.href); e.target.value ? url.searchParams.set("property", e.target.value) : url.searchParams.delete("property"); window.location.href = url.toString(); }}>
-          <option value="">All properties</option>
-          {properties.map((p) => <option key={p.id} value={p.id}>{p.nickname}</option>)}
-        </select>
-      </div>
-
+      <ExpenseFilters properties={properties} currentProperty={propertyFilter} currentCategory={categoryFilter} currentYear={year} />
       {expenses.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl border border-gray-100">
           <p className="text-gray-500">No expenses for {year} yet.</p>
