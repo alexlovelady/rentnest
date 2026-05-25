@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resend, FROM, APP_URL } from "@/lib/resend";
 import { applyLateFees } from "@/lib/rent";
+import { signTenantToken } from "@/lib/tenant-auth";
 import { addDays, isAfter, isBefore, differenceInDays } from "date-fns";
 
 export async function POST(req: NextRequest) {
@@ -36,7 +37,8 @@ export async function POST(req: NextRequest) {
   for (const payment of upcomingPayments) {
     if (!payment.tenant?.email) continue;
     const addr = `${payment.lease.unit.property.address}, Unit ${payment.lease.unit.unitNumber}`;
-    const portalUrl = `${APP_URL}/tenant-portal`;
+    const token = await signTenantToken({ tenantId: payment.tenantId!, leaseId: payment.leaseId, landlordId: payment.landlordId });
+    const portalUrl = `${APP_URL}/tenant-portal/auth?token=${token}`;
     await resend.emails.send({
       from: FROM,
       to: payment.tenant.email,
@@ -69,11 +71,13 @@ export async function POST(req: NextRequest) {
 
     if (shouldNotify && payment.tenant?.email) {
       const addr = `${payment.lease.unit.property.address}, Unit ${payment.lease.unit.unitNumber}`;
+      const token = await signTenantToken({ tenantId: payment.tenantId!, leaseId: payment.leaseId, landlordId: payment.landlordId });
+      const portalUrl = `${APP_URL}/tenant-portal/auth?token=${token}`;
       await resend.emails.send({
         from: FROM,
         to: payment.tenant.email,
         subject: `Rent overdue — ${addr}`,
-        html: `<p>Hi ${payment.tenant.name},</p><p>Your rent of <strong>$${payment.totalAmount.toFixed(2)}</strong> for ${addr} is overdue. Please pay as soon as possible.</p><p><a href="${APP_URL}/tenant-portal">Pay Online</a></p>`,
+        html: `<p>Hi ${payment.tenant.name},</p><p>Your rent of <strong>$${payment.totalAmount.toFixed(2)}</strong> for ${addr} is overdue. Please pay as soon as possible.</p><p><a href="${portalUrl}">Pay Online</a></p>`,
       });
     }
   }

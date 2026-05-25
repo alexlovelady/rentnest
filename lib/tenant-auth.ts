@@ -39,7 +39,7 @@ export async function requireTenantUser(): Promise<TenantSession> {
   const session = await getTenantUser();
   if (!session) {
     const { redirect } = await import("next/navigation");
-    redirect("/tenant-portal/login");
+    redirect("/tenant-portal/auth");
     throw new Error("Redirecting");
   }
   return session;
