@@ -16,7 +16,7 @@ export default async function TenantPortalPage() {
 
   const landlord = await prisma.landlord.findUnique({
     where: { id: session.landlordId },
-    select: { name: true, email: true, phone: true, showEmailToTenants: true, showPhoneToTenants: true },
+    select: { name: true, email: true, phone: true, showEmailToTenants: true, showPhoneToTenants: true, stripeConnectReady: true },
   });
 
   const lease = await prisma.lease.findUnique({
@@ -70,14 +70,18 @@ export default async function TenantPortalPage() {
             ) : (
               <div className="space-y-3">
                 <p className="text-sm text-gray-600">Due: {formatDate(currentPayment.dueDate)}</p>
-                {currentPayment.stripePaymentUrl ? (
-                  <a href={currentPayment.stripePaymentUrl} target="_blank" rel="noopener noreferrer">
-                    <Button className="w-full" size="lg">Pay Now</Button>
-                  </a>
+                {landlord?.stripeConnectReady ? (
+                  currentPayment.stripePaymentUrl ? (
+                    <a href={currentPayment.stripePaymentUrl} target="_blank" rel="noopener noreferrer">
+                      <Button className="w-full" size="lg">Pay Now</Button>
+                    </a>
+                  ) : (
+                    <Link href="/tenant-portal/pay">
+                      <Button className="w-full" size="lg">Pay Online</Button>
+                    </Link>
+                  )
                 ) : (
-                  <Link href="/tenant-portal/pay">
-                    <Button className="w-full" size="lg">Pay Online</Button>
-                  </Link>
+                  <p className="text-sm text-gray-500">Contact your landlord to arrange payment.</p>
                 )}
                 {currentPayment.lateFee > 0 && (
                   <p className="text-xs text-red-600">Includes ${currentPayment.lateFee.toFixed(2)} late fee</p>
