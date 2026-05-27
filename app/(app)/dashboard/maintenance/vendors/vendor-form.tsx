@@ -59,7 +59,7 @@ export function VendorForm({ vendor, trades }: Props) {
 
   if (!open) {
     return (
-      <Button size="sm" variant={vendor ? "secondary" : "default"} onClick={() => setOpen(true)}>
+      <Button size="sm" variant={vendor ? "secondary" : "primary"} onClick={() => setOpen(true)}>
         {vendor ? "Edit" : "Add Vendor"}
       </Button>
     );
