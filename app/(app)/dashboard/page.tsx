@@ -2,7 +2,7 @@ import { requireServerUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency, formatDate, monthName, daysUntil, currentPeriod } from "@/lib/utils";
 import Link from "next/link";
-import { AlertTriangle, DollarSign, Wrench, FileText } from "lucide-react";
+import { AlertTriangle, DollarSign, Wrench, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -53,6 +53,25 @@ export default async function DashboardPage() {
     const diff = (due.getTime() - now.getTime()) / 86400000;
     return p.status === "pending" && diff >= 0 && diff <= 7;
   });
+
+  // Occupancy
+  const allUnits = await prisma.unit.findMany({
+    where: { property: { landlordId: user.id }, isActive: true },
+    include: {
+      property: { select: { address: true, nickname: true } },
+      leases: { where: { status: "active" }, select: { id: true } },
+    },
+  });
+  const occupiedCount = allUnits.filter((u) => u.leases.length > 0).length;
+  const occupancyByProperty = Object.values(
+    allUnits.reduce<Record<string, { label: string; total: number; occupied: number }>>((acc, u) => {
+      const key = u.property.nickname;
+      if (!acc[key]) acc[key] = { label: u.property.nickname, total: 0, occupied: 0 };
+      acc[key].total++;
+      if (u.leases.length > 0) acc[key].occupied++;
+      return acc;
+    }, {})
+  );
 
   // Trial notice
   const trialDaysLeft = user.trialEndsAt
@@ -194,6 +213,45 @@ export default async function DashboardPage() {
           </Card>
         )}
       </div>
+      </div>
+
+      {/* Occupancy */}
+      {allUnits.length > 0 && (
+        <Card className="mt-6">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2"><Building2 size={16} /> Occupancy</CardTitle>
+            <span className="text-2xl font-bold text-[#1A2332]">
+              {allUnits.length === 0 ? "—" : `${Math.round((occupiedCount / allUnits.length) * 100)}%`}
+              <span className="text-sm font-normal text-gray-400 ml-1">occupied</span>
+            </span>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="flex gap-4 text-sm mb-4">
+              <span className="text-green-700 font-medium">{occupiedCount} occupied</span>
+              <span className="text-gray-400">·</span>
+              <span className="text-gray-500">{allUnits.length - occupiedCount} vacant</span>
+              <span className="text-gray-400">·</span>
+              <span className="text-gray-500">{allUnits.length} total</span>
+            </div>
+            {occupancyByProperty.length > 1 && (
+              <div className="space-y-2">
+                {occupancyByProperty.map((p) => (
+                  <div key={p.label} className="flex items-center gap-3">
+                    <span className="text-sm text-gray-600 w-40 truncate">{p.label}</span>
+                    <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="h-2 rounded-full bg-[#C4622D]"
+                        style={{ width: `${Math.round((p.occupied / p.total) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-gray-500 w-16 text-right">{p.occupied}/{p.total} units</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

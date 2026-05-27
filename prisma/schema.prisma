@@ -27,6 +27,8 @@ model Landlord {
   defaultLateFeeType    String  @default("flat")
   defaultLateFeeAmount  Float   @default(50)
   defaultLateFeeGraceDays Int   @default(5)
+  showEmailToTenants    Boolean @default(false)
+  showPhoneToTenants    Boolean @default(false)
   createdAt     DateTime @default(now())
 
   properties    Property[]
@@ -86,6 +88,7 @@ model Tenant {
   leases        LeaseTenant[]
   maintenanceRequests MaintenanceRequest[]
   rentPayments  RentPayment[]
+  leaseSignatures LeaseSignature[]
 }
 
 model Lease {
@@ -118,6 +121,7 @@ model Lease {
   rentPayments    RentPayment[]
   documents       Document[]
   maintenanceRequests MaintenanceRequest[]
+  signatures      LeaseSignature[]
 }
 
 model LeaseTenant {
@@ -211,6 +215,22 @@ model Expense {
   createdAt     DateTime @default(now())
   landlord      Landlord @relation(fields: [landlordId], references: [id])
   property      Property? @relation(fields: [propertyId], references: [id])
+}
+
+model LeaseSignature {
+  id         String    @id @default(cuid())
+  leaseId    String
+  tenantId   String
+  token      String    @unique
+  status     String    @default("pending")
+  signerName String?
+  signerIp   String?
+  signedAt   DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  lease  Lease  @relation(fields: [leaseId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id])
 }
 
 model Document {

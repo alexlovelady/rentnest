@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { updateAccount, updateNotifications, updateLateFeeDefaults, markConnectReady } from "./actions";
+import { updateAccount, updateNotifications, updateLateFeeDefaults, markConnectReady, updateContactVisibility } from "./actions";
 import type { Landlord } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
@@ -195,6 +195,37 @@ export function SettingsClient({ user, daysLeft }: Props) {
               </div>
             </div>
             <Button type="submit" size="sm" disabled={saving === "latefee"}>{saving === "latefee" ? "Saving…" : "Save Payment Defaults"}</Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Tenant contact info */}
+      <Card>
+        <CardHeader><CardTitle>Tenant Contact Info</CardTitle></CardHeader>
+        <CardContent>
+          <p className="text-sm text-gray-500 mb-4">Choose what contact information tenants can see in their portal. Your email and phone are set in the Account section above.</p>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setSaving("contact");
+              const fd = new FormData(e.currentTarget);
+              await updateContactVisibility({
+                showEmailToTenants: fd.has("showEmailToTenants"),
+                showPhoneToTenants: fd.has("showPhoneToTenants"),
+              });
+              setSaving(null);
+            }}
+            className="space-y-3"
+          >
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" name="showEmailToTenants" defaultChecked={user.showEmailToTenants} className="accent-[#C4622D]" />
+              Show my email address to tenants ({user.email})
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" name="showPhoneToTenants" defaultChecked={user.showPhoneToTenants} className="accent-[#C4622D]" />
+              Show my phone number to tenants{user.phone ? ` (${user.phone})` : " — add a phone number in Account first"}
+            </label>
+            <Button type="submit" size="sm" disabled={saving === "contact"}>{saving === "contact" ? "Saving…" : "Save"}</Button>
           </form>
         </CardContent>
       </Card>

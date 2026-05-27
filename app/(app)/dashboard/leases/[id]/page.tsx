@@ -2,12 +2,13 @@ import { requireServerUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate, monthName } from "@/lib/utils";
 import { SendInviteButton } from "./send-invite-button";
 import { TerminateLeaseButton } from "./terminate-lease-button";
+import { RequestSignatureButton } from "./request-signature-button";
 
 export default async function LeaseDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
   const { id } = await params;
@@ -21,6 +22,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
       tenants: { include: { tenant: true } },
       rentPayments: { orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }] },
       documents: { orderBy: { uploadedAt: "desc" } },
+      signatures: { include: { tenant: true }, orderBy: { createdAt: "desc" } },
     },
   });
 
@@ -79,8 +81,36 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
         </div>
 
         {lease.status === "active" && (
-          <div className="border-t border-gray-100 pt-4 mt-4 flex gap-2">
-            <TerminateLeaseButton leaseId={lease.id} />
+          <div className="border-t border-gray-100 pt-4 mt-4 space-y-3">
+            {/* Signature status */}
+            {lease.signatures.length > 0 && (
+              <div>
+                <p className="text-xs text-gray-500 font-medium mb-2">Lease signatures</p>
+                <div className="space-y-1.5">
+                  {lease.signatures.map((sig) => (
+                    <div key={sig.id} className="flex items-center justify-between text-sm">
+                      <span className="text-gray-700">{sig.tenant.name}</span>
+                      {sig.status === "signed" ? (
+                        <span className="flex items-center gap-1 text-green-600 text-xs font-medium">
+                          <Check size={11} /> Signed {sig.signedAt ? formatDate(sig.signedAt) : ""}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-yellow-600 font-medium">Awaiting signature</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="flex gap-2 flex-wrap">
+              <RequestSignatureButton
+                leaseId={lease.id}
+                allSigned={lease.tenants.length > 0 && lease.tenants.every((lt) =>
+                  lease.signatures.some((s) => s.tenantId === lt.tenantId && s.status === "signed")
+                )}
+              />
+              <TerminateLeaseButton leaseId={lease.id} />
+            </div>
           </div>
         )}
       </div>

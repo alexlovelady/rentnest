@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Users, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { NewTenantModal } from "./new-tenant-modal";
+import { BulkMessageModal } from "./bulk-message-modal";
 
 export default async function TenantsPage() {
   const user = await requireServerUser();
@@ -22,6 +23,10 @@ export default async function TenantsPage() {
     orderBy: { name: "asc" },
   });
 
+  const emailableCount = tenants.filter(
+    (t) => t.email && t.leases.some((lt) => lt.lease.status === "active")
+  ).length;
+
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -29,7 +34,10 @@ export default async function TenantsPage() {
           <h1 className="text-2xl font-bold text-[#1A2332]">Tenants</h1>
           <p className="text-sm text-gray-500 mt-1">{tenants.length} tenant{tenants.length !== 1 ? "s" : ""}</p>
         </div>
-        <NewTenantModal />
+        <div className="flex gap-2">
+          <BulkMessageModal recipientCount={emailableCount} />
+          <NewTenantModal />
+        </div>
       </div>
 
       {tenants.length === 0 ? (

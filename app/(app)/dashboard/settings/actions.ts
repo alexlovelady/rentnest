@@ -45,6 +45,12 @@ export async function updateLateFeeDefaults(data: z.infer<typeof LateFeeSchema>)
   revalidatePath("/dashboard/settings");
 }
 
+export async function updateContactVisibility(data: { showEmailToTenants: boolean; showPhoneToTenants: boolean }) {
+  const user = await requireServerUser();
+  await prisma.landlord.update({ where: { id: user.id }, data });
+  revalidatePath("/dashboard/settings");
+}
+
 export async function markConnectReady() {
   const user = await requireServerUser();
   const { stripe } = await import("@/lib/stripe");

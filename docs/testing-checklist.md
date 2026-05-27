@@ -1,0 +1,237 @@
+# RentNest — Testing Checklist
+
+Manual QA checklist. Run through each section after making changes to a feature area.
+
+---
+
+## Auth
+
+- [ ] Sign up with a new email — account created, redirected to dashboard
+- [ ] Sign up with an existing email — error shown, no duplicate created
+- [ ] Log in with correct credentials — redirected to dashboard
+- [ ] Log in with wrong password — error shown
+- [ ] Unauthenticated visit to `/dashboard/*` — redirected to login
+- [ ] Session persists on page refresh
+
+---
+
+## Properties & Units
+
+- [ ] Create a new property — appears in properties list
+- [ ] Edit a property — changes saved and reflected
+- [ ] Add a unit to a property — unit appears on property detail page
+- [ ] Unit count shown correctly on property card
+- [ ] Inactive properties/units hidden from active flows (lease creation, etc.)
+
+---
+
+## Tenants
+
+- [ ] Create a tenant with email and phone — appears in tenant list
+- [ ] Create a tenant without email — no errors, fields optional
+- [ ] Edit a tenant — changes saved
+- [ ] Send portal link — email received, link works
+- [ ] Tenant portal loads with correct name and address after auth
+
+---
+
+## Leases
+
+- [ ] Create a lease for a unit with a tenant — lease appears in list and on unit
+- [ ] Lease detail page shows rent, dates, tenants, late fee settings
+- [ ] Month-to-month lease shows "Month-to-month" (no end date)
+- [ ] Terminate a lease — status changes to "terminated", no longer active
+- [ ] Lease with multiple tenants — all names shown, all get portal invites
+
+### Lease Signing
+- [ ] "Request Signature" button sends email to tenant(s)
+- [ ] Signing link opens `/sign/[token]` with correct lease details shown
+- [ ] Lease document link shown if a document is attached to the lease
+- [ ] Typing the wrong name keeps Sign button disabled
+- [ ] Typing the exact name (case-insensitive) enables Sign button
+- [ ] Consent checkbox required before signing
+- [ ] Submitting signature → success screen shown, landlord receives email
+- [ ] Revisiting the signed link shows "Already signed" message
+- [ ] Expired link (past 30 days) shows "Link expired" message
+- [ ] Signature status appears on lease detail page for each tenant
+- [ ] "All tenants have signed" shown when all signatures are complete
+- [ ] Resend button re-sends the signing email
+
+---
+
+## Rent Collection
+
+- [ ] Generate rent charges — one charge created per active lease
+- [ ] Generating again for same month — no duplicates created
+- [ ] Rent page shows Collected / Outstanding / Overdue totals correctly
+- [ ] Overdue payments highlighted in red
+- [ ] Record payment modal opens and loads leases
+- [ ] Selecting a lease auto-fills the amount with monthly rent
+- [ ] Recording a payment marks it as paid, updates totals
+- [ ] Recording a payment with days late beyond grace period — late fee auto-calculated
+- [ ] Late fee field is manually editable (overrides auto-calculation)
+- [ ] Total shown correctly as rent + late fee when late fee > 0
+- [ ] Receipt email sent when "Email receipt to tenant" is checked
+- [ ] Send reminders button — emails sent to pending tenants
+
+### Auto Late Fees (cron)
+- [ ] Cron job runs (verify in Vercel cron logs)
+- [ ] Payment past grace period with `lateFeeEnabled: true` — late fee applied automatically
+- [ ] Payment past grace period with `lateFeeEnabled: false` — no fee applied
+- [ ] Payment already has `lateFeeApplied: true` — not double-charged
+- [ ] Percentage late fee calculates correctly (e.g. 5% of $1,200 = $60)
+- [ ] Flat late fee applies correct amount
+
+---
+
+## Maintenance Requests
+
+- [ ] Tenant submits maintenance request from portal — appears in landlord dashboard
+- [ ] Landlord receives email notification for new request
+- [ ] Landlord can update status (open → in progress → resolved)
+- [ ] Tenant can see status update in portal
+- [ ] Unacknowledged requests trigger cron email after 24 hours
+- [ ] Resolved requests show in history with resolution notes
+
+---
+
+## Documents
+
+- [ ] Upload a document to a property — appears in document list
+- [ ] Upload a document to a lease — appears on lease detail page
+- [ ] Document link opens the file correctly
+- [ ] Tenant can view documents shared to their lease from the portal
+
+---
+
+## Expenses
+
+- [ ] Add an expense with category and amount — appears in expense list
+- [ ] Associate expense with a property — filtered correctly in reports
+- [ ] CSV export downloads with correct data
+
+---
+
+## Reports
+
+- [ ] Reports page loads with correct income and expense totals
+- [ ] Filtering by property works
+- [ ] CSV export produces a valid file with all rows
+
+---
+
+## Tenant Portal
+
+- [ ] Tenant auth via portal link — session created, correct name shown
+- [ ] Current month rent shown with correct total amount
+- [ ] "Includes $X late fee" notice shown when late fee > 0
+- [ ] Pay Now / Pay Online button present when rent is unpaid
+- [ ] Stripe payment link opens and shows correct amount
+- [ ] After payment, status updates to paid
+- [ ] Payment history shows last 6 months
+- [ ] Maintenance requests submittable from portal
+- [ ] Open maintenance requests shown on portal home
+- [ ] Documents page shows lease documents
+
+---
+
+## Billing & Stripe Connect
+
+- [ ] Landlord can initiate Stripe Connect onboarding
+- [ ] Stripe Connect status shows as ready after onboarding
+- [ ] Tenant payment charge reaches landlord's connected account
+- [ ] Fee passthrough option adds Stripe fee to tenant's amount
+- [ ] Stripe webhook marks payment as paid when completed
+- [ ] Subscription upgrade/downgrade via billing portal
+
+---
+
+## Notifications (Cron)
+
+- [ ] Rent due reminder sent 3 days before due date
+- [ ] Overdue notice sent to tenant on day 1, 7, 14, 30 past grace period
+- [ ] Landlord overdue summary email sent
+- [ ] Lease expiring in 60 days — landlord email sent
+- [ ] Lease expiring in 30 days — landlord email sent
+- [ ] Unacknowledged maintenance after 24h — landlord email sent
+
+---
+
+## Settings
+
+- [ ] Landlord can update name, email, phone
+- [ ] Default late fee settings save and apply to new leases
+- [ ] Notification toggles (payment, maintenance, overdue) save correctly
+- [ ] Timezone setting saves
+
+---
+
+## Marketing / Public Pages
+
+- [ ] Landing page loads and is readable on mobile
+- [ ] "Start Free Trial" and "Sign in" links work
+- [ ] Pricing section shows correct plan names and prices
+- [ ] Cozy callout section displays correctly
+- [ ] FAQ answers are all accurate and up to date
+
+---
+
+## Tenant Contact Info
+
+- [ ] Settings page shows "Tenant Contact Info" section
+- [ ] Both toggles default to off for existing landlords
+- [ ] Enabling email toggle → tenant portal shows landlord email as mailto link
+- [ ] Enabling phone toggle → tenant portal shows landlord phone as tel link
+- [ ] Both enabled → both shown in portal
+- [ ] Both disabled → contact section hidden entirely in portal
+- [ ] Phone toggle shows note "add a phone number in Account first" when no phone is set
+- [ ] Saving toggles persists correctly on page refresh
+
+---
+
+## Occupancy Dashboard
+
+- [ ] Occupancy section visible on dashboard Overview when units exist
+- [ ] Total / occupied / vacant counts are correct
+- [ ] Occupancy % calculates correctly (occupied ÷ total)
+- [ ] Per-property progress bars shown when more than one property exists
+- [ ] Bar widths reflect actual occupancy per property
+- [ ] Section hidden when landlord has no units yet
+
+---
+
+## Bulk Messaging
+
+- [ ] "Message Tenants" button visible on Tenants page
+- [ ] Button shows correct recipient count (only tenants with email + active lease)
+- [ ] Modal opens with subject and message fields
+- [ ] Sending with empty fields blocked by required validation
+- [ ] Tenants without email addresses excluded from send
+- [ ] Tenants without active leases excluded from send
+- [ ] Success screen shows after sending, with correct sent count
+- [ ] Tenant receives email with correct subject and message body
+- [ ] Email includes landlord's "sent via RentNest" footer
+- [ ] "Message Tenants" button disabled (or shows 0) when no eligible tenants exist
+
+---
+
+## Maintenance Cost Reporting
+
+- [ ] "Maintenance Costs" tab visible on Reports page
+- [ ] Total spent, avg per job, and property count cards show correct values
+- [ ] "Cost by Property" table shows correct totals and job counts
+- [ ] "Cost by Category" table shows correct totals
+- [ ] "All Jobs with Costs" table lists jobs with vendor name and cost
+- [ ] Jobs without `actualCost` set are excluded
+- [ ] Empty state shown when no jobs have costs recorded
+- [ ] Totals row in jobs table matches sum of individual rows
+
+---
+
+## General
+
+- [ ] No console errors on any page
+- [ ] All pages load on mobile (375px width)
+- [ ] All forms show validation errors for missing required fields
+- [ ] Loading states shown on all async buttons
+- [ ] Error states shown on form submission failures

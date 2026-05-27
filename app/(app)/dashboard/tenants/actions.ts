@@ -42,3 +42,35 @@ export async function sendPortalLink(tenantId: string, leaseId: string) {
   const { sendTenantPortalInvite } = await import("@/lib/tenant-auth");
   await sendTenantPortalInvite(tenantId, leaseId, user.id);
 }
+
+export async function sendBulkMessage({ subject, message }: { subject: string; message: string }) {
+  const user = await requireServerUser();
+
+  const activeTenants = await prisma.tenant.findMany({
+    where: {
+      landlordId: user.id,
+      isActive: true,
+      email: { not: null },
+      leases: { some: { lease: { status: "active" } } },
+    },
+    select: { name: true, email: true },
+  });
+
+  if (activeTenants.length === 0) throw new Error("No tenants with email addresses found");
+
+  const { resend, FROM } = await import("@/lib/resend");
+  const messageHtml = message.replace(/\n/g, "<br/>");
+
+  await Promise.all(
+    activeTenants.map((t) =>
+      resend.emails.send({
+        from: FROM,
+        to: t.email!,
+        subject,
+        html: `<p>Hi ${t.name},</p><p>${messageHtml}</p><p style="color:#999;font-size:12px;margin-top:24px;">This message was sent by your landlord via RentNest.</p>`,
+      })
+    )
+  );
+
+  return { sent: activeTenants.length };
+}

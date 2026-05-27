@@ -37,6 +37,29 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
     include: { property: { select: { nickname: true } } },
   });
 
+  // Maintenance costs
+  const maintenanceCosts = await prisma.maintenanceRequest.findMany({
+    where: { landlordId: user.id, actualCost: { gt: 0 } },
+    include: { unit: { include: { property: { select: { address: true, nickname: true } } } } },
+    orderBy: { submittedAt: "desc" },
+  });
+  const totalMaintenanceCost = maintenanceCosts.reduce((s, r) => s + (r.actualCost ?? 0), 0);
+  const maintenanceByProperty = Object.values(
+    maintenanceCosts.reduce<Record<string, { label: string; total: number; count: number }>>((acc, r) => {
+      const key = r.unit.property.nickname;
+      if (!acc[key]) acc[key] = { label: r.unit.property.nickname, total: 0, count: 0 };
+      acc[key].total += r.actualCost ?? 0;
+      acc[key].count++;
+      return acc;
+    }, {})
+  ).sort((a, b) => b.total - a.total);
+  const maintenanceByCategory = Object.entries(
+    maintenanceCosts.reduce<Record<string, number>>((acc, r) => {
+      acc[r.category] = (acc[r.category] || 0) + (r.actualCost ?? 0);
+      return acc;
+    }, {})
+  ).sort((a, b) => b[1] - a[1]);
+
   // Vacancy
   const allUnits = await prisma.unit.findMany({
     where: { property: { landlordId: user.id }, isActive: true },
@@ -77,7 +100,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
       </div>
 
       <div className="flex gap-2 mb-6">
-        {[["rent-roll", "Rent Roll"], ["income", "Income & Expense"], ["vacancy", "Vacancy"]].map(([id, label]) => (
+        {[["rent-roll", "Rent Roll"], ["income", "Income & Expense"], ["vacancy", "Vacancy"], ["maintenance", "Maintenance Costs"]].map(([id, label]) => (
           <a key={id} href={`/dashboard/reports?report=${id}&year=${year}`} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${report === id ? "bg-[#C4622D] text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
             {label}
           </a>
@@ -172,6 +195,102 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                   <p className="text-sm text-gray-500">Unit {u.unitNumber} · {u.bedrooms}bd/{u.bathrooms}ba</p>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+      {report === "maintenance" && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-orange-50 border border-orange-200 rounded-xl p-5">
+              <p className="text-sm text-orange-700">Total Spent</p>
+              <p className="text-2xl font-bold text-orange-800">{formatCurrency(totalMaintenanceCost)}</p>
+              <p className="text-xs text-orange-600 mt-1">{maintenanceCosts.length} completed job{maintenanceCosts.length !== 1 ? "s" : ""}</p>
+            </div>
+            <div className="bg-white border border-gray-100 rounded-xl p-5">
+              <p className="text-sm text-gray-500">Avg per job</p>
+              <p className="text-2xl font-bold text-gray-800">
+                {maintenanceCosts.length > 0 ? formatCurrency(totalMaintenanceCost / maintenanceCosts.length) : "—"}
+              </p>
+            </div>
+            <div className="bg-white border border-gray-100 rounded-xl p-5">
+              <p className="text-sm text-gray-500">Properties with costs</p>
+              <p className="text-2xl font-bold text-gray-800">{maintenanceByProperty.length}</p>
+            </div>
+          </div>
+
+          {maintenanceByProperty.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-100 p-6">
+              <h3 className="font-semibold text-sm mb-4">Cost by Property</h3>
+              <div className="space-y-2">
+                {maintenanceByProperty.map((p) => (
+                  <div key={p.label} className="flex justify-between text-sm">
+                    <span className="text-gray-700">{p.label}</span>
+                    <div className="text-right">
+                      <span className="font-medium">{formatCurrency(p.total)}</span>
+                      <span className="text-xs text-gray-400 ml-2">{p.count} job{p.count !== 1 ? "s" : ""}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {maintenanceByCategory.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-100 p-6">
+              <h3 className="font-semibold text-sm mb-4">Cost by Category</h3>
+              <div className="space-y-2">
+                {maintenanceByCategory.map(([cat, amt]) => (
+                  <div key={cat} className="flex justify-between text-sm">
+                    <span className="capitalize text-gray-700">{cat.replace(/_/g, " ")}</span>
+                    <span className="font-medium">{formatCurrency(amt)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {maintenanceCosts.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100">
+                <h3 className="font-semibold text-sm">All Jobs with Costs</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 border-b border-gray-100 text-xs text-gray-500">
+                    <tr>
+                      <th className="text-left px-6 py-3">Job</th>
+                      <th className="text-left px-4 py-3">Property</th>
+                      <th className="text-left px-4 py-3">Category</th>
+                      <th className="text-left px-4 py-3">Vendor</th>
+                      <th className="text-right px-4 py-3">Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {maintenanceCosts.map((r) => (
+                      <tr key={r.id}>
+                        <td className="px-6 py-3 font-medium">{r.title}</td>
+                        <td className="px-4 py-3 text-gray-500">{r.unit.property.nickname}, Unit {r.unit.unitNumber}</td>
+                        <td className="px-4 py-3 text-gray-500 capitalize">{r.category.replace(/_/g, " ")}</td>
+                        <td className="px-4 py-3 text-gray-500">{r.vendorName || "—"}</td>
+                        <td className="px-4 py-3 text-right font-medium">{formatCurrency(r.actualCost ?? 0)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot className="border-t border-gray-100 bg-gray-50">
+                    <tr>
+                      <td colSpan={4} className="px-6 py-3 font-semibold text-sm">Total</td>
+                      <td className="px-4 py-3 text-right font-bold">{formatCurrency(totalMaintenanceCost)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {maintenanceCosts.length === 0 && (
+            <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
+              <p className="text-gray-500 text-sm">No maintenance jobs with costs recorded yet. Add actual costs when closing out maintenance requests.</p>
             </div>
           )}
         </div>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { formatCurrency, formatDate, monthName, currentPeriod } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Wrench, FileText } from "lucide-react";
+import { DollarSign, Wrench, FileText, Phone, Mail } from "lucide-react";
 
 export default async function TenantPortalPage() {
   const session = await requireTenantUser();
@@ -13,6 +13,11 @@ export default async function TenantPortalPage() {
 
   const tenant = await prisma.tenant.findUnique({ where: { id: session.tenantId } });
   if (!tenant) redirect("/tenant-portal/auth");
+
+  const landlord = await prisma.landlord.findUnique({
+    where: { id: session.landlordId },
+    select: { name: true, email: true, phone: true, showEmailToTenants: true, showPhoneToTenants: true },
+  });
 
   const lease = await prisma.lease.findUnique({
     where: { id: session.leaseId },
@@ -111,6 +116,34 @@ export default async function TenantPortalPage() {
           <p className="text-xs font-medium text-gray-700">History</p>
         </Link>
       </div>
+
+      {/* Contact landlord */}
+      {landlord && (landlord.showEmailToTenants || landlord.showPhoneToTenants) && (
+        <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <h2 className="font-semibold text-gray-900 mb-3 text-sm">Contact Your Landlord</h2>
+          <p className="text-sm text-gray-500 mb-3">{landlord.name}</p>
+          <div className="flex flex-col gap-2">
+            {landlord.showPhoneToTenants && landlord.phone && (
+              <a
+                href={`tel:${landlord.phone}`}
+                className="flex items-center gap-2 text-sm font-medium text-[#1A2332] hover:text-[#C4622D] transition"
+              >
+                <Phone size={15} className="text-gray-400" />
+                {landlord.phone}
+              </a>
+            )}
+            {landlord.showEmailToTenants && landlord.email && (
+              <a
+                href={`mailto:${landlord.email}`}
+                className="flex items-center gap-2 text-sm font-medium text-[#1A2332] hover:text-[#C4622D] transition"
+              >
+                <Mail size={15} className="text-gray-400" />
+                {landlord.email}
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Open maintenance */}
       {openRequests.length > 0 && (

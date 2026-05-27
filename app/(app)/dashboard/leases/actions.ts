@@ -61,6 +61,47 @@ export async function terminateLease(leaseId: string, reason: string) {
   revalidatePath("/dashboard/leases");
 }
 
+export async function requestSignature(leaseId: string) {
+  const user = await requireServerUser();
+  const lease = await prisma.lease.findFirst({
+    where: { id: leaseId, landlordId: user.id },
+    include: { tenants: { include: { tenant: true } }, unit: { include: { property: true } } },
+  });
+  if (!lease) throw new Error("Lease not found");
+
+  const { randomBytes } = await import("crypto");
+  const { APP_URL, resend, FROM } = await import("@/lib/resend");
+
+  for (const lt of lease.tenants) {
+    if (!lt.tenant.email) continue;
+
+    const existing = await prisma.leaseSignature.findFirst({
+      where: { leaseId, tenantId: lt.tenantId, status: "signed" },
+    });
+    if (existing) continue;
+
+    const token = randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30); // 30 days
+
+    await prisma.leaseSignature.upsert({
+      where: { token },
+      create: { leaseId, tenantId: lt.tenantId, token, expiresAt },
+      update: { token, expiresAt, status: "pending", signerName: null, signerIp: null, signedAt: null },
+    });
+
+    const addr = `${lease.unit.property.address}, Unit ${lease.unit.unitNumber}`;
+    const signingUrl = `${APP_URL}/sign/${token}`;
+    await resend.emails.send({
+      from: FROM,
+      to: lt.tenant.email,
+      subject: `Please sign your lease — ${addr}`,
+      html: `<p>Hi ${lt.tenant.name},</p><p>Your landlord has requested your signature on the lease for <strong>${addr}</strong>.</p><p>Please review and sign your lease here:</p><p><a href="${signingUrl}" style="background:#C4622D;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Sign Lease →</a></p><p>This link expires in 30 days.</p>`,
+    });
+  }
+
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
 export async function sendLeasePortalInvites(leaseId: string) {
   const user = await requireServerUser();
   const lease = await prisma.lease.findFirst({
