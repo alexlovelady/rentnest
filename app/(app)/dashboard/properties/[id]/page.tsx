@@ -8,6 +8,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { AddUnitModal } from "./add-unit-modal";
 import { EditPropertyModal } from "./edit-property-modal";
 import { EditUnitModal } from "./edit-unit-modal";
+import { PropertyPhotoUpload } from "./property-photo-upload";
 
 export default async function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -41,21 +42,24 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
         <ArrowLeft size={14} /> Properties
       </Link>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-slate-dark">{property.nickname}</h1>
-            <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-              <MapPin size={12} /> {property.address}{property.address2 ? `, ${property.address2}` : ""}, {property.city}, {property.state} {property.zip}
-            </p>
-            <p className="text-xs text-gray-400 mt-1 capitalize">{property.propertyType.replace("_", " ")}</p>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="text-right">
-              <p className="text-lg font-semibold">{formatCurrency(totalRent)}<span className="text-sm font-normal text-gray-500">/mo</span></p>
-              <p className="text-xs text-gray-500">{property.units.filter(u => u.leases.length > 0).length}/{property.units.length} occupied</p>
+      <div className="bg-white rounded-xl border border-gray-100 mb-6 overflow-hidden">
+        <PropertyPhotoUpload propertyId={property.id} currentPhotoUrl={property.photoUrl} />
+        <div className="p-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-xl font-bold text-slate-dark">{property.nickname}</h1>
+              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                <MapPin size={12} /> {property.address}{property.address2 ? `, ${property.address2}` : ""}, {property.city}, {property.state} {property.zip}
+              </p>
+              <p className="text-xs text-gray-400 mt-1 capitalize">{property.propertyType.replace("_", " ")}</p>
             </div>
-            <EditPropertyModal property={property} />
+            <div className="flex items-start gap-3">
+              <div className="text-right">
+                <p className="text-lg font-semibold">{formatCurrency(totalRent)}<span className="text-sm font-normal text-gray-500">/mo</span></p>
+                <p className="text-xs text-gray-500">{property.units.filter(u => u.leases.length > 0).length}/{property.units.length} occupied</p>
+              </div>
+              <EditPropertyModal property={property} />
+            </div>
           </div>
         </div>
       </div>

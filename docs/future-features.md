@@ -5,7 +5,7 @@ Organized by category, roughly in order of priority within each section.
 ---
 
 ## In Progress / Already Planned
-- **Tenant application & screening** — SingleKey integration, full apply-to-lease flow
+- **Full tenant application & screening** — SingleKey integration (credit/criminal/eviction), full apply-to-lease flow with background check (see `application-screening-flow.md`)
 
 ---
 
@@ -47,8 +47,7 @@ Organized by category, roughly in order of priority within each section.
 - **Zapier / Make integration** — connect RentNest to thousands of other tools without code
 
 ### Listings & Acquisition
-- **Vacancy listings** — post vacant units to Zillow, Apartments.com, Facebook Marketplace from within RentNest
-- **Applicant pre-screening quiz** — quick income/pets/move-in date filter before full application
+- **External listing syndication** — post from RentNest to Zillow, Apartments.com, Facebook Marketplace (internal marketplace already built)
 - **Tenant referral** — existing tenant refers a new applicant, tracked in the system
 
 ### Financial Products
@@ -59,7 +58,5 @@ Organized by category, roughly in order of priority within each section.
 ---
 
 ## Quality of Life / Polish
-- **Dark mode**
 - **Bulk import** — CSV import for landlords migrating from Cozy, TurboTenant, or spreadsheets
 - **Landlord mobile-optimized views** — current dashboard works on mobile but could be optimized further
-- **Property photo management** — unit photos stored and displayed in the dashboard

@@ -21,3 +21,22 @@ body {
 h1, h2, h3 {
   font-family: var(--font-serif);
 }
+
+@variant dark (&:where(.dark, .dark *));
+
+.dark {
+  --color-gray-900: #f9fafb;
+  --color-gray-800: #f3f4f6;
+  --color-gray-700: #e5e7eb;
+  --color-gray-600: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-400: #4b5563;
+  --color-gray-300: #374151;
+  color-scheme: dark;
+}
+
+.dark .bg-white    { background-color: #1e2433; }
+.dark .bg-gray-50  { background-color: #111827; }
+.dark .bg-gray-100 { background-color: #252e42; }
+.dark .border-gray-100 { border-color: #2d3748; }
+.dark .border-gray-200 { border-color: #374151; }

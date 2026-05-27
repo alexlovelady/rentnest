@@ -114,7 +114,7 @@ export default function LandingPage() {
       {/* Nav */}
       <nav className="border-b border-slate-dark/10 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <span className="font-bold text-lg text-slate-dark">RentNest</span>
+          <img src="/logo.jpg" alt="RentNest" className="h-9 w-auto" />
           <div className="flex items-center gap-3 sm:gap-4">
             <Link href="/login" className="text-sm text-gray-600 hover:text-slate-dark">Sign in</Link>
             <Link href="/signup" className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition">
@@ -340,7 +340,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="bg-cream border-t border-slate-dark/10 px-6 py-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-400">
-          <span className="font-bold text-slate-dark">RentNest</span>
+          <img src="/logo.jpg" alt="RentNest" className="h-7 w-auto" />
           <span>© 2026 RentNest. All rights reserved.</span>
         </div>
       </footer>

@@ -166,6 +166,19 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ---
 
+## Branding & Favicon
+
+- [ ] Browser tab shows the house logo favicon on all pages
+- [ ] Mobile bookmark icon shows the logo (Apple touch icon)
+- [ ] Landing page header shows logo image (not text)
+- [ ] Landing page footer shows logo image
+- [ ] `/listings` header shows logo image
+- [ ] `/listings/[id]` header shows logo image
+- [ ] `/apply/[quizId]` header shows logo image
+- [ ] Thank-you page shows faded logo at the bottom
+
+---
+
 ## Marketing / Public Pages
 
 - [ ] Landing page loads and is readable on mobile
@@ -420,6 +433,83 @@ Manual QA checklist. Run through each section after making changes to a feature 
 - [ ] Signature status updates on lease detail page after signing
 - [ ] Trash icon deletes addendum from list
 - [ ] "Request Signatures" button hidden when lease has no tenants
+
+---
+
+## Listings & Marketplace
+
+### Dashboard (landlord)
+- [ ] "Listings" link visible in sidebar navigation
+- [ ] Listings dashboard page loads with empty state when no listings exist
+- [ ] "New Listing" button opens modal with unit selector, rent, date, description, quiz fields
+- [ ] Unit selector shows only vacant units (no active lease, no active listing)
+- [ ] Title auto-fills based on selected unit (e.g. "2BD/1BA — Oak Street Duplex")
+- [ ] Creating a listing shows it on the dashboard with status dropdown
+- [ ] Status dropdown cycles: Active → Inactive (hidden) → Rented
+- [ ] "Copy link" copies the `/listings/[id]` URL to clipboard
+- [ ] "View public listing" opens the listing in a new tab
+- [ ] "Remove" button deletes the listing after confirmation prompt
+- [ ] Cancelled account — "New Listing" replaced with "Upgrade to list units" link
+- [ ] Unit detail page (vacant) shows "Listed on marketplace · Manage listing" when active listing exists
+- [ ] Unit detail page (vacant) shows "List unit" button when no active listing
+- [ ] Creating a lease for a listed unit auto-sets that listing to "rented"
+
+### Public marketplace (`/listings`)
+- [ ] Logo image appears in header; clicking navigates to landing page
+- [ ] All active listings shown as cards with photo, city/state, rent, beds/baths
+- [ ] Counter shows "X of Y units shown" when filters narrow the results
+- [ ] Location text input filters by city, state, or zip (case-insensitive, partial match)
+- [ ] City chips appear below location input when ≤ 8 distinct locations exist; clicking fills input and filters
+- [ ] Clear ✕ button inside location input clears the location filter
+- [ ] Bed filter buttons (Any / 1bd / 2bd / 3+bd) highlight active selection and filter results
+- [ ] "3+ bd" shows units with 3 or more bedrooms
+- [ ] Max rent input filters out listings above the entered value (applies on blur or Enter)
+- [ ] Sort dropdown: Newest / Rent low→high / Rent high→low / Most bedrooms all work correctly
+- [ ] "Clear all" button appears when any filter is active; clicking resets all filters
+- [ ] Filters are reflected in the URL (shareable/bookmarkable)
+- [ ] "No listings match your filters" empty state shown when filters eliminate everything
+- [ ] Listing card links to `/listings/[id]` detail page
+
+### Public listing detail (`/listings/[id]`)
+- [ ] Logo in header; "← All listings" link navigates back
+- [ ] Photo banner shown when property has a photo
+- [ ] Full address, property type, beds/baths/sqft shown
+- [ ] Asking rent and available date shown in sticky apply card
+- [ ] "Apply Now" button present when quiz attached; links to `/apply/[quizId]`
+- [ ] Contact message shown instead when no quiz attached
+- [ ] Inactive or rented listings return 404
+- [ ] Browser tab shows listing title and rent (via metadata)
+
+---
+
+## Pre-Screening Quizzes
+
+- [ ] "Screening" link visible in sidebar navigation
+- [ ] Screening page loads with empty state when no quizzes exist
+- [ ] "New Quiz" button opens modal with title field
+- [ ] Creating a quiz redirects to the quiz detail page
+- [ ] Quiz detail page shows 10 default questions
+- [ ] Question list shows label, type, and required/optional indicator
+- [ ] Trash icon on question removes it and refreshes list
+- [ ] "Add custom question" opens inline form with label + type dropdown
+- [ ] Adding a custom question appends it to the list
+- [ ] "Copy link" button copies the `/apply/[quizId]` URL to clipboard
+- [ ] "Preview" link opens the apply page in a new tab
+- [ ] Apply page shows quiz title, property info, and landlord name
+- [ ] Apply page renders all question types: text, yes/no, select, number
+- [ ] Required questions block submission when empty
+- [ ] "Add co-applicant" button adds a name/email/phone block
+- [ ] Multiple co-applicants can be added
+- [ ] Trash icon removes a co-applicant block
+- [ ] Submitting the form redirects to the thank-you page
+- [ ] Thank-you page shows success message
+- [ ] Landlord receives email notification with all applicant answers
+- [ ] Email includes co-applicant names and emails when present
+- [ ] Response appears on quiz detail page with applicant name, email, status
+- [ ] Co-applicants listed under the primary applicant in the response
+- [ ] Status dropdown (Pending / Approved / Rejected) updates immediately
+- [ ] Screening page shows response count per quiz
+- [ ] Inactive quiz (deactivated) returns 404 on the apply page
 
 ---
 

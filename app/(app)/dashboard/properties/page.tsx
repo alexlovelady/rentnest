@@ -60,9 +60,13 @@ export default async function PropertiesPage() {
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <Home size={18} className="text-primary" />
-                    </div>
+                    {property.photoUrl ? (
+                      <img src={property.photoUrl} alt={property.nickname} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                    ) : (
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+                        <Home size={18} className="text-primary" />
+                      </div>
+                    )}
                     <div>
                       <h2 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
                         {property.nickname}

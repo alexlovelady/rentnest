@@ -34,10 +34,12 @@ model Landlord {
   showPhoneToTenants    Boolean @default(false)
   createdAt     DateTime @default(now())
 
-  properties    Property[]
-  expenses      Expense[]
-  documents     Document[]
-  vendors       Vendor[]
+  properties       Property[]
+  expenses         Expense[]
+  documents        Document[]
+  vendors          Vendor[]
+  screeningQuizzes ScreeningQuiz[]
+  listings         Listing[]
 }
 
 model Property {
@@ -57,9 +59,10 @@ model Property {
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   landlord      Landlord @relation(fields: [landlordId], references: [id])
-  units         Unit[]
-  expenses      Expense[]
-  documents     Document[]
+  units            Unit[]
+  expenses         Expense[]
+  documents        Document[]
+  screeningQuizzes ScreeningQuiz[]
 }
 
 model Unit {
@@ -73,9 +76,11 @@ model Unit {
   isActive      Boolean  @default(true)
   utilitiesIncluded String[]
   utilitiesNote String?
-  property      Property @relation(fields: [propertyId], references: [id])
-  leases        Lease[]
+  property         Property @relation(fields: [propertyId], references: [id])
+  leases           Lease[]
   maintenanceRequests MaintenanceRequest[]
+  screeningQuizzes ScreeningQuiz[]
+  listings         Listing[]
 }
 
 model Tenant {
@@ -368,4 +373,86 @@ model AddendumSignature {
 
   addendum LeaseAddendum @relation(fields: [addendumId], references: [id])
   tenant   Tenant        @relation(fields: [tenantId], references: [id])
+}
+
+model ScreeningQuiz {
+  id         String   @id @default(cuid())
+  landlordId String
+  propertyId String?
+  unitId     String?
+  title      String   @default("Rental Application")
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  landlord  Landlord           @relation(fields: [landlordId], references: [id])
+  property  Property?          @relation(fields: [propertyId], references: [id])
+  unit      Unit?              @relation(fields: [unitId], references: [id])
+  questions ScreeningQuestion[]
+  responses ScreeningResponse[]
+  listings  Listing[]
+}
+
+model ScreeningQuestion {
+  id       String   @id @default(cuid())
+  quizId   String
+  order    Int      @default(0)
+  label    String
+  type     String   @default("text") // text | yesno | number | select
+  options  String[]
+  required Boolean  @default(true)
+
+  quiz    ScreeningQuiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers ScreeningAnswer[]
+}
+
+model ScreeningResponse {
+  id             String   @id @default(cuid())
+  quizId         String
+  applicantName  String
+  applicantEmail String
+  applicantPhone String?
+  submittedAt    DateTime @default(now())
+  notes          String?
+  status         String   @default("pending") // pending | approved | rejected
+
+  quiz          ScreeningQuiz          @relation(fields: [quizId], references: [id])
+  answers       ScreeningAnswer[]
+  coApplicants  ScreeningCoApplicant[]
+}
+
+model ScreeningCoApplicant {
+  id         String @id @default(cuid())
+  responseId String
+  name       String
+  email      String
+  phone      String?
+
+  response ScreeningResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+}
+
+model Listing {
+  id          String    @id @default(cuid())
+  landlordId  String
+  unitId      String
+  quizId      String?
+  title       String
+  description String?
+  askingRent  Float
+  availableAt DateTime?
+  status      String    @default("active") // active | inactive | rented
+  createdAt   DateTime  @default(now())
+
+  landlord Landlord       @relation(fields: [landlordId], references: [id])
+  unit     Unit           @relation(fields: [unitId], references: [id])
+  quiz     ScreeningQuiz? @relation(fields: [quizId], references: [id])
+}
+
+model ScreeningAnswer {
+  id         String @id @default(cuid())
+  responseId String
+  questionId String
+  answer     String
+
+  response ScreeningResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question ScreeningQuestion @relation(fields: [questionId], references: [id])
 }

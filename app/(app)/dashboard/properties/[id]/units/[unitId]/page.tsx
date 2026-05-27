@@ -23,12 +23,14 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
         orderBy: { createdAt: "desc" },
       },
       maintenanceRequests: { orderBy: { submittedAt: "desc" }, take: 10 },
+      listings: { where: { status: "active" }, take: 1 },
     },
   });
 
   if (!unit) notFound();
 
   const activeLease = unit.leases.find((l) => l.status === "active");
+  const activeListing = unit.listings[0] ?? null;
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto">
@@ -67,14 +69,28 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
           </div>
         </div>
       ) : (
-        <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-5 mb-6 flex items-center justify-between">
+        <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-5 mb-6 flex items-center justify-between gap-4">
           <div>
             <p className="font-medium text-yellow-800">Unit is vacant</p>
-            <p className="text-sm text-yellow-600">No active lease for this unit.</p>
+            {activeListing ? (
+              <p className="text-sm text-green-700">
+                Listed on marketplace ·{" "}
+                <Link href="/dashboard/listings" className="underline hover:text-green-900">Manage listing</Link>
+              </p>
+            ) : (
+              <p className="text-sm text-yellow-600">No active lease for this unit.</p>
+            )}
           </div>
-          <Link href={`/dashboard/leases/new?unitId=${unitId}`} className="text-sm bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition">
-            Add Lease
-          </Link>
+          <div className="flex gap-2 shrink-0">
+            {!activeListing && (
+              <Link href={`/dashboard/listings?listUnit=${unitId}`} className="text-sm border border-yellow-400 text-yellow-800 px-3 py-1.5 rounded-lg hover:bg-yellow-100 transition">
+                List unit
+              </Link>
+            )}
+            <Link href={`/dashboard/leases/new?unitId=${unitId}`} className="text-sm bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition">
+              Add Lease
+            </Link>
+          </div>
         </div>
       )}
 

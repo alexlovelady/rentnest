@@ -44,7 +44,14 @@ export async function createLease(data: z.infer<typeof LeaseSchema>) {
     },
   });
 
+  // Mark any active listing for this unit as rented
+  await prisma.listing.updateMany({
+    where: { unitId: rest.unitId, status: "active" },
+    data: { status: "rented" },
+  });
+
   revalidatePath("/dashboard/leases");
+  revalidatePath("/dashboard/listings");
   return lease;
 }
 

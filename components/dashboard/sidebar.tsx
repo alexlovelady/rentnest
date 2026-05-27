@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   Home, Building2, Users, FileText, DollarSign, Wrench,
-  Receipt, FolderOpen, BarChart3, Settings, LogOut, Menu, X,
+  Receipt, FolderOpen, BarChart3, Settings, LogOut, Menu, X, Sun, Moon, ClipboardList, Megaphone,
 } from "lucide-react";
 
 const nav = [
@@ -17,6 +17,8 @@ const nav = [
   { href: "/dashboard/maintenance", label: "Maintenance", icon: Wrench },
   { href: "/dashboard/expenses", label: "Expenses", icon: Receipt },
   { href: "/dashboard/documents", label: "Documents", icon: FolderOpen },
+  { href: "/dashboard/listings", label: "Listings", icon: Megaphone },
+  { href: "/dashboard/screening", label: "Screening", icon: ClipboardList },
   { href: "/dashboard/reports", label: "Reports", icon: BarChart3 },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
@@ -29,6 +31,18 @@ async function handleSignOut() {
 export function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    setDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  function toggleDark() {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    try { localStorage.setItem("theme", next ? "dark" : "light"); } catch {}
+  }
 
   const navLinks = (
     <>
@@ -53,7 +67,14 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="px-2 py-4 border-t border-white/10">
+      <div className="px-2 py-4 border-t border-white/10 space-y-0.5">
+        <button
+          onClick={toggleDark}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/10 w-full transition-colors"
+        >
+          {dark ? <Sun size={16} /> : <Moon size={16} />}
+          {dark ? "Light mode" : "Dark mode"}
+        </button>
         <button
           onClick={handleSignOut}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/10 w-full transition-colors"
