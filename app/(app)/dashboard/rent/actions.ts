@@ -90,6 +90,23 @@ export async function recordPayment(data: {
   return payment;
 }
 
+export async function waiveLateFee(paymentId: string) {
+  const user = await requireServerUser();
+  const payment = await prisma.rentPayment.findFirst({
+    where: { id: paymentId, landlordId: user.id, status: "pending" },
+  });
+  if (!payment) throw new Error("Payment not found");
+  await prisma.rentPayment.update({
+    where: { id: paymentId },
+    data: {
+      lateFee: 0,
+      totalAmount: payment.amount,
+      lateFeeApplied: true, // keep true so cron doesn't re-apply it
+    },
+  });
+  revalidatePath("/dashboard/rent");
+}
+
 export async function sendRentReminders() {
   const user = await requireServerUser();
   const { month, year } = currentPeriod();

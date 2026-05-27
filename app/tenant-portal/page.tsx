@@ -30,6 +30,12 @@ export default async function TenantPortalPage() {
     where: { leaseId: session.leaseId, periodMonth: month, periodYear: year },
   });
 
+  // All unpaid charges (current + prior months)
+  const allUnpaid = await prisma.rentPayment.findMany({
+    where: { leaseId: session.leaseId, status: "pending" },
+    orderBy: [{ periodYear: "asc" }, { periodMonth: "asc" }],
+  });
+
   const recentPayments = await prisma.rentPayment.findMany({
     where: { leaseId: session.leaseId },
     orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }],
@@ -83,6 +89,32 @@ export default async function TenantPortalPage() {
           <p className="text-sm text-gray-500">No rent charge found for this month. Contact your landlord.</p>
         )}
       </div>
+
+      {/* Outstanding balance — prior unpaid months */}
+      {allUnpaid.filter((p) => !(p.periodMonth === month && p.periodYear === year)).length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-5">
+          <h2 className="font-semibold text-red-900 mb-3 text-sm">Outstanding Balance</h2>
+          <div className="space-y-2 mb-4">
+            {allUnpaid.map((p) => (
+              <div key={p.id} className="flex justify-between text-sm">
+                <span className="text-red-800">{monthName(p.periodMonth)} {p.periodYear}</span>
+                <div className="text-right">
+                  <span className="font-medium text-red-900">{formatCurrency(p.totalAmount)}</span>
+                  {p.lateFee > 0 && (
+                    <p className="text-xs text-red-600">incl. {formatCurrency(p.lateFee)} late fee</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-red-200 pt-3 flex justify-between items-center">
+            <span className="text-sm font-semibold text-red-900">Total owed</span>
+            <span className="text-lg font-bold text-red-900">
+              {formatCurrency(allUnpaid.reduce((s, p) => s + p.totalAmount, 0))}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Payment history */}
       {recentPayments.length > 0 && (
