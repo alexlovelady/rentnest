@@ -98,6 +98,8 @@ model Tenant {
   maintenanceRequests MaintenanceRequest[]
   rentPayments  RentPayment[]
   leaseSignatures LeaseSignature[]
+  leaseMessages   LeaseMessage[]
+  addendumSignatures AddendumSignature[]
 }
 
 model Lease {
@@ -135,6 +137,9 @@ model Lease {
   signatures      LeaseSignature[]
   depositDeductions DepositDeduction[]
   evictionRecords EvictionRecord[]
+  messages        LeaseMessage[]
+  inspectionReports InspectionReport[]
+  addendums       LeaseAddendum[]
 }
 
 model LeaseTenant {
@@ -300,4 +305,67 @@ model Document {
   landlord      Landlord @relation(fields: [landlordId], references: [id])
   property      Property? @relation(fields: [propertyId], references: [id])
   lease         Lease?   @relation(fields: [leaseId], references: [id])
+}
+
+model LeaseMessage {
+  id         String   @id @default(cuid())
+  leaseId    String
+  landlordId String
+  tenantId   String?
+  senderRole String   // "landlord" | "tenant"
+  body       String
+  createdAt  DateTime @default(now())
+
+  lease  Lease   @relation(fields: [leaseId], references: [id])
+  tenant Tenant? @relation(fields: [tenantId], references: [id])
+}
+
+model InspectionReport {
+  id         String   @id @default(cuid())
+  leaseId    String
+  landlordId String
+  type       String   // "move_in" | "move_out"
+  date       DateTime
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  lease Lease            @relation(fields: [leaseId], references: [id])
+  items InspectionItem[]
+}
+
+model InspectionItem {
+  id                 String  @id @default(cuid())
+  inspectionReportId String
+  room               String
+  condition          String  // "good" | "fair" | "poor"
+  notes              String?
+
+  report InspectionReport @relation(fields: [inspectionReportId], references: [id], onDelete: Cascade)
+}
+
+model LeaseAddendum {
+  id         String   @id @default(cuid())
+  leaseId    String
+  landlordId String
+  title      String
+  body       String
+  createdAt  DateTime @default(now())
+
+  lease      Lease               @relation(fields: [leaseId], references: [id])
+  signatures AddendumSignature[]
+}
+
+model AddendumSignature {
+  id         String    @id @default(cuid())
+  addendumId String
+  tenantId   String
+  token      String    @unique
+  status     String    @default("pending")
+  signerName String?
+  signedAt   DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+
+  addendum LeaseAddendum @relation(fields: [addendumId], references: [id])
+  tenant   Tenant        @relation(fields: [tenantId], references: [id])
 }

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { formatCurrency, formatDate, monthName, currentPeriod } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Wrench, FileText, Phone, Mail } from "lucide-react";
+import { DollarSign, Wrench, FileText, Phone, Mail, MessageSquare } from "lucide-react";
 
 export default async function TenantPortalPage() {
   const session = await requireTenantUser();
@@ -103,7 +103,7 @@ export default async function TenantPortalPage() {
       )}
 
       {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Link href="/tenant-portal/maintenance/new" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
           <Wrench size={20} className="mx-auto text-gray-400 mb-1" />
           <p className="text-xs font-medium text-gray-700">Maintenance</p>
@@ -111,6 +111,10 @@ export default async function TenantPortalPage() {
         <Link href="/tenant-portal/documents" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
           <FileText size={20} className="mx-auto text-gray-400 mb-1" />
           <p className="text-xs font-medium text-gray-700">Documents</p>
+        </Link>
+        <Link href="/tenant-portal/messages" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
+          <MessageSquare size={20} className="mx-auto text-gray-400 mb-1" />
+          <p className="text-xs font-medium text-gray-700">Messages</p>
         </Link>
         <Link href="/tenant-portal/maintenance" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
           <DollarSign size={20} className="mx-auto text-gray-400 mb-1" />

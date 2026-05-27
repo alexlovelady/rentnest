@@ -365,6 +365,64 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ---
 
+## Tenant Messaging
+
+- [ ] "Messages" section visible on lease detail page
+- [ ] "No messages yet" shown when empty
+- [ ] Landlord can type and send a message
+- [ ] Message appears in the thread bubble (right-aligned, orange)
+- [ ] Tenant receives email notification with message body
+- [ ] Tenant portal shows "Messages" quick link on home page
+- [ ] Tenant messages page loads with full thread
+- [ ] Tenant can send a message from the portal
+- [ ] Tenant message appears in thread (left-aligned, gray)
+- [ ] Landlord receives email notification when tenant sends a message
+- [ ] Messages display in chronological order
+
+---
+
+## Move-In / Move-Out Inspections
+
+- [ ] "Inspections" section visible on lease detail page with "Open Inspection Reports" button
+- [ ] Inspections page loads (linked from lease detail)
+- [ ] "No inspection reports yet" shown when empty
+- [ ] "+ New Inspection" button opens inline form
+- [ ] Move-In and Move-Out type options available
+- [ ] Date field required and saves correctly
+- [ ] At least one room item required; "+ Add room" adds more
+- [ ] Room dropdown shows all standard rooms
+- [ ] Good / Fair / Poor condition buttons work and highlight correctly
+- [ ] Per-room notes save correctly
+- [ ] Overall notes (optional) save correctly
+- [ ] Saving creates report and shows it in list
+- [ ] Report shows correct type badge (blue = move-in, orange = move-out)
+- [ ] Clicking report row expands to show all rooms with condition and notes
+- [ ] Trash icon on report header deletes the report
+- [ ] Multiple reports shown with most recent first
+
+---
+
+## Digital Addendums
+
+- [ ] "Addendums" section visible on lease detail page
+- [ ] "No addendums yet" shown when empty
+- [ ] "+ Add Addendum" opens inline form with Title and Body fields
+- [ ] Creating an addendum saves and appears in list
+- [ ] Addendum body text displays in the card
+- [ ] "Request Signatures" button sends emails to all tenants with email
+- [ ] Signing email contains addendum title and sign link
+- [ ] Sign link opens `/sign/addendum/[token]` with correct addendum title and body shown
+- [ ] Name matching logic works (case-insensitive, must be exact)
+- [ ] Consent checkbox required before signing
+- [ ] Submitting signature → success screen shown, landlord receives email
+- [ ] Revisiting signed link shows "Already signed" message
+- [ ] Expired link shows "Link expired" message
+- [ ] Signature status updates on lease detail page after signing
+- [ ] Trash icon deletes addendum from list
+- [ ] "Request Signatures" button hidden when lease has no tenants
+
+---
+
 ## General
 
 - [ ] No console errors on any page

@@ -194,6 +194,88 @@ export async function markDepositReturned(leaseId: string) {
   revalidatePath(`/dashboard/leases/${leaseId}`);
 }
 
+export async function sendLandlordMessage(leaseId: string, body: string) {
+  const user = await requireServerUser();
+  const lease = await prisma.lease.findFirst({
+    where: { id: leaseId, landlordId: user.id },
+    include: { tenants: { include: { tenant: true } } },
+  });
+  if (!lease) throw new Error("Not found");
+
+  await prisma.leaseMessage.create({
+    data: { leaseId, landlordId: user.id, senderRole: "landlord", body },
+  });
+
+  const { resend, FROM, APP_URL } = await import("@/lib/resend");
+  for (const lt of lease.tenants) {
+    if (!lt.tenant.email) continue;
+    await resend.emails.send({
+      from: FROM,
+      to: lt.tenant.email,
+      subject: `New message from your landlord`,
+      html: `<p>Hi ${lt.tenant.name},</p><p>Your landlord sent you a message:</p><blockquote style="border-left:3px solid #C4622D;margin:0;padding:8px 16px;color:#374151;">${body}</blockquote><p><a href="${APP_URL}/tenant-portal/messages">View &amp; reply in your portal →</a></p>`,
+    });
+  }
+
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
+export async function createAddendum(leaseId: string, data: { title: string; body: string }) {
+  const user = await requireServerUser();
+  const lease = await prisma.lease.findFirst({ where: { id: leaseId, landlordId: user.id } });
+  if (!lease) throw new Error("Not found");
+  const addendum = await prisma.leaseAddendum.create({
+    data: { leaseId, landlordId: user.id, title: data.title, body: data.body },
+  });
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+  return addendum;
+}
+
+export async function deleteAddendum(addendumId: string, leaseId: string) {
+  const user = await requireServerUser();
+  await prisma.leaseAddendum.deleteMany({ where: { id: addendumId, landlordId: user.id } });
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
+export async function requestAddendumSignature(addendumId: string, leaseId: string) {
+  const user = await requireServerUser();
+  const addendum = await prisma.leaseAddendum.findFirst({
+    where: { id: addendumId, landlordId: user.id },
+    include: { lease: { include: { tenants: { include: { tenant: true } }, unit: { include: { property: true } } } } },
+  });
+  if (!addendum) throw new Error("Not found");
+
+  const { randomBytes } = await import("crypto");
+  const { resend, FROM, APP_URL } = await import("@/lib/resend");
+
+  for (const lt of addendum.lease.tenants) {
+    if (!lt.tenant.email) continue;
+    const existing = await prisma.addendumSignature.findFirst({
+      where: { addendumId, tenantId: lt.tenantId, status: "signed" },
+    });
+    if (existing) continue;
+
+    const token = randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+
+    await prisma.addendumSignature.upsert({
+      where: { token },
+      create: { addendumId, tenantId: lt.tenantId, token, expiresAt },
+      update: { token, expiresAt, status: "pending", signerName: null, signedAt: null },
+    });
+
+    const addr = `${addendum.lease.unit.property.address}, Unit ${addendum.lease.unit.unitNumber}`;
+    await resend.emails.send({
+      from: FROM,
+      to: lt.tenant.email,
+      subject: `Please sign: ${addendum.title} — ${addr}`,
+      html: `<p>Hi ${lt.tenant.name},</p><p>Your landlord has sent you an addendum to sign: <strong>${addendum.title}</strong></p><p><a href="${APP_URL}/sign/addendum/${token}" style="background:#C4622D;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Review &amp; Sign →</a></p><p>This link expires in 30 days.</p>`,
+    });
+  }
+
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
 export async function sendLeasePortalInvites(leaseId: string) {
   const user = await requireServerUser();
   const lease = await prisma.lease.findFirst({

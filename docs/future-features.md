@@ -14,7 +14,6 @@ Organized by category, roughly in order of priority within each section.
 ### Leasing
 - **Rent increase notices** — generate state-compliant rent increase notice letters, track delivery
 - **Lease templates by state** — pre-built lease templates with required state-specific clauses
-- **Digital addendums** — pet addendum, parking addendum, etc. with e-sign
 
 ### Rent & Payments
 - **Partial payments** — allow tenants to pay partial rent and track the balance owed
@@ -22,7 +21,7 @@ Organized by category, roughly in order of priority within each section.
 - **ACH / bank verification** — verify tenant bank account before first payment (Plaid or Stripe micro-deposit)
 
 ### Maintenance
-- **Move-in / move-out inspection** — checklist with photo documentation per room; ties to security deposit decisions
+- **Move-in / move-out inspection photos** — add photo uploads per room to existing inspection reports
 
 ---
 
@@ -36,7 +35,6 @@ Organized by category, roughly in order of priority within each section.
 ### Tenant Experience
 - **SMS / text notifications** — rent reminders and maintenance updates via text, not just email
 - **Maintenance request photos from portal** — tenants can attach photos when submitting (not just landlord-side)
-- **Tenant messaging** — in-app message thread between landlord and tenant, logged and searchable
 
 ### Landlord Tools
 - **Calendar / scheduling** — maintenance scheduling that syncs to Google Calendar or iCal

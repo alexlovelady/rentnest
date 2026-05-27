@@ -2,7 +2,7 @@ import { requireServerUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, ClipboardList, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate, monthName } from "@/lib/utils";
@@ -12,6 +12,8 @@ import { RequestSignatureButton } from "./request-signature-button";
 import { DepositPanel } from "./deposit-panel";
 import { RenewLeaseButton } from "./renew-lease-button";
 import { EvictionPanel } from "./eviction-panel";
+import { MessagesPanel } from "./messages-panel";
+import { AddendumsPanel } from "./addendums-panel";
 
 export default async function LeaseDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
   const { id } = await params;
@@ -28,6 +30,8 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
       signatures: { include: { tenant: true }, orderBy: { createdAt: "desc" } },
       depositDeductions: { orderBy: { createdAt: "asc" } },
       evictionRecords: { orderBy: { date: "asc" } },
+      messages: { orderBy: { createdAt: "asc" }, include: { tenant: { select: { name: true } } } },
+      addendums: { orderBy: { createdAt: "desc" }, include: { signatures: { include: { tenant: { select: { name: true } } } } } },
     },
   });
 
@@ -146,6 +150,38 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
       <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
         <h2 className="text-sm font-semibold mb-4">Eviction Log</h2>
         <EvictionPanel leaseId={lease.id} records={lease.evictionRecords} />
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold">Messages</h2>
+          <MessageSquare size={15} className="text-gray-400" />
+        </div>
+        <MessagesPanel leaseId={lease.id} messages={lease.messages} />
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold">Addendums</h2>
+        </div>
+        <AddendumsPanel
+          leaseId={lease.id}
+          addendums={lease.addendums}
+          hasTenants={lease.tenants.length > 0}
+        />
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold">Inspections</h2>
+          <Link href={`/dashboard/leases/${lease.id}/inspections`} className="flex items-center gap-1 text-xs text-[#C4622D] hover:underline">
+            <ClipboardList size={13} /> View Reports
+          </Link>
+        </div>
+        <p className="text-sm text-gray-500">Document move-in and move-out condition with room-by-room checklists.</p>
+        <Link href={`/dashboard/leases/${lease.id}/inspections`} className="inline-block mt-3">
+          <Button size="sm" variant="secondary">Open Inspection Reports</Button>
+        </Link>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 p-6">
