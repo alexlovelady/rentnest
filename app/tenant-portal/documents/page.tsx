@@ -9,6 +9,7 @@ export default async function TenantDocumentsPage() {
 
   const documents = await prisma.document.findMany({
     where: {
+      landlordId: session.landlordId,
       OR: [
         { leaseId: session.leaseId },
         { lease: { tenants: { some: { tenantId: session.tenantId } } } },
