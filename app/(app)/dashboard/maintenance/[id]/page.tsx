@@ -57,6 +57,15 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
               </div>
             </div>
             <p className="text-sm text-gray-600 mb-4">{req.description}</p>
+            {req.photoUrls.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {req.photoUrls.map((url, i) => (
+                  <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                    <img src={url} alt={`Photo ${i + 1}`} className="w-24 h-24 object-cover rounded-lg border border-gray-100 hover:opacity-90 transition" />
+                  </a>
+                ))}
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div><p className="text-xs text-gray-500">Property</p><p>{req.unit.property.address}, Unit {req.unit.unitNumber}</p></div>
               <div><p className="text-xs text-gray-500">Category</p><p className="capitalize">{req.category}</p></div>

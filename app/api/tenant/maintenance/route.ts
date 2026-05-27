@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   const session = await getTenantUser();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { title, description, category, priority } = await req.json();
+  const { title, description, category, priority, photoUrls } = await req.json();
 
   const lease = await prisma.lease.findUnique({
     where: { id: session.leaseId },
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       description,
       category: category || "other",
       priority: priority || "normal",
-      photoUrls: [],
+      photoUrls: Array.isArray(photoUrls) ? photoUrls : [],
       resolvedPhotoUrls: [],
     },
   });

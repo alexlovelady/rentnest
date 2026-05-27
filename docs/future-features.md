@@ -20,9 +20,6 @@ Organized by category, roughly in order of priority within each section.
 - **Payment plans** — structured installment plans for overdue tenants (e.g. $200/week until caught up)
 - **ACH / bank verification** — verify tenant bank account before first payment (Plaid or Stripe micro-deposit)
 
-### Maintenance
-- **Move-in / move-out inspection photos** — add photo uploads per room to existing inspection reports
-
 ---
 
 ## Medium Priority (Retention & Stickiness)
@@ -34,7 +31,6 @@ Organized by category, roughly in order of priority within each section.
 
 ### Tenant Experience
 - **SMS / text notifications** — rent reminders and maintenance updates via text, not just email
-- **Maintenance request photos from portal** — tenants can attach photos when submitting (not just landlord-side)
 
 ### Landlord Tools
 - **Calendar / scheduling** — maintenance scheduling that syncs to Google Calendar or iCal
@@ -49,12 +45,6 @@ Organized by category, roughly in order of priority within each section.
 - **White label** — for property management companies that want to brand the portal as their own
 - **API access** — for power users to build their own integrations or pull data into other tools
 - **Zapier / Make integration** — connect RentNest to thousands of other tools without code
-
-### AI Features
-- **AI maintenance triage** — categorize and prioritize incoming maintenance requests automatically
-- **AI lease review** — flag unusual or missing clauses in uploaded leases
-- **AI-drafted responses** — suggest replies to tenant messages or maintenance updates
-- **Rent pricing suggestions** — based on unit details and market data, suggest competitive rent pricing
 
 ### Listings & Acquisition
 - **Vacancy listings** — post vacant units to Zillow, Apartments.com, Facebook Marketplace from within RentNest
