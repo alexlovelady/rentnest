@@ -10,6 +10,8 @@ import { SendInviteButton } from "./send-invite-button";
 import { TerminateLeaseButton } from "./terminate-lease-button";
 import { RequestSignatureButton } from "./request-signature-button";
 import { DepositPanel } from "./deposit-panel";
+import { RenewLeaseButton } from "./renew-lease-button";
+import { EvictionPanel } from "./eviction-panel";
 
 export default async function LeaseDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
   const { id } = await params;
@@ -25,6 +27,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
       documents: { orderBy: { uploadedAt: "desc" } },
       signatures: { include: { tenant: true }, orderBy: { createdAt: "desc" } },
       depositDeductions: { orderBy: { createdAt: "asc" } },
+      evictionRecords: { orderBy: { date: "asc" } },
     },
   });
 
@@ -111,6 +114,14 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
                   lease.signatures.some((s) => s.tenantId === lt.tenantId && s.status === "signed")
                 )}
               />
+              {lease.endDate && (
+                <RenewLeaseButton
+                  leaseId={lease.id}
+                  currentEndDate={lease.endDate}
+                  currentRent={lease.monthlyRent}
+                  currentLeaseType={lease.leaseType}
+                />
+              )}
               <TerminateLeaseButton leaseId={lease.id} />
             </div>
           </div>
@@ -131,6 +142,11 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
           />
         </div>
       )}
+
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+        <h2 className="text-sm font-semibold mb-4">Eviction Log</h2>
+        <EvictionPanel leaseId={lease.id} records={lease.evictionRecords} />
+      </div>
 
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <h2 className="text-sm font-semibold mb-4">Rent Ledger</h2>

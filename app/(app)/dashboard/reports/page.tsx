@@ -5,10 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { DownloadCSVButton } from "./download-csv-button";
 import { ReportYearSelect } from "./report-year-select";
 
-export default async function ReportsPage({ searchParams }: { searchParams: Promise<{ year?: string; report?: string }> }) {
-  const { year: yearStr, report = "rent-roll" } = await searchParams;
+export default async function ReportsPage({ searchParams }: { searchParams: Promise<{ year?: string; month?: string; report?: string }> }) {
+  const { year: yearStr, month: monthStr, report = "rent-roll" } = await searchParams;
   const user = await requireServerUser();
   const year = yearStr ? parseInt(yearStr) : new Date().getFullYear();
+  const month = monthStr ? parseInt(monthStr) : new Date().getMonth() + 1;
 
   // Rent roll
   const activeLeases = await prisma.lease.findMany({
@@ -79,6 +80,38 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
     return acc;
   }, {});
 
+  // Owner statements — per-property summary for selected month
+  const stmtStart = new Date(`${year}-${String(month).padStart(2, "0")}-01`);
+  const stmtEnd = new Date(stmtStart);
+  stmtEnd.setMonth(stmtEnd.getMonth() + 1);
+
+  const [stmtPayments, stmtExpenses, stmtProperties] = await Promise.all([
+    prisma.rentPayment.findMany({
+      where: { landlordId: user.id, status: "paid", paidAt: { gte: stmtStart, lt: stmtEnd } },
+      include: { lease: { include: { unit: { include: { property: true } } } } },
+    }),
+    prisma.expense.findMany({
+      where: { landlordId: user.id, date: { gte: stmtStart, lt: stmtEnd } },
+      include: { property: { select: { id: true, nickname: true, address: true } } },
+    }),
+    prisma.property.findMany({
+      where: { landlordId: user.id, isActive: true },
+      select: { id: true, nickname: true, address: true },
+      orderBy: { address: "asc" },
+    }),
+  ]);
+
+  const stmtByProperty = stmtProperties.map((prop) => {
+    const income = stmtPayments
+      .filter((p) => p.lease.unit.property.id === prop.id)
+      .reduce((s, p) => s + p.totalAmount, 0);
+    const propExpenses = stmtExpenses.filter((e) => e.propertyId === prop.id);
+    const expenseTotal = propExpenses.reduce((s, e) => s + e.amount, 0);
+    return { prop, income, expenseTotal, net: income - expenseTotal, expenses: propExpenses };
+  }).filter((s) => s.income > 0 || s.expenseTotal > 0);
+
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
   const rentRollCsv = [
     ["Property", "Unit", "Tenant", "Monthly Rent", "Lease Start", "Lease End", "Status"],
     ...activeLeases.map((l) => [
@@ -99,9 +132,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
         <ReportYearSelect currentYear={year} currentReport={report} />
       </div>
 
-      <div className="flex gap-2 mb-6">
-        {[["rent-roll", "Rent Roll"], ["income", "Income & Expense"], ["vacancy", "Vacancy"], ["maintenance", "Maintenance Costs"]].map(([id, label]) => (
-          <a key={id} href={`/dashboard/reports?report=${id}&year=${year}`} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${report === id ? "bg-[#C4622D] text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {[["rent-roll", "Rent Roll"], ["income", "Income & Expense"], ["vacancy", "Vacancy"], ["maintenance", "Maintenance Costs"], ["statements", "Owner Statements"]].map(([id, label]) => (
+          <a key={id} href={`/dashboard/reports?report=${id}&year=${year}&month=${month}`} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${report === id ? "bg-[#C4622D] text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
             {label}
           </a>
         ))}
@@ -199,6 +232,86 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
           )}
         </div>
       )}
+      {report === "statements" && (
+        <div className="space-y-6">
+          {/* Month selector */}
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-500">Period:</span>
+            <div className="flex gap-1 flex-wrap">
+              {MONTHS.map((m, i) => (
+                <a
+                  key={m}
+                  href={`/dashboard/reports?report=statements&year=${year}&month=${i + 1}`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${month === i + 1 ? "bg-[#1A2332] text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+                >
+                  {m}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {stmtByProperty.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
+              <p className="text-gray-500 text-sm">No income or expenses recorded for {MONTHS[month - 1]} {year}.</p>
+            </div>
+          ) : (
+            <>
+              {/* Portfolio summary */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+                  <p className="text-sm text-green-700">Total Income</p>
+                  <p className="text-2xl font-bold text-green-800">{formatCurrency(stmtByProperty.reduce((s, p) => s + p.income, 0))}</p>
+                </div>
+                <div className="bg-red-50 border border-red-200 rounded-xl p-5">
+                  <p className="text-sm text-red-700">Total Expenses</p>
+                  <p className="text-2xl font-bold text-red-800">{formatCurrency(stmtByProperty.reduce((s, p) => s + p.expenseTotal, 0))}</p>
+                </div>
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+                  <p className="text-sm text-blue-700">Net Income</p>
+                  <p className="text-2xl font-bold text-blue-800">{formatCurrency(stmtByProperty.reduce((s, p) => s + p.net, 0))}</p>
+                </div>
+              </div>
+
+              {/* Per-property cards */}
+              {stmtByProperty.map(({ prop, income, expenseTotal, net, expenses: propExps }) => (
+                <div key={prop.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{prop.nickname}</h3>
+                      <p className="text-xs text-gray-400">{prop.address}</p>
+                    </div>
+                    <span className={`text-sm font-bold ${net >= 0 ? "text-green-700" : "text-red-600"}`}>{net >= 0 ? "+" : ""}{formatCurrency(net)} net</span>
+                  </div>
+                  <div className="px-6 py-4 grid grid-cols-2 gap-4 text-sm border-b border-gray-50">
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Rent collected</p>
+                      <p className="font-semibold text-green-700">{formatCurrency(income)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 mb-1">Expenses</p>
+                      <p className="font-semibold text-red-600">{formatCurrency(expenseTotal)}</p>
+                    </div>
+                  </div>
+                  {propExps.length > 0 && (
+                    <div className="px-6 py-3">
+                      <p className="text-xs text-gray-400 mb-2">Expense detail</p>
+                      <div className="space-y-1">
+                        {propExps.map((e) => (
+                          <div key={e.id} className="flex justify-between text-sm">
+                            <span className="text-gray-600 capitalize">{e.category} {e.description && `— ${e.description}`}</span>
+                            <span className="text-gray-700">{formatCurrency(e.amount)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      )}
+
       {report === "maintenance" && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

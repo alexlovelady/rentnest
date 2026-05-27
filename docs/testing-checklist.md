@@ -320,6 +320,51 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ---
 
+## Lease Renewal
+
+- [ ] "Renew Lease" button visible on active lease detail when an end date is set
+- [ ] Button hidden on month-to-month leases (no end date)
+- [ ] Modal pre-fills start date to the day after the current end date
+- [ ] End date defaults to 12 months from new start
+- [ ] Monthly rent pre-filled from current lease
+- [ ] Rent increase % field updates the monthly rent field in real time
+- [ ] Increase amount shown as "X/mo increase" below the % field
+- [ ] Submitting creates a new lease and redirects to it with "created" banner
+- [ ] New lease has same tenants, late fee settings, and pet settings as original
+- [ ] New lease security deposit is $0 (already held) and marked paid
+- [ ] Original lease still visible and not automatically terminated
+
+---
+
+## Eviction Tracking
+
+- [ ] "Eviction Log" section visible on every lease detail page
+- [ ] "No eviction events recorded" shown when empty
+- [ ] "+ Add Event" button opens inline form
+- [ ] All 7 event types available in dropdown
+- [ ] Date and notes save correctly
+- [ ] Event appears in list with correct type badge color and date
+- [ ] Notes displayed under the date when present
+- [ ] Trash icon deletes an event and updates list immediately
+- [ ] Multiple events shown in chronological order
+
+---
+
+## Owner Statements
+
+- [ ] "Owner Statements" tab visible on Reports page
+- [ ] Month selector shows all 12 months; current month selected by default
+- [ ] Clicking a different month updates the statement data
+- [ ] Portfolio summary cards show correct total income, expenses, and net
+- [ ] Only properties with activity in the selected month are shown
+- [ ] Per-property card shows correct income (rent collected) and expenses
+- [ ] Net shown as green (+) or red (−) correctly
+- [ ] Expense detail section lists individual expenses with category and description
+- [ ] Empty state shown when no income or expenses exist for the month
+- [ ] Year selector still works alongside month selector
+
+---
+
 ## General
 
 - [ ] No console errors on any page

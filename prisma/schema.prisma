@@ -134,6 +134,7 @@ model Lease {
   maintenanceRequests MaintenanceRequest[]
   signatures      LeaseSignature[]
   depositDeductions DepositDeduction[]
+  evictionRecords EvictionRecord[]
 }
 
 model LeaseTenant {
@@ -245,6 +246,18 @@ model LeaseSignature {
 
   lease  Lease  @relation(fields: [leaseId], references: [id])
   tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+model EvictionRecord {
+  id         String   @id @default(cuid())
+  leaseId    String
+  landlordId String
+  type       String
+  date       DateTime
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  lease Lease @relation(fields: [leaseId], references: [id])
 }
 
 model DepositDeduction {

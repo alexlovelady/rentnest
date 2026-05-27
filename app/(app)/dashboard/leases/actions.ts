@@ -102,6 +102,58 @@ export async function requestSignature(leaseId: string) {
   revalidatePath(`/dashboard/leases/${leaseId}`);
 }
 
+export async function renewLease(leaseId: string, data: { startDate: string; endDate: string | null; monthlyRent: number; leaseType: string }) {
+  const user = await requireServerUser();
+  const lease = await prisma.lease.findFirst({
+    where: { id: leaseId, landlordId: user.id },
+    include: { tenants: true },
+  });
+  if (!lease) throw new Error("Lease not found");
+
+  const newLease = await prisma.lease.create({
+    data: {
+      unitId: lease.unitId,
+      landlordId: user.id,
+      startDate: new Date(data.startDate),
+      endDate: data.endDate ? new Date(data.endDate) : null,
+      leaseType: data.leaseType,
+      monthlyRent: data.monthlyRent,
+      securityDeposit: 0,
+      securityDepositPaid: true,
+      rentDueDay: lease.rentDueDay,
+      lateFeeEnabled: lease.lateFeeEnabled,
+      lateFeeType: lease.lateFeeType,
+      lateFeeAmount: lease.lateFeeAmount,
+      lateFeeGracePeriodDays: lease.lateFeeGracePeriodDays,
+      petsAllowed: lease.petsAllowed,
+      petDeposit: lease.petDeposit,
+      petRent: lease.petRent,
+      tenants: {
+        create: lease.tenants.map((lt) => ({ tenantId: lt.tenantId, isPrimary: lt.isPrimary })),
+      },
+    },
+  });
+
+  revalidatePath("/dashboard/leases");
+  return newLease;
+}
+
+export async function addEvictionRecord(leaseId: string, data: { type: string; date: string; notes: string }) {
+  const user = await requireServerUser();
+  const lease = await prisma.lease.findFirst({ where: { id: leaseId, landlordId: user.id } });
+  if (!lease) throw new Error("Not found");
+  await prisma.evictionRecord.create({
+    data: { leaseId, landlordId: user.id, type: data.type, date: new Date(data.date), notes: data.notes || null },
+  });
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
+export async function deleteEvictionRecord(recordId: string, leaseId: string) {
+  const user = await requireServerUser();
+  await prisma.evictionRecord.deleteMany({ where: { id: recordId, landlordId: user.id } });
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
 export async function markDepositReceived(leaseId: string) {
   const user = await requireServerUser();
   await prisma.lease.updateMany({

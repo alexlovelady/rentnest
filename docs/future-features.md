@@ -17,6 +17,9 @@ Organized by category, roughly in order of priority within each section.
 - **Security deposit tracking** — mark deposit received, add itemized deductions, record return amount and date; shown on lease detail
 - **Notification preferences** — granular per-event email toggles: payment, maintenance, overdue, lease expiring, insurance expiring, signature
 - **Vendor management** — contractor address book with trade/phone/email; assign vendors to maintenance requests from request detail page
+- **Lease renewal workflow** — "Renew Lease" button on lease detail pre-fills new lease from old terms; optional rent increase % field
+- **Eviction tracking** — per-lease event log (notice, filing, hearing, judgment, writ, lockout) with dates and notes
+- **Owner statements** — per-property monthly income/expense/net summary on reports page with month selector
 
 ## In Progress / Already Planned
 - **Tenant application & screening** — SingleKey integration, full apply-to-lease flow
@@ -26,7 +29,7 @@ Organized by category, roughly in order of priority within each section.
 ## High Priority (Core Product Gaps)
 
 ### Leasing
-- **Lease renewal workflow** — alert landlord 60/30/15 days before expiration, one-click renewal with optional rent increase
+- **Lease renewal workflow** — ~~completed, see above~~
 - **Rent increase notices** — generate state-compliant rent increase notice letters, track delivery
 - **Lease templates by state** — pre-built lease templates with required state-specific clauses
 - **Digital addendums** — pet addendum, parking addendum, etc. with e-sign
@@ -45,7 +48,7 @@ Organized by category, roughly in order of priority within each section.
 ## Medium Priority (Retention & Stickiness)
 
 ### Financial
-- **Owner statements** — auto-generated monthly PDF summary: rent collected, expenses, net income, per property
+- **Owner statements** — ~~completed, see above~~
 - **Security deposit tracking** — ~~completed, see above~~
 - **Accounting integrations** — QuickBooks Online and/or Wave export (beyond CSV)
 - **Bank reconciliation** — match recorded rent payments against actual bank deposits
@@ -59,7 +62,7 @@ Organized by category, roughly in order of priority within each section.
 
 ### Landlord Tools
 - **Calendar / scheduling** — maintenance scheduling that syncs to Google Calendar or iCal
-- **Eviction tracking** — log eviction notices, court dates, outcomes; generate notice templates by state
+- **Eviction tracking** — ~~completed, see above~~
 
 ---
 
