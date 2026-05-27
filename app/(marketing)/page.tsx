@@ -52,10 +52,18 @@ const jsonLd = {
         },
         {
           "@type": "Question",
+          name: "Is there a free trial? Do I need a credit card?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Every new account gets a 14-day free trial with no credit card required. Add your card only when you're ready to subscribe. If you don't — no charge, no hassle.",
+          },
+        },
+        {
+          "@type": "Question",
           name: "What does my tenant need to use the portal?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Just an email address. They get a link and can access it without creating an account. No app to download, no new password to remember.",
+            text: "Just an email address. You send them a portal invite and they click the link — no account to create, no app to download, no new password to remember.",
           },
         },
         {
@@ -63,7 +71,23 @@ const jsonLd = {
           name: "How does online rent collection work?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "We use Stripe to process payments. Tenants pay by bank transfer (ACH) or card. Funds go to your connected bank account within 2 business days. Standard Stripe processing fees apply — we take nothing.",
+            text: "We use Stripe to process payments. Tenants pay by bank transfer (ACH) or card through their portal. Funds go to your connected bank account typically within 2 business days. Standard Stripe processing fees apply (2.9% + $0.30 for cards; 0.8% capped at $5 for bank transfers) — we take nothing. You can optionally pass the processing fee through to your tenant so you always receive the full rent amount.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What if my tenant pays by check or cash?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No problem. You can record offline payments manually in your dashboard. Online payment through the portal is available but never required — tenants can keep paying however works for them.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Can I cancel anytime?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. Cancel your subscription at any time from your account settings — no contracts, no cancellation fees. Your account stays active through the end of your current billing period.",
           },
         },
         {
@@ -71,7 +95,7 @@ const jsonLd = {
           name: "Can I use RentNest if I only have one unit?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes. The Starter plan at $19/month covers up to 5 units, so you're getting good value even if you only have one.",
+            text: "Yes. The Starter plan at $19/month covers up to 5 units, so you're getting good value even with a single rental. All features are included on every plan.",
           },
         },
       ],
@@ -288,9 +312,12 @@ export default function LandingPage() {
           <div className="space-y-6">
             {[
               { q: "Does RentNest take a percentage of my rent?", a: "No, never. You pay a flat monthly subscription. That's it. We built RentNest because small landlords deserve a tool that doesn't take a cut of their income." },
-              { q: "What does my tenant need to use the portal?", a: "Just an email address. They get a link and can access it without creating an account. No app to download, no new password to remember." },
-              { q: "How does online rent collection work?", a: "We use Stripe to process payments. Tenants pay by bank transfer (ACH) or card. Funds go to your connected bank account within 2 business days. Standard Stripe processing fees apply — we take nothing." },
-              { q: "Can I use RentNest if I only have one unit?", a: "Yes. The Starter plan at $19/month covers up to 5 units, so you're getting good value even if you only have one." },
+              { q: "Is there a free trial? Do I need a credit card?", a: "Every new account gets a 14-day free trial with no credit card required. Add your card only when you're ready to subscribe. If you don't — no charge, no hassle." },
+              { q: "What does my tenant need to use the portal?", a: "Just an email address. You send them a portal invite and they click the link — no account to create, no app to download, no new password to remember." },
+              { q: "How does online rent collection work?", a: "We use Stripe to process payments. Tenants pay by bank transfer (ACH) or card through their portal. Funds go to your connected bank account typically within 2 business days. Standard Stripe processing fees apply (2.9% + $0.30 for cards; 0.8% capped at $5 for bank transfers) — we take nothing. You can also optionally pass the processing fee through to your tenant so you always receive the full rent amount." },
+              { q: "What if my tenant pays by check or cash?", a: "No problem. You can record offline payments manually in your dashboard. Online payment through the portal is available but never required — tenants can keep paying however works for them." },
+              { q: "Can I cancel anytime?", a: "Yes. Cancel your subscription at any time from your account settings — no contracts, no cancellation fees. Your account stays active through the end of your current billing period." },
+              { q: "Can I use RentNest if I only have one unit?", a: "Yes. The Starter plan at $19/month covers up to 5 units, so you're getting good value even with a single rental. All features are included on every plan." },
             ].map((faq) => (
               <div key={faq.q} className="border-b border-slate-dark/10 pb-6">
                 <h3 className="font-semibold mb-2">{faq.q}</h3>
