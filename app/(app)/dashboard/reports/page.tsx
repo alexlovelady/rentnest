@@ -125,6 +125,57 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
     ]),
   ];
 
+  const incomeCsv = [
+    ["Type", "Date", "Description", "Property", "Amount"],
+    ...paidPayments.map((p) => [
+      "Income",
+      p.paidAt ? new Date(p.paidAt).toISOString().split("T")[0] : "",
+      `Rent — ${new Date(p.periodYear, p.periodMonth - 1).toLocaleString("en-US", { month: "long", year: "numeric" })}`,
+      `${p.lease.unit.property.address}, Unit ${p.lease.unit.unitNumber}`,
+      p.totalAmount.toFixed(2),
+    ]),
+    ...expenses.map((e) => [
+      "Expense",
+      new Date(e.date).toISOString().split("T")[0],
+      `${e.category}${e.description ? ` — ${e.description}` : ""}`,
+      e.property?.nickname || "General",
+      e.amount.toFixed(2),
+    ]),
+  ];
+
+  const maintenanceCsv = [
+    ["Title", "Property", "Unit", "Category", "Vendor", "Actual Cost"],
+    ...maintenanceCosts.map((r) => [
+      r.title,
+      r.unit.property.address,
+      `Unit ${r.unit.unitNumber}`,
+      r.category.replace(/_/g, " "),
+      r.vendorName || "",
+      (r.actualCost ?? 0).toFixed(2),
+    ]),
+  ];
+
+  const vacancyCsv = [
+    ["Property", "Unit", "Bedrooms", "Bathrooms"],
+    ...vacantUnits.map((u) => [
+      u.property.address,
+      `Unit ${u.unitNumber}`,
+      String(u.bedrooms ?? ""),
+      String(u.bathrooms ?? ""),
+    ]),
+  ];
+
+  const statementsCsv = [
+    ["Property", "Address", "Income", "Expenses", "Net"],
+    ...stmtByProperty.map((s) => [
+      s.prop.nickname,
+      s.prop.address,
+      s.income.toFixed(2),
+      s.expenseTotal.toFixed(2),
+      s.net.toFixed(2),
+    ]),
+  ];
+
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
@@ -184,6 +235,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
       {report === "income" && (
         <div className="space-y-6">
+          <div className="flex justify-end">
+            <DownloadCSVButton data={incomeCsv} filename={`income-expense-${year}.csv`} />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-green-50 border border-green-200 rounded-xl p-5">
               <p className="text-sm text-green-700">Total Income</p>
@@ -215,8 +269,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
       {report === "vacancy" && (
         <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 className="font-semibold text-gray-900">Vacant Units ({vacantUnits.length})</h2>
+            <DownloadCSVButton data={vacancyCsv} filename="vacancy.csv" />
           </div>
           {vacantUnits.length === 0 ? (
             <p className="px-6 py-8 text-sm text-gray-500">All units are occupied.</p>
@@ -256,6 +311,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
             </div>
           ) : (
             <>
+              <div className="flex justify-end mb-2">
+                <DownloadCSVButton data={statementsCsv} filename={`statements-${MONTHS[month - 1]}-${year}.csv`} />
+              </div>
               {/* Portfolio summary */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-green-50 border border-green-200 rounded-xl p-5">
@@ -365,8 +423,9 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
           {maintenanceCosts.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-100">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                 <h3 className="font-semibold text-sm">All Jobs with Costs</h3>
+                <DownloadCSVButton data={maintenanceCsv} filename="maintenance-costs.csv" />
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
