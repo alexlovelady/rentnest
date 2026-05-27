@@ -43,11 +43,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
 
   if (landlord?.email) {
     const { resend, FROM, APP_URL } = await import("@/lib/resend");
+    const { emailBase, greeting, detailTable, alertBox, btn } = await import("@/lib/email");
     await resend.emails.send({
       from: FROM,
       to: landlord.email,
       subject: `Addendum signed — ${sig.tenant.name}`,
-      html: `<p>Hi ${landlord.name},</p><p><strong>${sig.tenant.name}</strong> has signed <strong>${addendum.title}</strong> for <strong>${addr}</strong>.</p><p>Signed as: ${signerName}</p><p><a href="${APP_URL}/dashboard/leases/${addendum.leaseId}">View Lease →</a></p>`,
+      html: emailBase(
+        alertBox(`${sig.tenant.name} has signed "${addendum.title}".`, "success") +
+        greeting(landlord.name) +
+        detailTable([
+          ["Tenant", sig.tenant.name],
+          ["Addendum", addendum.title],
+          ["Property", addr],
+          ["Signed as", signerName],
+          ["Date signed", new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+        ]) +
+        btn("View Lease →", `${APP_URL}/dashboard/leases/${addendum.leaseId}`)
+      ),
     });
   }
 

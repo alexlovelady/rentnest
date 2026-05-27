@@ -78,11 +78,23 @@ export async function recordPayment(data: {
 
   if (data.sendReceipt && primaryTenant?.email) {
     const { resend, FROM } = await import("@/lib/resend");
+    const { emailBase, greeting, ep, detailTable, alertBox } = await import("@/lib/email");
+    const periodStr = new Date(data.periodYear, data.periodMonth - 1).toLocaleString("en-US", { month: "long", year: "numeric" });
     await resend.emails.send({
       from: FROM,
       to: primaryTenant.email,
-      subject: `Rent receipt — ${new Date(data.periodYear, data.periodMonth - 1).toLocaleString("en-US", { month: "long", year: "numeric" })}`,
-      html: `<p>Hi ${primaryTenant.name},</p><p>This is a receipt confirming your rent payment of <strong>$${data.amount.toFixed(2)}</strong> for ${new Date(data.periodYear, data.periodMonth - 1).toLocaleString("en-US", { month: "long", year: "numeric" })}.</p><p>Payment method: ${data.paymentMethod}</p>`,
+      subject: `Rent receipt — ${periodStr}`,
+      html: emailBase(
+        alertBox("Your rent payment has been recorded.", "success") +
+        greeting(primaryTenant.name) +
+        ep(`This is a receipt confirming your rent payment for <strong>${periodStr}</strong>.`) +
+        detailTable([
+          ["Amount paid", `$${data.amount.toFixed(2)}`],
+          ["Period", periodStr],
+          ["Payment method", data.paymentMethod],
+          ["Date", new Date(data.paidAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+        ])
+      ),
     });
   }
 
@@ -123,11 +135,21 @@ export async function sendRentReminders() {
   for (const payment of payments) {
     if (!payment.tenant?.email) continue;
     const addr = `${payment.lease.unit.property.address}, Unit ${payment.lease.unit.unitNumber}`;
+    const { emailBase: eb, greeting: gr, ep: paragraph, detailTable: dt, btn: button } = await import("@/lib/email");
     await resend.emails.send({
       from: FROM,
       to: payment.tenant.email,
       subject: `Rent reminder — $${payment.totalAmount.toFixed(2)} due`,
-      html: `<p>Hi ${payment.tenant.name},</p><p>Your rent of <strong>$${payment.totalAmount.toFixed(2)}</strong> for ${addr} is due on ${payment.dueDate.toLocaleDateString()}.</p><p>Contact your landlord or <a href="${APP_URL}/tenant-portal">pay online</a>.</p>`,
+      html: eb(
+        gr(payment.tenant.name) +
+        paragraph(`Your rent for <strong>${addr}</strong> is due soon.`) +
+        dt([
+          ["Amount due", `$${payment.totalAmount.toFixed(2)}`],
+          ["Due date", payment.dueDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+          ["Property", addr],
+        ]) +
+        button("Pay Online →", `${APP_URL}/tenant-portal`)
+      ),
     });
   }
 

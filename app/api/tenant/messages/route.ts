@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTenantUser } from "@/lib/tenant-auth";
 import { prisma } from "@/lib/prisma";
 import { resend, FROM, APP_URL } from "@/lib/resend";
+import { emailBase, greeting, ep, emailBlockquote, btn } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const session = await getTenantUser();
@@ -28,7 +29,12 @@ export async function POST(req: NextRequest) {
       from: FROM,
       to: landlord.email,
       subject: `New message from ${tenant?.name ?? "your tenant"}`,
-      html: `<p>Hi ${landlord.name},</p><p><strong>${tenant?.name ?? "Your tenant"}</strong> sent you a message:</p><blockquote style="border-left:3px solid #C4622D;margin:0;padding:8px 16px;color:#374151;">${body.trim()}</blockquote><p><a href="${APP_URL}/dashboard/leases/${session.leaseId}">View in RentNest →</a></p>`,
+      html: emailBase(
+        greeting(landlord.name) +
+        ep(`<strong>${tenant?.name ?? "Your tenant"}</strong> sent you a message:`) +
+        emailBlockquote(body.trim()) +
+        btn("View & Reply in RentNest →", `${APP_URL}/dashboard/leases/${session.leaseId}`)
+      ),
     });
   }
 

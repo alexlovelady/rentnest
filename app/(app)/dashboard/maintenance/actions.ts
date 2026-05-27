@@ -33,11 +33,20 @@ export async function createMaintenanceRequest(data: z.infer<typeof MxSchema>) {
 
   if (parsed.priority === "emergency") {
     const { resend, FROM, APP_URL } = await import("@/lib/resend");
+    const { emailBase, ep, detailTable, alertBox, btn } = await import("@/lib/email");
     await resend.emails.send({
       from: FROM,
       to: user.email,
       subject: `EMERGENCY maintenance request — ${parsed.title}`,
-      html: `<p>An emergency maintenance request has been submitted for Unit ${unit.unitNumber}:</p><p><strong>${parsed.title}</strong></p><p>${parsed.description}</p><p><a href="${APP_URL}/dashboard/maintenance/${req.id}">View Request</a></p>`,
+      html: emailBase(
+        alertBox("An emergency maintenance request was submitted and requires immediate attention.", "error") +
+        detailTable([
+          ["Issue", parsed.title],
+          ["Unit", `Unit ${unit.unitNumber}`],
+        ]) +
+        ep(parsed.description) +
+        btn("View Request →", `${APP_URL}/dashboard/maintenance/${req.id}`)
+      ),
     });
   }
 
@@ -65,12 +74,23 @@ export async function updateMaintenanceStatus(id: string, status: string, notes?
 
   if (req.tenant?.email && (notes || status)) {
     const { resend, FROM } = await import("@/lib/resend");
+    const { emailBase, greeting, ep, detailTable } = await import("@/lib/email");
     const addr = `${req.unit.property.address}, Unit ${req.unit.unitNumber}`;
+    const statusLabel = status.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     await resend.emails.send({
       from: FROM,
       to: req.tenant.email,
       subject: `Maintenance update — ${req.title}`,
-      html: `<p>Hi ${req.tenant.name},</p><p>Your maintenance request "<strong>${req.title}</strong>" at ${addr} has been updated.</p><p><strong>Status:</strong> ${status.replace("_", " ")}</p>${notes ? `<p>${notes}</p>` : ""}`,
+      html: emailBase(
+        greeting(req.tenant.name) +
+        ep(`Your maintenance request for <strong>${addr}</strong> has been updated.`) +
+        detailTable([
+          ["Request", req.title],
+          ["New status", statusLabel],
+          ["Property", addr],
+        ]) +
+        (notes ? ep(notes) : "")
+      ),
     });
   }
 

@@ -65,22 +65,23 @@ export async function sendTenantPortalInvite(tenantId: string, leaseId: string, 
 
   await prisma.tenant.update({ where: { id: tenantId }, data: { portalToken: token } });
 
+  const { emailBase, greeting, ep, emailList, btn, muted } = await import("./email");
   await resend.emails.send({
     from: process.env.FROM_EMAIL!,
     to: tenant.email,
     subject: `Your RentNest tenant portal — ${address}`,
-    html: `
-      <p>Hi ${tenant.name},</p>
-      <p>${landlord.name} has invited you to manage your rental at <strong>${address}</strong> through RentNest.</p>
-      <p>Through your portal you can:</p>
-      <ul>
-        <li>Pay rent online by bank transfer or card</li>
-        <li>Submit and track maintenance requests</li>
-        <li>View your lease documents</li>
-      </ul>
-      <p><a href="${portalUrl}" style="background:#C4622D;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;">Access Your Portal</a></p>
-      <p>This link will log you in automatically. Keep it private — it works like a password.</p>
-      <p>— RentNest</p>
-    `,
+    html: emailBase(
+      greeting(tenant.name) +
+      ep(`<strong>${landlord.name}</strong> has invited you to manage your rental at <strong>${address}</strong> through RentNest.`) +
+      ep("Your tenant portal lets you:") +
+      emailList([
+        "Pay rent online by bank transfer or card",
+        "Submit and track maintenance requests",
+        "View your lease documents",
+        "Message your landlord directly",
+      ]) +
+      btn("Access Your Tenant Portal →", portalUrl) +
+      muted("This link logs you in automatically — treat it like a password and keep it private.")
+    ),
   });
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTenantUser } from "@/lib/tenant-auth";
 import { prisma } from "@/lib/prisma";
 import { resend, FROM, APP_URL } from "@/lib/resend";
+import { emailBase, greeting, ep, detailTable, alertBox, btn } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const session = await getTenantUser();
@@ -39,7 +40,18 @@ export async function POST(req: NextRequest) {
       from: FROM,
       to: landlord.email,
       subject: `${priority === "emergency" ? "🚨 EMERGENCY: " : ""}New maintenance request — ${title}`,
-      html: `<p>Hi ${landlord.name},</p><p><strong>${tenant?.name || "Your tenant"}</strong> submitted a maintenance request for ${addr}:</p><p><strong>${title}</strong> (${priority} priority)</p><p>${description}</p><p><a href="${APP_URL}/dashboard/maintenance/${request.id}">View Request</a></p>`,
+      html: emailBase(
+        (priority === "emergency" ? alertBox("This is an emergency maintenance request requiring immediate attention.", "error") : "") +
+        greeting(landlord.name) +
+        ep(`<strong>${tenant?.name || "Your tenant"}</strong> submitted a maintenance request for <strong>${addr}</strong>.`) +
+        detailTable([
+          ["Issue", title],
+          ["Priority", priority.charAt(0).toUpperCase() + priority.slice(1)],
+          ["Category", (category || "other").charAt(0).toUpperCase() + (category || "other").slice(1)],
+        ]) +
+        ep(description) +
+        btn("View Request →", `${APP_URL}/dashboard/maintenance/${request.id}`)
+      ),
     });
   }
 

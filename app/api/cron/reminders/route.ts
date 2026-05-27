@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { resend, FROM, APP_URL } from "@/lib/resend";
 import { applyLateFees, generateMonthlyRent } from "@/lib/rent";
 import { signTenantToken } from "@/lib/tenant-auth";
-import { addDays, isAfter, isBefore, differenceInDays } from "date-fns";
+import { addDays, isAfter, differenceInDays } from "date-fns";
+import { emailBase, greeting, ep, detailTable, emailList, alertBox, btn } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const auth = req.headers.get("authorization");
@@ -50,7 +51,16 @@ export async function POST(req: NextRequest) {
       from: FROM,
       to: payment.tenant.email,
       subject: `Rent reminder — $${payment.totalAmount.toFixed(2)} due soon`,
-      html: `<p>Hi ${payment.tenant.name},</p><p>Your rent of <strong>$${payment.totalAmount.toFixed(2)}</strong> for ${addr} is due on <strong>${payment.dueDate.toLocaleDateString()}</strong>.</p><p><a href="${portalUrl}">Pay Online</a></p>`,
+      html: emailBase(
+        greeting(payment.tenant.name) +
+        ep(`Your rent for <strong>${addr}</strong> is due soon.`) +
+        detailTable([
+          ["Amount due", `$${payment.totalAmount.toFixed(2)}`],
+          ["Due date", payment.dueDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+          ["Property", addr],
+        ]) +
+        btn("Pay Online →", portalUrl)
+      ),
     });
   }
 
@@ -84,7 +94,17 @@ export async function POST(req: NextRequest) {
         from: FROM,
         to: payment.tenant.email,
         subject: `Rent overdue — ${addr}`,
-        html: `<p>Hi ${payment.tenant.name},</p><p>Your rent of <strong>$${payment.totalAmount.toFixed(2)}</strong> for ${addr} is overdue. Please pay as soon as possible.</p><p><a href="${portalUrl}">Pay Online</a></p>`,
+        html: emailBase(
+          alertBox("Your rent is past due. Please pay as soon as possible to avoid additional late fees.", "error") +
+          greeting(payment.tenant.name) +
+          ep(`Your rent for <strong>${addr}</strong> is overdue.`) +
+          detailTable([
+            ["Amount overdue", `$${payment.totalAmount.toFixed(2)}`],
+            ["Original due date", payment.dueDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+            ["Property", addr],
+          ]) +
+          btn("Pay Online →", portalUrl)
+        ),
       });
     }
   }
@@ -92,12 +112,16 @@ export async function POST(req: NextRequest) {
   for (const [landlordId, payments] of Object.entries(landlordOverdue)) {
     const landlord = await prisma.landlord.findUnique({ where: { id: landlordId } });
     if (!landlord?.notifyOnOverdue || !landlord.email) continue;
-    const lines = payments.map((p) => `<li>${p.tenant?.name} — ${p.lease.unit.property.address} Unit ${p.lease.unit.unitNumber} — $${p.totalAmount.toFixed(2)}</li>`).join("");
     await resend.emails.send({
       from: FROM,
       to: landlord.email,
-      subject: `${payments.length} overdue rent payment(s) need attention`,
-      html: `<p>Hi ${landlord.name},</p><p>The following tenants have overdue rent:</p><ul>${lines}</ul><p><a href="${APP_URL}/dashboard/rent">View Rent Dashboard</a></p>`,
+      subject: `${payments.length} overdue rent payment${payments.length > 1 ? "s" : ""} need attention`,
+      html: emailBase(
+        greeting(landlord.name) +
+        ep(`${payments.length} tenant${payments.length > 1 ? "s have" : " has"} overdue rent that needs your attention.`) +
+        emailList(payments.map((p) => `<strong>${p.tenant?.name}</strong> — ${p.lease.unit.property.address} Unit ${p.lease.unit.unitNumber} — <strong>$${p.totalAmount.toFixed(2)}</strong>`)) +
+        btn("View Rent Dashboard →", `${APP_URL}/dashboard/rent`)
+      ),
     });
   }
 
@@ -124,7 +148,17 @@ export async function POST(req: NextRequest) {
       from: FROM,
       to: landlord.email,
       subject: `Lease expiring in ${days} days — ${addr}`,
-      html: `<p>Hi ${landlord.name},</p><p><strong>${tenantNames}</strong> at ${addr} has a lease expiring in <strong>${days} days</strong> (${lease.endDate.toLocaleDateString()}).</p><p><a href="${APP_URL}/dashboard/leases/${lease.id}">View Lease</a></p>`,
+      html: emailBase(
+        greeting(landlord.name) +
+        ep(`A lease is expiring in <strong>${days} days</strong> and may need to be renewed.`) +
+        detailTable([
+          ["Tenant(s)", tenantNames],
+          ["Property", addr],
+          ["Expiration date", lease.endDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+          ["Days remaining", `${days} days`],
+        ]) +
+        btn("View Lease →", `${APP_URL}/dashboard/leases/${lease.id}`)
+      ),
     });
   }
 
@@ -151,17 +185,22 @@ export async function POST(req: NextRequest) {
   for (const [landlordId, tenants] of Object.entries(landlordInsurance)) {
     const landlord = await prisma.landlord.findUnique({ where: { id: landlordId } });
     if (!landlord?.email || !landlord.notifyOnInsuranceExpiring) continue;
-    const lines = tenants.map((t) => {
-      const days = Math.ceil((new Date(t.insuranceExpiresAt!).getTime() - now.getTime()) / 86400000);
-      const lease = t.leases[0]?.lease;
-      const addr = lease ? `${lease.unit.property.address}, Unit ${lease.unit.unitNumber}` : "";
-      return `<li>${t.name} (${addr}) — expires in ${days} day${days !== 1 ? "s" : ""}</li>`;
-    }).join("");
+    const insuranceItems = tenants.map((t) => {
+      const daysLeft = Math.ceil((new Date(t.insuranceExpiresAt!).getTime() - now.getTime()) / 86400000);
+      const tLease = t.leases[0]?.lease;
+      const tAddr = tLease ? `${tLease.unit.property.address}, Unit ${tLease.unit.unitNumber}` : "";
+      return `<strong>${t.name}</strong>${tAddr ? ` (${tAddr})` : ""} — expires in <strong>${daysLeft} day${daysLeft !== 1 ? "s" : ""}</strong>`;
+    });
     await resend.emails.send({
       from: FROM,
       to: landlord.email,
       subject: `Renters insurance expiring soon`,
-      html: `<p>Hi ${landlord.name},</p><p>The following tenant(s) have renters insurance expiring within 30 days:</p><ul>${lines}</ul><p><a href="${APP_URL}/dashboard/tenants">View Tenants</a></p>`,
+      html: emailBase(
+        greeting(landlord.name) +
+        ep(`${tenants.length} tenant${tenants.length > 1 ? "s have" : " has"} renters insurance expiring within 30 days.`) +
+        emailList(insuranceItems) +
+        btn("View Tenants →", `${APP_URL}/dashboard/tenants`)
+      ),
     });
   }
 
@@ -185,12 +224,16 @@ export async function POST(req: NextRequest) {
   for (const [landlordId, reqs] of Object.entries(landlordUnacked)) {
     const landlord = await prisma.landlord.findUnique({ where: { id: landlordId } });
     if (!landlord?.email) continue;
-    const lines = reqs.map((r) => `<li>${r.title} — ${r.unit.property.address} Unit ${r.unit.unitNumber} (${r.priority})</li>`).join("");
     await resend.emails.send({
       from: FROM,
       to: landlord.email,
-      subject: `${reqs.length} unacknowledged maintenance request(s)`,
-      html: `<p>Hi ${landlord.name},</p><p>These maintenance requests haven't been acknowledged in over 24 hours:</p><ul>${lines}</ul><p><a href="${APP_URL}/dashboard/maintenance">View Requests</a></p>`,
+      subject: `${reqs.length} unacknowledged maintenance request${reqs.length > 1 ? "s" : ""}`,
+      html: emailBase(
+        greeting(landlord.name) +
+        alertBox(`${reqs.length} maintenance request${reqs.length > 1 ? "s have" : " has"} not been acknowledged in over 24 hours.`, "warning") +
+        emailList(reqs.map((r) => `<strong>${r.title}</strong> — ${r.unit.property.address} Unit ${r.unit.unitNumber} <span style="color:#9ca3af;">(${r.priority})</span>`)) +
+        btn("View Maintenance Requests →", `${APP_URL}/dashboard/maintenance`)
+      ),
     });
   }
 

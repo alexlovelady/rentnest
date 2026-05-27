@@ -72,6 +72,7 @@ export async function sendBulkMessage({ subject, message }: { subject: string; m
   if (activeTenants.length === 0) throw new Error("No tenants with email addresses found");
 
   const { resend, FROM } = await import("@/lib/resend");
+  const { emailBase, greeting, ep, emailDivider, muted } = await import("@/lib/email");
   const messageHtml = message.replace(/\n/g, "<br/>");
 
   await Promise.all(
@@ -80,7 +81,12 @@ export async function sendBulkMessage({ subject, message }: { subject: string; m
         from: FROM,
         to: t.email!,
         subject,
-        html: `<p>Hi ${t.name},</p><p>${messageHtml}</p><p style="color:#999;font-size:12px;margin-top:24px;">This message was sent by your landlord via RentNest.</p>`,
+        html: emailBase(
+          greeting(t.name) +
+          ep(messageHtml) +
+          emailDivider() +
+          muted("This message was sent by your landlord via RentNest.")
+        ),
       })
     )
   );

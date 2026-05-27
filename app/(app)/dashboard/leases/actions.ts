@@ -91,11 +91,21 @@ export async function requestSignature(leaseId: string) {
 
     const addr = `${lease.unit.property.address}, Unit ${lease.unit.unitNumber}`;
     const signingUrl = `${APP_URL}/sign/${token}`;
+    const { emailBase, greeting, ep, detailTable, btn, muted } = await import("@/lib/email");
     await resend.emails.send({
       from: FROM,
       to: lt.tenant.email,
       subject: `Please sign your lease — ${addr}`,
-      html: `<p>Hi ${lt.tenant.name},</p><p>Your landlord has requested your signature on the lease for <strong>${addr}</strong>.</p><p>Please review and sign your lease here:</p><p><a href="${signingUrl}" style="background:#C4622D;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Sign Lease →</a></p><p>This link expires in 30 days.</p>`,
+      html: emailBase(
+        greeting(lt.tenant.name) +
+        ep("Your landlord has requested your signature on a lease agreement. Please review and sign at your earliest convenience.") +
+        detailTable([
+          ["Property", addr],
+          ["Link expires", "30 days from now"],
+        ]) +
+        btn("Review & Sign Lease →", signingUrl) +
+        muted("This signing link is private — do not share it with anyone.")
+      ),
     });
   }
 
@@ -209,11 +219,17 @@ export async function sendLandlordMessage(leaseId: string, body: string) {
   const { resend, FROM, APP_URL } = await import("@/lib/resend");
   for (const lt of lease.tenants) {
     if (!lt.tenant.email) continue;
+    const { emailBase, greeting, ep, emailBlockquote, btn } = await import("@/lib/email");
     await resend.emails.send({
       from: FROM,
       to: lt.tenant.email,
       subject: `New message from your landlord`,
-      html: `<p>Hi ${lt.tenant.name},</p><p>Your landlord sent you a message:</p><blockquote style="border-left:3px solid #C4622D;margin:0;padding:8px 16px;color:#374151;">${body}</blockquote><p><a href="${APP_URL}/tenant-portal/messages">View &amp; reply in your portal →</a></p>`,
+      html: emailBase(
+        greeting(lt.tenant.name) +
+        ep("Your landlord sent you a message:") +
+        emailBlockquote(body) +
+        btn("View & Reply in Your Portal →", `${APP_URL}/tenant-portal/messages`)
+      ),
     });
   }
 
@@ -265,11 +281,22 @@ export async function requestAddendumSignature(addendumId: string, leaseId: stri
     });
 
     const addr = `${addendum.lease.unit.property.address}, Unit ${addendum.lease.unit.unitNumber}`;
+    const { emailBase: eBase, greeting: gr, ep: paragraph, detailTable: dt, btn: button, muted: mt } = await import("@/lib/email");
     await resend.emails.send({
       from: FROM,
       to: lt.tenant.email,
-      subject: `Please sign: ${addendum.title} — ${addr}`,
-      html: `<p>Hi ${lt.tenant.name},</p><p>Your landlord has sent you an addendum to sign: <strong>${addendum.title}</strong></p><p><a href="${APP_URL}/sign/addendum/${token}" style="background:#C4622D;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;">Review &amp; Sign →</a></p><p>This link expires in 30 days.</p>`,
+      subject: `Please sign: ${addendum.title}`,
+      html: eBase(
+        gr(lt.tenant.name) +
+        paragraph(`Your landlord has sent you an addendum to review and sign: <strong>${addendum.title}</strong>`) +
+        dt([
+          ["Property", addr],
+          ["Document", addendum.title],
+          ["Link expires", "30 days from now"],
+        ]) +
+        button("Review & Sign →", `${APP_URL}/sign/addendum/${token}`) +
+        mt("This signing link is private — do not share it with anyone.")
+      ),
     });
   }
 

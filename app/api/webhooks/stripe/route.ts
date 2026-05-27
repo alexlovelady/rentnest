@@ -34,12 +34,22 @@ export async function POST(req: NextRequest) {
         // Send receipt to tenant
         if (payment.tenant?.email) {
           const { resend, FROM } = await import("@/lib/resend");
+          const { emailBase, greeting, ep, detailTable, alertBox } = await import("@/lib/email");
           const addr = `${payment.lease.unit.property.address}, Unit ${payment.lease.unit.unitNumber}`;
           await resend.emails.send({
             from: FROM,
             to: payment.tenant.email,
             subject: `Rent payment confirmed — ${addr}`,
-            html: `<p>Hi ${payment.tenant.name},</p><p>We received your rent payment of <strong>$${payment.totalAmount.toFixed(2)}</strong> for ${addr}. Thank you!</p>`,
+            html: emailBase(
+              alertBox("Your rent payment has been received. Thank you!", "success") +
+              greeting(payment.tenant.name) +
+              ep(`This confirms your rent payment for <strong>${addr}</strong>.`) +
+              detailTable([
+                ["Amount paid", `$${payment.totalAmount.toFixed(2)}`],
+                ["Property", addr],
+                ["Date", new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+              ])
+            ),
           });
         }
       }
