@@ -77,7 +77,7 @@ export function RenewLeaseButton({ leaseId, currentEndDate, currentRent, current
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-        <h2 className="text-lg font-bold text-[#1A2332] mb-1">Renew Lease</h2>
+        <h2 className="text-lg font-bold text-slate-dark mb-1">Renew Lease</h2>
         <p className="text-sm text-gray-500 mb-5">Creates a new lease with the same tenants and terms. Security deposit is marked as already held.</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Select label="Lease type" value={form.leaseType} onChange={(e) => setForm((f) => ({ ...f, leaseType: e.target.value }))}>

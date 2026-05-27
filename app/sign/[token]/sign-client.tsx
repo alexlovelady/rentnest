@@ -48,7 +48,7 @@ export function SignClient({ token, tenantName, address, monthlyRent, startDate,
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <Check size={32} className="text-green-600" />
         </div>
-        <h2 className="text-xl font-bold text-[#1A2332] mb-2">Lease signed</h2>
+        <h2 className="text-xl font-bold text-slate-dark mb-2">Lease signed</h2>
         <p className="text-gray-500 text-sm">Your signature has been recorded. Your landlord has been notified.</p>
       </div>
     );
@@ -70,7 +70,7 @@ export function SignClient({ token, tenantName, address, monthlyRent, startDate,
           href={documentUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="block text-center border border-[#C4622D] text-[#C4622D] rounded-xl py-3 text-sm font-medium hover:bg-[#C4622D]/5 transition"
+          className="block text-center border border-primary text-primary rounded-xl py-3 text-sm font-medium hover:bg-primary/5 transition"
         >
           View Lease Document →
         </a>

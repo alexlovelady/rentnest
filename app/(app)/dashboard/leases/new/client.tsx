@@ -119,11 +119,11 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
 
   return (
     <div className="p-4 md:p-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#1A2332] mb-2">New Lease</h1>
+      <h1 className="text-2xl font-bold text-slate-dark mb-2">New Lease</h1>
 
       <div className="flex gap-2 mb-8">
         {STEPS.map((s, i) => (
-          <div key={s} className={`flex-1 text-center text-xs py-1.5 rounded-full font-medium transition-colors ${i === step ? "bg-[#C4622D] text-white" : i < step ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-400"}`}>
+          <div key={s} className={`flex-1 text-center text-xs py-1.5 rounded-full font-medium transition-colors ${i === step ? "bg-primary text-white" : i < step ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-400"}`}>
             {s}
           </div>
         ))}
@@ -149,7 +149,7 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
               <div className="divide-y divide-gray-100 border border-gray-100 rounded-lg max-h-60 overflow-y-auto">
                 {tenants.map((t) => (
                   <label key={t.id} className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50">
-                    <input type="checkbox" checked={form.tenantIds.includes(t.id)} onChange={() => toggleTenant(t.id)} className="accent-[#C4622D]" />
+                    <input type="checkbox" checked={form.tenantIds.includes(t.id)} onChange={() => toggleTenant(t.id)} className="accent-primary" />
                     <div>
                       <p className="text-sm font-medium">{t.name}</p>
                       <p className="text-xs text-gray-400">{t.email || "No email"}</p>
@@ -196,7 +196,7 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
               <button
                 type="button"
                 onClick={() => setShowNewTenant(true)}
-                className="text-sm text-[#C4622D] hover:underline"
+                className="text-sm text-primary hover:underline"
               >
                 + Create new tenant
               </button>
@@ -259,7 +259,7 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
             </div>
             <Input label="Rent due day (1-28)" type="number" min="1" max="28" value={form.rentDueDay} onChange={(e) => setForm((f) => ({ ...f, rentDueDay: e.target.value }))} />
             <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" checked={form.lateFeeEnabled} onChange={(e) => setForm((f) => ({ ...f, lateFeeEnabled: e.target.checked }))} className="accent-[#C4622D]" />
+              <input type="checkbox" checked={form.lateFeeEnabled} onChange={(e) => setForm((f) => ({ ...f, lateFeeEnabled: e.target.checked }))} className="accent-primary" />
               Enable late fees
             </label>
             {form.lateFeeEnabled && (
@@ -273,7 +273,7 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
               </div>
             )}
             <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" checked={form.petsAllowed} onChange={(e) => setForm((f) => ({ ...f, petsAllowed: e.target.checked }))} className="accent-[#C4622D]" />
+              <input type="checkbox" checked={form.petsAllowed} onChange={(e) => setForm((f) => ({ ...f, petsAllowed: e.target.checked }))} className="accent-primary" />
               Pets allowed
             </label>
             {form.petsAllowed && (

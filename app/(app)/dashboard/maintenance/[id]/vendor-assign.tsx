@@ -39,7 +39,7 @@ export function VendorAssign({ requestId, currentVendorId, currentVendorName, ve
         {currentVendorId ? (
           <>
             <span className="text-sm text-gray-700 font-medium">{currentVendorName}</span>
-            <button onClick={() => setSelecting(true)} className="text-xs text-[#C4622D] hover:underline">Change</button>
+            <button onClick={() => setSelecting(true)} className="text-xs text-primary hover:underline">Change</button>
             <button onClick={() => handleSelect(null)} disabled={loading} className="text-xs text-gray-400 hover:text-red-400">Remove</button>
           </>
         ) : (
@@ -58,8 +58,8 @@ export function VendorAssign({ requestId, currentVendorId, currentVendorName, ve
           disabled={loading}
           className={`text-sm px-3 py-1.5 rounded-lg border transition ${
             v.id === currentVendorId
-              ? "bg-[#C4622D] text-white border-[#C4622D]"
-              : "bg-white text-gray-700 border-gray-200 hover:border-[#C4622D]/40"
+              ? "bg-primary text-white border-primary"
+              : "bg-white text-gray-700 border-gray-200 hover:border-primary/40"
           }`}
         >
           <span className="font-medium">{v.name}</span>

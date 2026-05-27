@@ -20,7 +20,7 @@ export default async function TenantDocumentsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-[#1A2332]">Documents</h1>
+      <h1 className="text-xl font-bold text-slate-dark">Documents</h1>
       <p className="text-sm text-gray-500">Documents shared by your landlord.</p>
 
       {documents.length === 0 ? (
@@ -40,7 +40,7 @@ export default async function TenantDocumentsPage() {
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="gray" className="capitalize">{doc.docType}</Badge>
-                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#C4622D]">
+                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary">
                   <Download size={16} />
                 </a>
               </div>

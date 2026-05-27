@@ -17,7 +17,7 @@ export default async function TenantMaintenancePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-[#1A2332]">Maintenance</h1>
+        <h1 className="text-xl font-bold text-slate-dark">Maintenance</h1>
         <Link href="/tenant-portal/maintenance/new">
           <Button size="sm"><Plus size={14} /> New Request</Button>
         </Link>

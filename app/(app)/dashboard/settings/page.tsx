@@ -12,7 +12,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
   return (
     <div className="p-4 md:p-8 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#1A2332] mb-8">Settings</h1>
+      <h1 className="text-2xl font-bold text-slate-dark mb-8">Settings</h1>
 
       {billing === "success" && (
         <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">

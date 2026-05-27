@@ -82,7 +82,7 @@ export default function NewTenantMaintenancePage() {
       <Link href="/tenant-portal/maintenance" className="text-sm text-gray-500 flex items-center gap-1">
         <ArrowLeft size={14} /> Back
       </Link>
-      <h1 className="text-xl font-bold text-[#1A2332]">Submit Maintenance Request</h1>
+      <h1 className="text-xl font-bold text-slate-dark">Submit Maintenance Request</h1>
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="What's the issue?" name="title" placeholder="e.g. Kitchen faucet leaking" required />

@@ -35,7 +35,7 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2332]">Expenses</h1>
+          <h1 className="text-2xl font-bold text-slate-dark">Expenses</h1>
           <p className="text-sm text-gray-500">Year: {year} · Total: {formatCurrency(total)}</p>
         </div>
         <AddExpenseModal properties={properties} />

@@ -39,7 +39,7 @@ export default function LoginPage() {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A2332] mb-1">Welcome back</h1>
+        <h1 className="text-2xl font-bold text-slate-dark mb-1">Welcome back</h1>
         <p className="text-sm text-gray-500">Sign in to your RentNest account</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -52,7 +52,7 @@ export default function LoginPage() {
       </form>
       <p className="text-sm text-gray-500 text-center mt-6">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="text-[#C4622D] hover:underline font-medium">
+        <Link href="/signup" className="text-primary hover:underline font-medium">
           Start free trial
         </Link>
       </p>

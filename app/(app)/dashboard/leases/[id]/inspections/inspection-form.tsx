@@ -56,7 +56,7 @@ export function InspectionForm({ leaseId, onCancel }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="border border-gray-100 rounded-xl p-5 space-y-5 bg-gray-50">
-      <h3 className="font-semibold text-[#1A2332]">New Inspection</h3>
+      <h3 className="font-semibold text-slate-dark">New Inspection</h3>
 
       <div className="grid grid-cols-2 gap-4">
         <Select label="Type" value={type} onChange={(e) => setType(e.target.value)}>
@@ -73,14 +73,14 @@ export function InspectionForm({ leaseId, onCancel }: Props) {
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           placeholder="e.g. Unit generally clean, minor scuffs on walls"
-          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30 resize-none"
+          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
         />
       </div>
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-gray-700">Rooms / Areas</p>
-          <button type="button" onClick={addItem} className="text-xs text-[#C4622D] hover:underline flex items-center gap-1">
+          <button type="button" onClick={addItem} className="text-xs text-primary hover:underline flex items-center gap-1">
             <Plus size={12} /> Add room
           </button>
         </div>
@@ -92,7 +92,7 @@ export function InspectionForm({ leaseId, onCancel }: Props) {
                 <select
                   value={item.room}
                   onChange={(e) => updateItem(i, "room", e.target.value)}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30"
+                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/30"
                 >
                   {ROOMS.map((r) => <option key={r} value={r}>{r}</option>)}
                 </select>
@@ -120,7 +120,7 @@ export function InspectionForm({ leaseId, onCancel }: Props) {
               value={item.notes}
               onChange={(e) => updateItem(i, "notes", e.target.value)}
               placeholder="Notes (e.g. small scratch on door)"
-              className="w-full text-xs border border-gray-100 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30"
+              className="w-full text-xs border border-gray-100 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
         ))}

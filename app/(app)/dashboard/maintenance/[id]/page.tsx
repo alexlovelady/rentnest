@@ -50,7 +50,7 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
         <div className="col-span-2 space-y-6">
           <div className="bg-white rounded-xl border border-gray-100 p-6">
             <div className="flex items-start justify-between mb-4">
-              <h1 className="text-xl font-bold text-[#1A2332]">{req.title}</h1>
+              <h1 className="text-xl font-bold text-slate-dark">{req.title}</h1>
               <div className="flex gap-2">
                 <Badge variant={priorityColor[req.priority as keyof typeof priorityColor] || "gray"} className="capitalize">{req.priority}</Badge>
                 <Badge variant={statusColor[req.status as keyof typeof statusColor] || "gray"} className="capitalize">{req.status.replace("_", " ")}</Badge>

@@ -38,7 +38,7 @@ export function TenantMessageForm({ tenantName }: { tenantName: string }) {
           onChange={(e) => setBody(e.target.value)}
           rows={2}
           placeholder={`Message your landlord as ${tenantName}…`}
-          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30 resize-none"
+          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
         />
         {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
       </div>

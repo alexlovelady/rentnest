@@ -43,7 +43,7 @@ export function MessagesPanel({ leaseId, messages }: Props) {
         <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
           {messages.map((m) => (
             <div key={m.id} className={`flex ${m.senderRole === "landlord" ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[75%] rounded-xl px-4 py-2.5 text-sm ${m.senderRole === "landlord" ? "bg-[#C4622D] text-white" : "bg-gray-100 text-gray-800"}`}>
+              <div className={`max-w-[75%] rounded-xl px-4 py-2.5 text-sm ${m.senderRole === "landlord" ? "bg-primary text-white" : "bg-gray-100 text-gray-800"}`}>
                 {m.senderRole === "tenant" && m.tenant && (
                   <p className="text-xs font-medium mb-1 opacity-70">{m.tenant.name}</p>
                 )}
@@ -64,7 +64,7 @@ export function MessagesPanel({ leaseId, messages }: Props) {
             onChange={(e) => setBody(e.target.value)}
             rows={2}
             placeholder="Type a message to your tenant(s)…"
-            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30 resize-none"
+            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
           />
         </div>
         <Button type="submit" size="sm" disabled={loading || !body.trim()} className="shrink-0">

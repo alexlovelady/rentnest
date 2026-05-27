@@ -68,7 +68,7 @@ export function VendorForm({ vendor, trades }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-        <h2 className="text-lg font-bold text-[#1A2332] mb-5">{vendor ? "Edit Vendor" : "Add Vendor"}</h2>
+        <h2 className="text-lg font-bold text-slate-dark mb-5">{vendor ? "Edit Vendor" : "Add Vendor"}</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <Input label="Name" name="name" defaultValue={vendor?.name} required placeholder="e.g. Mike's Plumbing" />
           <Select label="Trade" name="trade" defaultValue={vendor?.trade || "general"}>
@@ -86,7 +86,7 @@ export function VendorForm({ vendor, trades }: Props) {
               defaultValue={vendor?.notes || ""}
               rows={2}
               placeholder="e.g. Only available weekdays, prefers cash"
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30 resize-none"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
             />
           </div>
           <div className="flex gap-2 pt-1">

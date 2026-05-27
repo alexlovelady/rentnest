@@ -40,7 +40,7 @@ export default async function LeasesPage({ searchParams }: { searchParams: Promi
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-[#1A2332]">Leases</h1>
+        <h1 className="text-2xl font-bold text-slate-dark">Leases</h1>
         <Link href="/dashboard/leases/new">
           <Button><Plus size={16} /> New Lease</Button>
         </Link>

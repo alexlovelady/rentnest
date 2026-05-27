@@ -128,13 +128,13 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-[#1A2332]">Reports</h1>
+        <h1 className="text-2xl font-bold text-slate-dark">Reports</h1>
         <ReportYearSelect currentYear={year} currentReport={report} />
       </div>
 
       <div className="flex gap-2 mb-6 flex-wrap">
         {[["rent-roll", "Rent Roll"], ["income", "Income & Expense"], ["vacancy", "Vacancy"], ["maintenance", "Maintenance Costs"], ["statements", "Owner Statements"]].map(([id, label]) => (
-          <a key={id} href={`/dashboard/reports?report=${id}&year=${year}&month=${month}`} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${report === id ? "bg-[#C4622D] text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
+          <a key={id} href={`/dashboard/reports?report=${id}&year=${year}&month=${month}`} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${report === id ? "bg-primary text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
             {label}
           </a>
         ))}
@@ -242,7 +242,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                 <a
                   key={m}
                   href={`/dashboard/reports?report=statements&year=${year}&month=${i + 1}`}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${month === i + 1 ? "bg-[#1A2332] text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${month === i + 1 ? "bg-slate-dark text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}
                 >
                   {m}
                 </a>

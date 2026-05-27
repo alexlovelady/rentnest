@@ -51,7 +51,7 @@ export function EditUnitModal({ unit }: Props) {
     <>
       <button
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(true); }}
-        className="p-1.5 rounded-md text-gray-400 hover:text-[#C4622D] hover:bg-orange-50 transition-colors"
+        className="p-1.5 rounded-md text-gray-400 hover:text-primary hover:bg-orange-50 transition-colors"
         title="Edit unit"
       >
         <Pencil size={14} />

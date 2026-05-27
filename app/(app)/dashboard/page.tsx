@@ -90,14 +90,14 @@ export default async function DashboardPage() {
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A2332]">Good morning, {user.name.split(" ")[0]}</h1>
+        <h1 className="text-2xl font-bold text-slate-dark">Good morning, {user.name.split(" ")[0]}</h1>
         <p className="text-sm text-gray-500">{monthName(month)} {year} overview</p>
       </div>
 
       {trialDaysLeft !== null && trialDaysLeft <= 7 && user.plan === "trial" && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 flex items-center justify-between">
           <p className="text-yellow-800 text-sm font-medium">Trial expires in {trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""}.</p>
-          <Link href="/dashboard/settings" className="text-sm text-[#C4622D] font-medium hover:underline">Subscribe now →</Link>
+          <Link href="/dashboard/settings" className="text-sm text-primary font-medium hover:underline">Subscribe now →</Link>
         </div>
       )}
 
@@ -111,7 +111,7 @@ export default async function DashboardPage() {
 
       {/* Onboarding checklist */}
       {!onboardingDone && (
-        <Card className="mb-8 border-[#C4622D]/20 bg-orange-50/30">
+        <Card className="mb-8 border-primary/20 bg-orange-50/30">
           <CardHeader>
             <CardTitle className="text-base">Get started with RentNest</CardTitle>
           </CardHeader>
@@ -127,7 +127,7 @@ export default async function DashboardPage() {
                 <Link
                   key={step.label}
                   href={step.done ? "#" : step.href}
-                  className={`flex items-center gap-3 text-sm ${step.done ? "text-gray-400 pointer-events-none" : "text-gray-700 hover:text-[#C4622D]"}`}
+                  className={`flex items-center gap-3 text-sm ${step.done ? "text-gray-400 pointer-events-none" : "text-gray-700 hover:text-primary"}`}
                 >
                   {step.done
                     ? <CheckCircle2 size={16} className="text-green-500 shrink-0" />
@@ -260,7 +260,7 @@ export default async function DashboardPage() {
         <Card className="mt-6">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2"><Building2 size={16} /> Occupancy</CardTitle>
-            <span className="text-2xl font-bold text-[#1A2332]">
+            <span className="text-2xl font-bold text-slate-dark">
               {`${Math.round((occupiedCount / allUnits.length) * 100)}%`}
               <span className="text-sm font-normal text-gray-400 ml-1">occupied</span>
             </span>
@@ -280,7 +280,7 @@ export default async function DashboardPage() {
                     <span className="text-sm text-gray-600 w-40 truncate">{p.label}</span>
                     <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
                       <div
-                        className="h-2 rounded-full bg-[#C4622D]"
+                        className="h-2 rounded-full bg-primary"
                         style={{ width: `${Math.round((p.occupied / p.total) * 100)}%` }}
                       />
                     </div>

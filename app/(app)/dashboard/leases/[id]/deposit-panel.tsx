@@ -142,7 +142,7 @@ export function DepositPanel({
                 placeholder="Description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30"
+                className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <input
                 type="number"
@@ -151,7 +151,7 @@ export function DepositPanel({
                 onChange={(e) => setAmount(e.target.value)}
                 min={0}
                 step="0.01"
-                className="w-24 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30"
+                className="w-24 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
               <Button size="sm" onClick={handleAddDeduction} disabled={loading === "deduction"}>Add</Button>
               <Button size="sm" variant="secondary" onClick={() => { setAddingDeduction(false); setDescription(""); setAmount(""); }}>Cancel</Button>

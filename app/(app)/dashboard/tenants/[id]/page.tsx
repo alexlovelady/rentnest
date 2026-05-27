@@ -43,7 +43,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
       <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[#1A2332]">{tenant.name}</h1>
+            <h1 className="text-xl font-bold text-slate-dark">{tenant.name}</h1>
             {tenant.email && (
               <p className="text-sm text-gray-500 flex items-center gap-1.5 mt-1"><Mail size={12} />{tenant.email}</p>
             )}
@@ -92,7 +92,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
         <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold">Current Lease</h2>
-            <Link href={`/dashboard/leases/${activeLease.id}`} className="text-xs text-[#C4622D] hover:underline">View →</Link>
+            <Link href={`/dashboard/leases/${activeLease.id}`} className="text-xs text-primary hover:underline">View →</Link>
           </div>
           <p className="text-sm text-gray-600">{activeLease.unit.property.address}, Unit {activeLease.unit.unitNumber}</p>
           <p className="text-sm">{formatCurrency(activeLease.monthlyRent)}/mo · Due day {activeLease.rentDueDay}</p>
@@ -134,7 +134,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
           <h2 className="text-sm font-semibold mb-4">Maintenance Requests</h2>
           <div className="space-y-3">
             {tenant.maintenanceRequests.map((req) => (
-              <Link key={req.id} href={`/dashboard/maintenance/${req.id}`} className="flex items-center justify-between text-sm hover:text-[#C4622D]">
+              <Link key={req.id} href={`/dashboard/maintenance/${req.id}`} className="flex items-center justify-between text-sm hover:text-primary">
                 <span>{req.title}</span>
                 <Badge variant={req.status === "resolved" ? "green" : "yellow"}>{req.status}</Badge>
               </Link>

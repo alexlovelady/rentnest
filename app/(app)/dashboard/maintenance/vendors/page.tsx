@@ -22,7 +22,7 @@ export default async function VendorsPage() {
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2332]">Vendors</h1>
+          <h1 className="text-2xl font-bold text-slate-dark">Vendors</h1>
           <p className="text-sm text-gray-500">Save contractor info to quickly assign to maintenance jobs.</p>
         </div>
         <VendorForm trades={TRADES} />
@@ -38,24 +38,24 @@ export default async function VendorsPage() {
             <div key={v.id} className="bg-white border border-gray-100 rounded-xl p-5">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <p className="font-semibold text-[#1A2332]">{v.name}</p>
+                  <p className="font-semibold text-slate-dark">{v.name}</p>
                   <p className="text-xs text-gray-400 capitalize">{v.trade}</p>
                 </div>
                 <VendorForm vendor={v} trades={TRADES} />
               </div>
               <div className="space-y-1 mt-3">
                 {v.phone && (
-                  <a href={`tel:${v.phone}`} className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#C4622D]">
+                  <a href={`tel:${v.phone}`} className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary">
                     <Phone size={12} className="text-gray-400" /> {v.phone}
                   </a>
                 )}
                 {v.email && (
-                  <a href={`mailto:${v.email}`} className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#C4622D]">
+                  <a href={`mailto:${v.email}`} className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary">
                     <Mail size={12} className="text-gray-400" /> {v.email}
                   </a>
                 )}
                 {v.website && (
-                  <a href={v.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#C4622D]">
+                  <a href={v.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-primary">
                     <Globe size={12} className="text-gray-400" /> {v.website}
                   </a>
                 )}

@@ -37,7 +37,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
       </Link>
 
       <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
-        <h1 className="text-xl font-bold text-[#1A2332]">Unit {unit.unitNumber}</h1>
+        <h1 className="text-xl font-bold text-slate-dark">Unit {unit.unitNumber}</h1>
         <p className="text-sm text-gray-500">{unit.bedrooms}bd / {unit.bathrooms}ba{unit.squareFeet ? ` · ${unit.squareFeet} sqft` : ""}</p>
       </div>
 
@@ -45,7 +45,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
         <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
           <div className="flex items-start justify-between mb-4">
             <h2 className="text-sm font-semibold text-gray-900">Current Lease</h2>
-            <Link href={`/dashboard/leases/${activeLease.id}`} className="text-xs text-[#C4622D] hover:underline">View full lease →</Link>
+            <Link href={`/dashboard/leases/${activeLease.id}`} className="text-xs text-primary hover:underline">View full lease →</Link>
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
@@ -72,7 +72,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
             <p className="font-medium text-yellow-800">Unit is vacant</p>
             <p className="text-sm text-yellow-600">No active lease for this unit.</p>
           </div>
-          <Link href={`/dashboard/leases/new?unitId=${unitId}`} className="text-sm bg-[#C4622D] text-white px-4 py-2 rounded-lg hover:bg-[#a8522a] transition">
+          <Link href={`/dashboard/leases/new?unitId=${unitId}`} className="text-sm bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition">
             Add Lease
           </Link>
         </div>
@@ -124,7 +124,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Recent Maintenance</h2>
           <div className="space-y-3">
             {unit.maintenanceRequests.map((req) => (
-              <Link key={req.id} href={`/dashboard/maintenance/${req.id}`} className="flex items-center justify-between hover:text-[#C4622D] transition-colors">
+              <Link key={req.id} href={`/dashboard/maintenance/${req.id}`} className="flex items-center justify-between hover:text-primary transition-colors">
                 <div>
                   <p className="text-sm font-medium">{req.title}</p>
                   <p className="text-xs text-gray-500 capitalize">{req.category} · {req.priority}</p>

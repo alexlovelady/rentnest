@@ -42,7 +42,7 @@ export default function SignupPage() {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A2332] mb-1">Start your free trial</h1>
+        <h1 className="text-2xl font-bold text-slate-dark mb-1">Start your free trial</h1>
         <p className="text-sm text-gray-500">14 days free, no credit card required</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -59,7 +59,7 @@ export default function SignupPage() {
       </p>
       <p className="text-sm text-gray-500 text-center mt-3">
         Already have an account?{" "}
-        <Link href="/login" className="text-[#C4622D] hover:underline font-medium">
+        <Link href="/login" className="text-primary hover:underline font-medium">
           Sign in
         </Link>
       </p>

@@ -132,7 +132,7 @@ export function AddendumsPanel({ leaseId, addendums, hasTenants }: Props) {
               rows={5}
               placeholder="Enter the addendum terms…"
               required
-              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30 resize-none"
+              className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
             />
           </div>
           <div className="flex gap-2">

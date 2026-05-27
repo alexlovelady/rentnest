@@ -51,7 +51,7 @@ export default async function RentPage() {
     return (
       <tr className={isOverdue ? "bg-red-50/30" : ""}>
         <td className="px-6 py-3">
-          <Link href={`/dashboard/properties/${p.lease.unit.propertyId}`} className="text-[#C4622D] hover:underline">
+          <Link href={`/dashboard/properties/${p.lease.unit.propertyId}`} className="text-primary hover:underline">
             {p.lease.unit.property.address}
           </Link>
           <p className="text-xs text-gray-400">Unit {p.lease.unit.unitNumber}{showPeriod ? ` · ${monthName(p.periodMonth)} ${p.periodYear}` : ""}</p>
@@ -82,7 +82,7 @@ export default async function RentPage() {
     <div className="p-4 md:p-8 max-w-6xl mx-auto">
       <div className="flex flex-wrap items-start justify-between mb-6 gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2332]">Rent Collection</h1>
+          <h1 className="text-2xl font-bold text-slate-dark">Rent Collection</h1>
           <p className="text-sm text-gray-500">{monthName(month)} {year}</p>
         </div>
         <div className="flex gap-2 flex-wrap">

@@ -33,7 +33,7 @@ export default async function DocumentsPage() {
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-[#1A2332]">Documents</h1>
+        <h1 className="text-2xl font-bold text-slate-dark">Documents</h1>
         <UploadDocumentModal properties={properties} leases={leases} />
       </div>
 
@@ -58,7 +58,7 @@ export default async function DocumentsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <Badge variant={docTypeColor[doc.docType] || "gray"} className="capitalize">{doc.docType}</Badge>
-                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#C4622D] transition">
+                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition">
                   <Download size={16} />
                 </a>
               </div>

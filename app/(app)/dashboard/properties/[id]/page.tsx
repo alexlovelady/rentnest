@@ -44,7 +44,7 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
       <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[#1A2332]">{property.nickname}</h1>
+            <h1 className="text-xl font-bold text-slate-dark">{property.nickname}</h1>
             <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
               <MapPin size={12} /> {property.address}{property.address2 ? `, ${property.address2}` : ""}, {property.city}, {property.state} {property.zip}
             </p>
@@ -73,14 +73,14 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
             <Link
               key={unit.id}
               href={`/dashboard/properties/${property.id}/units/${unit.id}`}
-              className="bg-white rounded-xl border border-gray-100 p-5 hover:border-[#C4622D]/30 hover:shadow-sm transition-all flex items-center justify-between group"
+              className="bg-white rounded-xl border border-gray-100 p-5 hover:border-primary/30 hover:shadow-sm transition-all flex items-center justify-between group"
             >
               <div className="flex items-center gap-4">
                 <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center">
                   <Home size={16} className="text-gray-500" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 group-hover:text-[#C4622D] transition-colors">Unit {unit.unitNumber}</p>
+                  <p className="font-medium text-gray-900 group-hover:text-primary transition-colors">Unit {unit.unitNumber}</p>
                   <p className="text-xs text-gray-500">{unit.bedrooms}bd / {unit.bathrooms}ba{unit.squareFeet ? ` · ${unit.squareFeet} sqft` : ""}</p>
                 </div>
               </div>

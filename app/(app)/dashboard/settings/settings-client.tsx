@@ -131,8 +131,8 @@ export function SettingsClient({ user, daysLeft }: Props) {
             <div className="grid grid-cols-3 gap-3">
               {PLANS.map(p => (
                 <div key={p.id} className="border border-gray-200 rounded-xl p-4 text-center">
-                  <p className="font-bold text-[#1A2332]">{p.label}</p>
-                  <p className="text-[#C4622D] font-semibold">{p.price}</p>
+                  <p className="font-bold text-slate-dark">{p.label}</p>
+                  <p className="text-primary font-semibold">{p.price}</p>
                   <p className="text-xs text-gray-500 mb-3">{p.units}</p>
                   <Button size="sm" className="w-full" onClick={() => startCheckout(p.id)} disabled={billingLoading}>Subscribe</Button>
                 </div>
@@ -175,7 +175,7 @@ export function SettingsClient({ user, daysLeft }: Props) {
             <div>
               <p className="text-sm font-medium text-gray-700 mb-2">Stripe Fee Passthrough</p>
               <label className="flex items-start gap-2 text-sm cursor-pointer">
-                <input type="checkbox" name="feePassthrough" defaultChecked={user.feePassthrough} className="accent-[#C4622D] mt-0.5" />
+                <input type="checkbox" name="feePassthrough" defaultChecked={user.feePassthrough} className="accent-primary mt-0.5" />
                 <span className="text-gray-600">Pass Stripe processing fees (~2.9% + $0.30) to the tenant. The tenant pays a slightly higher amount so you receive the full rent.</span>
               </label>
             </div>
@@ -184,7 +184,7 @@ export function SettingsClient({ user, daysLeft }: Props) {
               <p className="text-xs text-gray-500 mb-3">Applied automatically when creating new leases. You can override per lease.</p>
               <div className="space-y-3">
                 <label className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="checkbox" name="defaultLateFeeEnabled" defaultChecked={user.defaultLateFeeEnabled} className="accent-[#C4622D]" />
+                  <input type="checkbox" name="defaultLateFeeEnabled" defaultChecked={user.defaultLateFeeEnabled} className="accent-primary" />
                   Enable late fees by default on new leases
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -221,11 +221,11 @@ export function SettingsClient({ user, daysLeft }: Props) {
             className="space-y-3"
           >
             <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" name="showEmailToTenants" defaultChecked={user.showEmailToTenants} className="accent-[#C4622D]" />
+              <input type="checkbox" name="showEmailToTenants" defaultChecked={user.showEmailToTenants} className="accent-primary" />
               Show my email address to tenants ({user.email})
             </label>
             <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" name="showPhoneToTenants" defaultChecked={user.showPhoneToTenants} className="accent-[#C4622D]" />
+              <input type="checkbox" name="showPhoneToTenants" defaultChecked={user.showPhoneToTenants} className="accent-primary" />
               Show my phone number to tenants{user.phone ? ` (${user.phone})` : " — add a phone number in Account first"}
             </label>
             <Button type="submit" size="sm" disabled={saving === "contact"}>{saving === "contact" ? "Saving…" : "Save"}</Button>
@@ -247,7 +247,7 @@ export function SettingsClient({ user, daysLeft }: Props) {
               { name: "notifyOnSignature", label: "When a tenant signs their lease", checked: user.notifyOnSignature },
             ].map((n) => (
               <label key={n.name} className="flex items-center gap-2 text-sm cursor-pointer">
-                <input type="checkbox" name={n.name} defaultChecked={n.checked} className="accent-[#C4622D]" />
+                <input type="checkbox" name={n.name} defaultChecked={n.checked} className="accent-primary" />
                 {n.label}
               </label>
             ))}

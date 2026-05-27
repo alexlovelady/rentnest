@@ -55,7 +55,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
       <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h1 className="text-xl font-bold text-[#1A2332]">
+            <h1 className="text-xl font-bold text-slate-dark">
               {lease.tenants.map((lt) => lt.tenant.name).join(" & ")}
             </h1>
             <p className="text-sm text-gray-500">{lease.unit.property.address}, Unit {lease.unit.unitNumber}</p>
@@ -174,7 +174,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
       <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold">Inspections</h2>
-          <Link href={`/dashboard/leases/${lease.id}/inspections`} className="flex items-center gap-1 text-xs text-[#C4622D] hover:underline">
+          <Link href={`/dashboard/leases/${lease.id}/inspections`} className="flex items-center gap-1 text-xs text-primary hover:underline">
             <ClipboardList size={13} /> View Reports
           </Link>
         </div>

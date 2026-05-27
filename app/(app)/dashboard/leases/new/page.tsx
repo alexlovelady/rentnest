@@ -11,7 +11,7 @@ export default async function NewLeasePage() {
     lateFeeGracePeriodDays: String(user.defaultLateFeeGraceDays),
   };
   return (
-    <Suspense fallback={<div className="p-8"><div className="w-6 h-6 border-2 border-[#C4622D] border-t-transparent rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<div className="p-8"><div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>}>
       <NewLeaseClient defaults={defaults} />
     </Suspense>
   );

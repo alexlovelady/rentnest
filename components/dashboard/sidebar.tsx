@@ -43,7 +43,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
                 active
-                  ? "bg-[#C4622D] text-white"
+                  ? "bg-primary text-white"
                   : "text-gray-300 hover:bg-white/10 hover:text-white"
               )}
             >
@@ -68,7 +68,7 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 bg-[#1A2332] flex-col h-full shrink-0">
+      <aside className="hidden md:flex w-56 bg-slate-dark flex-col h-full shrink-0">
         <div className="px-5 py-5 border-b border-white/10">
           <span className="text-white font-bold text-lg tracking-tight">RentNest</span>
         </div>
@@ -76,7 +76,7 @@ export function Sidebar() {
       </aside>
 
       {/* Mobile top bar */}
-      <header className="md:hidden fixed top-0 inset-x-0 z-30 bg-[#1A2332] h-14 px-4 flex items-center justify-between">
+      <header className="md:hidden fixed top-0 inset-x-0 z-30 bg-slate-dark h-14 px-4 flex items-center justify-between">
         <span className="text-white font-bold text-lg tracking-tight">RentNest</span>
         <button onClick={() => setOpen(true)} className="text-white p-1 -mr-1" aria-label="Open menu">
           <Menu size={22} />
@@ -86,7 +86,7 @@ export function Sidebar() {
       {/* Mobile drawer */}
       {open && (
         <div className="md:hidden fixed inset-0 z-40 flex">
-          <aside className="w-64 bg-[#1A2332] flex flex-col h-full">
+          <aside className="w-64 bg-slate-dark flex flex-col h-full">
             <div className="px-5 h-14 border-b border-white/10 flex items-center justify-between">
               <span className="text-white font-bold text-lg tracking-tight">RentNest</span>
               <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white -mr-1" aria-label="Close menu">

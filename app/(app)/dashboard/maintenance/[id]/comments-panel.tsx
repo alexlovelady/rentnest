@@ -75,7 +75,7 @@ export function CommentsPanel({ requestId, initialComments }: Props) {
                 href={c.attachmentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 mt-1.5 text-xs text-[#C4622D] hover:underline"
+                className="inline-flex items-center gap-1 mt-1.5 text-xs text-primary hover:underline"
               >
                 <FileText size={12} />
                 {c.attachmentName || "Attachment"}

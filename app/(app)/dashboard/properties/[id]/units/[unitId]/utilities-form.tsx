@@ -93,7 +93,7 @@ export function UtilitiesForm({ unitId, propertyId, utilitiesIncluded, utilities
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="e.g. Water included up to $50/mo"
-          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C4622D]/30"
+          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
       </div>
       <div className="flex gap-2">

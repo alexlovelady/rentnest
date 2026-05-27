@@ -29,7 +29,7 @@ export default async function PropertiesPage() {
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2332]">Properties</h1>
+          <h1 className="text-2xl font-bold text-slate-dark">Properties</h1>
           <p className="text-sm text-gray-500 mt-1">{properties.length} propert{properties.length === 1 ? "y" : "ies"}</p>
         </div>
         <NewPropertyModal />
@@ -56,15 +56,15 @@ export default async function PropertiesPage() {
               <Link
                 key={property.id}
                 href={`/dashboard/properties/${property.id}`}
-                className="bg-white rounded-xl border border-gray-100 p-6 hover:border-[#C4622D]/30 hover:shadow-md transition-all group"
+                className="bg-white rounded-xl border border-gray-100 p-6 hover:border-primary/30 hover:shadow-md transition-all group"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-[#C4622D]/10 rounded-lg flex items-center justify-center">
-                      <Home size={18} className="text-[#C4622D]" />
+                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                      <Home size={18} className="text-primary" />
                     </div>
                     <div>
-                      <h2 className="font-semibold text-gray-900 group-hover:text-[#C4622D] transition-colors">
+                      <h2 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
                         {property.nickname}
                       </h2>
                       <p className="text-sm text-gray-500">

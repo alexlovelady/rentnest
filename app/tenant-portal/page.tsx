@@ -53,7 +53,7 @@ export default async function TenantPortalPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-[#1A2332]">Hi {tenant.name}</h1>
+        <h1 className="text-xl font-bold text-slate-dark">Hi {tenant.name}</h1>
         <p className="text-sm text-gray-500">{addr}</p>
       </div>
 
@@ -62,7 +62,7 @@ export default async function TenantPortalPage() {
         <p className="text-sm font-medium text-gray-600 mb-2">{monthName(month)} {year} Rent</p>
         {currentPayment ? (
           <>
-            <p className="text-3xl font-bold text-[#1A2332] mb-2">{formatCurrency(currentPayment.totalAmount)}</p>
+            <p className="text-3xl font-bold text-slate-dark mb-2">{formatCurrency(currentPayment.totalAmount)}</p>
             {currentPayment.status === "paid" ? (
               <div>
                 <Badge variant="green" className="text-sm px-3 py-1">Paid on {currentPayment.paidAt ? formatDate(currentPayment.paidAt) : "—"}</Badge>
@@ -140,19 +140,19 @@ export default async function TenantPortalPage() {
 
       {/* Quick links */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Link href="/tenant-portal/maintenance/new" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
+        <Link href="/tenant-portal/maintenance/new" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-primary/30 transition">
           <Wrench size={20} className="mx-auto text-gray-400 mb-1" />
           <p className="text-xs font-medium text-gray-700">Maintenance</p>
         </Link>
-        <Link href="/tenant-portal/documents" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
+        <Link href="/tenant-portal/documents" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-primary/30 transition">
           <FileText size={20} className="mx-auto text-gray-400 mb-1" />
           <p className="text-xs font-medium text-gray-700">Documents</p>
         </Link>
-        <Link href="/tenant-portal/messages" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
+        <Link href="/tenant-portal/messages" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-primary/30 transition">
           <MessageSquare size={20} className="mx-auto text-gray-400 mb-1" />
           <p className="text-xs font-medium text-gray-700">Messages</p>
         </Link>
-        <Link href="/tenant-portal/maintenance" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-[#C4622D]/30 transition">
+        <Link href="/tenant-portal/maintenance" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-primary/30 transition">
           <DollarSign size={20} className="mx-auto text-gray-400 mb-1" />
           <p className="text-xs font-medium text-gray-700">History</p>
         </Link>
@@ -182,7 +182,7 @@ export default async function TenantPortalPage() {
             {landlord.showPhoneToTenants && landlord.phone && (
               <a
                 href={`tel:${landlord.phone}`}
-                className="flex items-center gap-2 text-sm font-medium text-[#1A2332] hover:text-[#C4622D] transition"
+                className="flex items-center gap-2 text-sm font-medium text-slate-dark hover:text-primary transition"
               >
                 <Phone size={15} className="text-gray-400" />
                 {landlord.phone}
@@ -191,7 +191,7 @@ export default async function TenantPortalPage() {
             {landlord.showEmailToTenants && landlord.email && (
               <a
                 href={`mailto:${landlord.email}`}
-                className="flex items-center gap-2 text-sm font-medium text-[#1A2332] hover:text-[#C4622D] transition"
+                className="flex items-center gap-2 text-sm font-medium text-slate-dark hover:text-primary transition"
               >
                 <Mail size={15} className="text-gray-400" />
                 {landlord.email}
