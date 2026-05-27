@@ -198,26 +198,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-16 sm:py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-10" style={{ fontFamily: "var(--font-lora, serif)" }}>What landlords are saying</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {[
-            { quote: "I was still using a Google Sheet and Venmo. Setting up RentNest took 20 minutes. My tenants actually prefer paying online.", name: "David K.", detail: "3-unit landlord, Austin TX" },
-            { quote: "The maintenance tracking is worth it alone. I used to miss things. Now every request has a paper trail.", name: "Michelle T.", detail: "7-unit landlord, Columbus OH" },
-            { quote: "I switched from Cozy when Apartments.com made it basically unusable. This is exactly what I needed.", name: "Ray S.", detail: "4-unit landlord, Denver CO" },
-          ].map((t) => (
-            <div key={t.name} className="bg-[#FDFAF5] rounded-2xl p-6 border border-[#1A2332]/10">
-              <p className="text-sm text-gray-700 italic mb-4">&ldquo;{t.quote}&rdquo;</p>
-              <p className="text-sm font-semibold text-[#1A2332]">{t.name}</p>
-              <p className="text-xs text-gray-400">{t.detail}</p>
-            </div>
-          ))}
-          </div>
-        </div>
-      </section>
-
       {/* FAQ */}
       <section className="py-16 sm:py-20 px-6 bg-[#FDFAF5]">
         <div className="max-w-2xl mx-auto">
@@ -228,7 +208,6 @@ export default function LandingPage() {
               { q: "What does my tenant need to use the portal?", a: "Just an email address. They get a link and can access it without creating an account. No app to download, no new password to remember." },
               { q: "How does online rent collection work?", a: "We use Stripe to process payments. Tenants pay by bank transfer (ACH) or card. Funds go to your connected bank account within 2 business days. Standard Stripe processing fees apply — we take nothing." },
               { q: "Can I use RentNest if I only have one unit?", a: "Yes. The Starter plan at $19/month covers up to 5 units, so you're getting good value even if you only have one." },
-              { q: "Can I import data from Cozy or TurboTenant?", a: "Yes. We support CSV import for tenant and payment history. Contact us after signing up and we'll help you migrate." },
             ].map((faq) => (
               <div key={faq.q} className="border-b border-[#1A2332]/10 pb-6">
                 <h3 className="font-semibold mb-2">{faq.q}</h3>
