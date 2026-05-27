@@ -43,6 +43,19 @@ export async function sendPortalLink(tenantId: string, leaseId: string) {
   await sendTenantPortalInvite(tenantId, leaseId, user.id);
 }
 
+export async function updateInsurance(tenantId: string, data: { insuranceProvider: string; insurancePolicyNumber: string; insuranceExpiresAt: string }) {
+  const user = await requireServerUser();
+  await prisma.tenant.updateMany({
+    where: { id: tenantId, landlordId: user.id },
+    data: {
+      insuranceProvider: data.insuranceProvider || null,
+      insurancePolicyNumber: data.insurancePolicyNumber || null,
+      insuranceExpiresAt: data.insuranceExpiresAt ? new Date(data.insuranceExpiresAt) : null,
+    },
+  });
+  revalidatePath(`/dashboard/tenants/${tenantId}`);
+}
+
 export async function sendBulkMessage({ subject, message }: { subject: string; message: string }) {
   const user = await requireServerUser();
 

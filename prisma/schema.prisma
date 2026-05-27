@@ -67,6 +67,8 @@ model Unit {
   squareFeet    Int?
   notes         String?
   isActive      Boolean  @default(true)
+  utilitiesIncluded String[]
+  utilitiesNote String?
   property      Property @relation(fields: [propertyId], references: [id])
   leases        Lease[]
   maintenanceRequests MaintenanceRequest[]
@@ -83,6 +85,9 @@ model Tenant {
   notes         String?
   portalToken   String?
   isActive      Boolean  @default(true)
+  insuranceProvider    String?
+  insurancePolicyNumber String?
+  insuranceExpiresAt   DateTime?
   createdAt     DateTime @default(now())
 
   leases        LeaseTenant[]

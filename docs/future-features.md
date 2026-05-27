@@ -10,6 +10,10 @@ Organized by category, roughly in order of priority within each section.
 - **Occupancy dashboard** — occupancy rate + per-property breakdown on the main dashboard overview
 - **Bulk messaging** — "Message Tenants" on tenants page sends email to all active tenants with email on file
 - **Maintenance cost reporting** — "Maintenance Costs" tab on reports page; totals by property and category
+- **Tenant contact info** — landlord controls whether email/phone is visible in tenant portal (settings toggle)
+- **Renters insurance tracking** — per-tenant provider, policy number, expiry; badge for expired/expiring; cron email when within 30 days
+- **In-app onboarding checklist** — dashboard checklist guides new landlords through first property → unit → tenant → lease → rent setup; disappears when all steps complete
+- **Utility tracking** — per-unit list of landlord-included utilities + optional note; shown in unit detail and tenant portal
 
 ## In Progress / Already Planned
 - **Tenant application & screening** — SingleKey integration, full apply-to-lease flow
@@ -46,7 +50,7 @@ Organized by category, roughly in order of priority within each section.
 
 ### Tenant Experience
 - **SMS / text notifications** — rent reminders and maintenance updates via text, not just email
-- **Renters insurance tracking** — tenants upload proof of insurance, landlord gets alerted when it expires
+- **Renters insurance tracking** — ~~completed, see above~~
 - **Maintenance request photos from portal** — tenants can attach photos when submitting (not just landlord-side)
 - **Tenant messaging** — in-app message thread between landlord and tenant, logged and searchable
 
@@ -88,6 +92,4 @@ Organized by category, roughly in order of priority within each section.
 - **Dark mode**
 - **Bulk import** — CSV import for landlords migrating from Cozy, TurboTenant, or spreadsheets
 - **Landlord mobile-optimized views** — current dashboard works on mobile but could be optimized further
-- **In-app onboarding flow** — guided setup wizard for new landlords (add property → add unit → add tenant → collect first rent)
 - **Property photo management** — unit photos stored and displayed in the dashboard
-- **Utility tracking** — log which utilities are landlord-paid vs tenant-paid per unit

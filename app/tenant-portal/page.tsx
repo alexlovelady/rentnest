@@ -23,6 +23,7 @@ export default async function TenantPortalPage() {
     where: { id: session.leaseId },
     include: { unit: { include: { property: true } } },
   });
+
   if (!lease) redirect("/tenant-portal/auth");
 
   const currentPayment = await prisma.rentPayment.findFirst({
@@ -116,6 +117,21 @@ export default async function TenantPortalPage() {
           <p className="text-xs font-medium text-gray-700">History</p>
         </Link>
       </div>
+
+      {/* Utilities */}
+      {lease.unit.utilitiesIncluded.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <h2 className="font-semibold text-gray-900 mb-3 text-sm">Utilities Included in Rent</h2>
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {lease.unit.utilitiesIncluded.map((u) => (
+              <span key={u} className="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">{u}</span>
+            ))}
+          </div>
+          {lease.unit.utilitiesNote && (
+            <p className="text-xs text-gray-500">{lease.unit.utilitiesNote}</p>
+          )}
+        </div>
+      )}
 
       {/* Contact landlord */}
       {landlord && (landlord.showEmailToTenants || landlord.showPhoneToTenants) && (

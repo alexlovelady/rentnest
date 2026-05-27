@@ -121,7 +121,44 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // 4. Unacknowledged maintenance requests — 24h
+  // 4. Renters insurance expiring in 30 days
+  const insuranceExpiring = await prisma.tenant.findMany({
+    where: {
+      isActive: true,
+      insuranceExpiresAt: {
+        gte: now,
+        lte: addDays(now, 30),
+      },
+    },
+    select: { name: true, insuranceExpiresAt: true, leases: { where: { lease: { status: "active" } }, include: { lease: { include: { unit: { include: { property: true } }, tenants: { where: { isPrimary: true } } } } } } },
+  });
+
+  const landlordInsurance: Record<string, typeof insuranceExpiring> = {};
+  for (const t of insuranceExpiring) {
+    const activeLt = t.leases[0];
+    if (!activeLt) continue;
+    const lid = activeLt.lease.landlordId;
+    if (!landlordInsurance[lid]) landlordInsurance[lid] = [];
+    landlordInsurance[lid].push(t);
+  }
+  for (const [landlordId, tenants] of Object.entries(landlordInsurance)) {
+    const landlord = await prisma.landlord.findUnique({ where: { id: landlordId } });
+    if (!landlord?.email) continue;
+    const lines = tenants.map((t) => {
+      const days = Math.ceil((new Date(t.insuranceExpiresAt!).getTime() - now.getTime()) / 86400000);
+      const lease = t.leases[0]?.lease;
+      const addr = lease ? `${lease.unit.property.address}, Unit ${lease.unit.unitNumber}` : "";
+      return `<li>${t.name} (${addr}) — expires in ${days} day${days !== 1 ? "s" : ""}</li>`;
+    }).join("");
+    await resend.emails.send({
+      from: FROM,
+      to: landlord.email,
+      subject: `Renters insurance expiring soon`,
+      html: `<p>Hi ${landlord.name},</p><p>The following tenant(s) have renters insurance expiring within 30 days:</p><ul>${lines}</ul><p><a href="${APP_URL}/dashboard/tenants">View Tenants</a></p>`,
+    });
+  }
+
+  // 5. Unacknowledged maintenance requests — 24h
   const dayAgo = addDays(now, -1);
   const unacked = await prisma.maintenanceRequest.findMany({
     where: {

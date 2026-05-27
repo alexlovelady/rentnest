@@ -2,7 +2,7 @@ import { requireServerUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency, formatDate, monthName, daysUntil, currentPeriod } from "@/lib/utils";
 import Link from "next/link";
-import { AlertTriangle, DollarSign, Wrench, Building2 } from "lucide-react";
+import { AlertTriangle, DollarSign, Building2, CheckCircle2, Circle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -54,7 +54,7 @@ export default async function DashboardPage() {
     return p.status === "pending" && diff >= 0 && diff <= 7;
   });
 
-  // Occupancy
+  // Occupancy — must come before onboarding so allUnits is defined
   const allUnits = await prisma.unit.findMany({
     where: { property: { landlordId: user.id }, isActive: true },
     include: {
@@ -72,6 +72,15 @@ export default async function DashboardPage() {
       return acc;
     }, {})
   );
+
+  // Onboarding checklist — only shown until all steps complete
+  const [propertyCount, tenantCount] = await Promise.all([
+    prisma.property.count({ where: { landlordId: user.id } }),
+    prisma.tenant.count({ where: { landlordId: user.id } }),
+  ]);
+  const activeLeaseCount = await prisma.lease.count({ where: { landlordId: user.id, status: "active" } });
+  const onboardingDone =
+    propertyCount > 0 && allUnits.length > 0 && tenantCount > 0 && activeLeaseCount > 0 && rentPayments.length > 0;
 
   // Trial notice
   const trialDaysLeft = user.trialEndsAt
@@ -98,6 +107,38 @@ export default async function DashboardPage() {
           <p className="font-medium">{emergencies.length} emergency maintenance request{emergencies.length > 1 ? "s" : ""} need immediate attention.</p>
           <Link href="/dashboard/maintenance?priority=emergency" className="ml-auto text-white underline text-sm">View →</Link>
         </div>
+      )}
+
+      {/* Onboarding checklist */}
+      {!onboardingDone && (
+        <Card className="mb-8 border-[#C4622D]/20 bg-orange-50/30">
+          <CardHeader>
+            <CardTitle className="text-base">Get started with RentNest</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                { done: propertyCount > 0, label: "Add your first property", href: "/dashboard/properties" },
+                { done: allUnits.length > 0, label: "Add a unit to your property", href: "/dashboard/properties" },
+                { done: tenantCount > 0, label: "Add a tenant", href: "/dashboard/tenants" },
+                { done: activeLeaseCount > 0, label: "Create a lease", href: "/dashboard/leases/new" },
+                { done: rentPayments.length > 0, label: "Set up rent payments", href: "/dashboard/rent" },
+              ].map((step) => (
+                <Link
+                  key={step.label}
+                  href={step.done ? "#" : step.href}
+                  className={`flex items-center gap-3 text-sm ${step.done ? "text-gray-400 pointer-events-none" : "text-gray-700 hover:text-[#C4622D]"}`}
+                >
+                  {step.done
+                    ? <CheckCircle2 size={16} className="text-green-500 shrink-0" />
+                    : <Circle size={16} className="text-gray-300 shrink-0" />
+                  }
+                  <span className={step.done ? "line-through" : ""}>{step.label}</span>
+                </Link>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Rent summary */}
@@ -213,7 +254,6 @@ export default async function DashboardPage() {
           </Card>
         )}
       </div>
-      </div>
 
       {/* Occupancy */}
       {allUnits.length > 0 && (
@@ -221,7 +261,7 @@ export default async function DashboardPage() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2"><Building2 size={16} /> Occupancy</CardTitle>
             <span className="text-2xl font-bold text-[#1A2332]">
-              {allUnits.length === 0 ? "—" : `${Math.round((occupiedCount / allUnits.length) * 100)}%`}
+              {`${Math.round((occupiedCount / allUnits.length) * 100)}%`}
               <span className="text-sm font-normal text-gray-400 ml-1">occupied</span>
             </span>
           </CardHeader>

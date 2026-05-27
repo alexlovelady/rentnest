@@ -106,3 +106,15 @@ export async function updateUnit(unitId: string, data: z.infer<typeof UnitSchema
   });
   revalidatePath("/dashboard/properties");
 }
+
+export async function updateUtilities(unitId: string, propertyId: string, data: { utilitiesIncluded: string[]; utilitiesNote: string }) {
+  const user = await requireServerUser();
+  await prisma.unit.updateMany({
+    where: { id: unitId, property: { landlordId: user.id } },
+    data: {
+      utilitiesIncluded: data.utilitiesIncluded,
+      utilitiesNote: data.utilitiesNote || null,
+    },
+  });
+  revalidatePath(`/dashboard/properties/${propertyId}/units/${unitId}`);
+}

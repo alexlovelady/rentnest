@@ -6,6 +6,7 @@ import { ArrowLeft, Mail, Phone, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate, monthName } from "@/lib/utils";
 import { SendPortalLinkButton } from "./send-portal-link-button";
+import { InsuranceForm } from "./insurance-form";
 
 export default async function TenantDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -66,6 +67,25 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
             <p className="text-sm">{tenant.notes}</p>
           </div>
         )}
+      </div>
+
+      {/* Renters insurance */}
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <h2 className="text-sm font-semibold">Renters Insurance</h2>
+          {tenant.insuranceExpiresAt && (() => {
+            const days = Math.ceil((new Date(tenant.insuranceExpiresAt).getTime() - Date.now()) / 86400000);
+            if (days < 0) return <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Expired</span>;
+            if (days <= 30) return <span className="text-xs font-medium text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">Expires in {days}d</span>;
+            return <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">Active</span>;
+          })()}
+        </div>
+        <InsuranceForm
+          tenantId={tenant.id}
+          provider={tenant.insuranceProvider ?? null}
+          policyNumber={tenant.insurancePolicyNumber ?? null}
+          expiresAt={tenant.insuranceExpiresAt ?? null}
+        />
       </div>
 
       {activeLease && (

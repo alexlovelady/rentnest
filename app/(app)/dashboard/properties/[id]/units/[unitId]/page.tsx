@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate, monthName } from "@/lib/utils";
+import { UtilitiesForm } from "./utilities-form";
 
 export default async function UnitDetailPage({ params }: { params: Promise<{ id: string; unitId: string }> }) {
   const { id, unitId } = await params;
@@ -106,6 +107,17 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ id:
           </table>
         </div>
       )}
+
+      {/* Utilities */}
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+        <h2 className="text-sm font-semibold text-gray-900 mb-3">Utilities Included in Rent</h2>
+        <UtilitiesForm
+          unitId={unit.id}
+          propertyId={id}
+          utilitiesIncluded={unit.utilitiesIncluded}
+          utilitiesNote={unit.utilitiesNote ?? null}
+        />
+      </div>
 
       {unit.maintenanceRequests.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-100 p-6">

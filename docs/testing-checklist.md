@@ -228,6 +228,50 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ---
 
+## Renters Insurance Tracking
+
+- [ ] Insurance section visible on tenant detail page
+- [ ] "No insurance on file" shown when fields are empty
+- [ ] "Add" button opens edit form; "Edit" button shown when data exists
+- [ ] Provider, policy number, and expiry date save correctly
+- [ ] Expired insurance shows red "Expired" badge
+- [ ] Insurance expiring within 30 days shows yellow "Expires in Xd" badge
+- [ ] Active insurance (> 30 days out) shows green "Active" badge
+- [ ] Cron job sends landlord email when insurance expires within 30 days
+- [ ] Cron email correctly groups tenants by landlord
+
+---
+
+## In-App Onboarding Checklist
+
+- [ ] Checklist card visible on dashboard when account has no data
+- [ ] "Add your first property" step marked complete after property is created
+- [ ] "Add a unit" step marked complete after unit exists
+- [ ] "Add a tenant" step marked complete after tenant is created
+- [ ] "Create a lease" step marked complete after an active lease exists
+- [ ] "Set up rent payments" step marked complete after rent charges are generated
+- [ ] Completed steps show strikethrough text and green check icon
+- [ ] Incomplete steps are clickable links to the relevant page
+- [ ] Completed steps are not clickable
+- [ ] Entire checklist card hidden once all 5 steps are complete
+
+---
+
+## Utility Tracking
+
+- [ ] "Utilities Included in Rent" section visible on unit detail page
+- [ ] "No utilities included" shown when list is empty
+- [ ] "Add" button opens edit form; "Edit" button shown when utilities exist
+- [ ] All 9 utility options displayed as toggles in edit mode
+- [ ] Selecting utilities highlights them; deselecting removes highlight
+- [ ] Optional note field saves and displays correctly
+- [ ] Saving with no utilities selected clears the list and shows empty state
+- [ ] Tenant portal shows utilities card when unit has utilities included
+- [ ] Tenant portal utilities card hidden when no utilities are set
+- [ ] Optional note shown in tenant portal when present
+
+---
+
 ## General
 
 - [ ] No console errors on any page
