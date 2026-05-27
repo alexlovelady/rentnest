@@ -16,6 +16,8 @@ export async function generateRent(month?: number, year?: number) {
 export async function recordPayment(data: {
   leaseId: string;
   amount: number;
+  lateFee?: number;
+  daysLate?: number;
   periodMonth: number;
   periodYear: number;
   paymentMethod: string;
@@ -35,6 +37,9 @@ export async function recordPayment(data: {
   const primaryTenant = lease.tenants.find((lt) => lt.isPrimary)?.tenant || lease.tenants[0]?.tenant;
   const dueDate = new Date(data.periodYear, data.periodMonth - 1, lease.rentDueDay);
 
+  const lateFee = data.lateFee ?? 0;
+  const totalAmount = data.amount + lateFee;
+
   let payment;
   if (existing) {
     payment = await prisma.rentPayment.update({
@@ -45,7 +50,9 @@ export async function recordPayment(data: {
         paymentMethod: data.paymentMethod,
         notes: data.notes,
         amount: data.amount,
-        totalAmount: data.amount,
+        lateFee,
+        lateFeeApplied: lateFee > 0,
+        totalAmount,
       },
     });
   } else {
@@ -55,8 +62,9 @@ export async function recordPayment(data: {
         tenantId: primaryTenant?.id,
         landlordId: user.id,
         amount: data.amount,
-        lateFee: 0,
-        totalAmount: data.amount,
+        lateFee,
+        lateFeeApplied: lateFee > 0,
+        totalAmount,
         paymentMethod: data.paymentMethod,
         status: "paid",
         periodMonth: data.periodMonth,
