@@ -1,8 +1,91 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Check, Home, CreditCard, Wrench, FileText, BarChart2, Bell } from "lucide-react";
 
+export const metadata: Metadata = {
+  title: {
+    absolute: "RentNest — The Simple Landlord Software Cozy Used to Be",
+  },
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_APP_URL || "https://rentnest.app",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "RentNest",
+      url: process.env.NEXT_PUBLIC_APP_URL || "https://rentnest.app",
+      description:
+        "Online rent collection, maintenance tracking, lease storage, and tenant portal for small landlords. Starting at $19/month. No per-lease fees.",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      offers: {
+        "@type": "AggregateOffer",
+        lowPrice: "19",
+        highPrice: "99",
+        priceCurrency: "USD",
+        offerCount: "3",
+      },
+      featureList: [
+        "Online rent collection",
+        "Tenant portal",
+        "Maintenance request tracking",
+        "Document storage",
+        "Expense tracking",
+        "Automated payment reminders",
+        "Late fee tracking",
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "Does RentNest take a percentage of my rent?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No, never. You pay a flat monthly subscription. That's it. We built RentNest because small landlords deserve a tool that doesn't take a cut of their income.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "What does my tenant need to use the portal?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Just an email address. They get a link and can access it without creating an account. No app to download, no new password to remember.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How does online rent collection work?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "We use Stripe to process payments. Tenants pay by bank transfer (ACH) or card. Funds go to your connected bank account within 2 business days. Standard Stripe processing fees apply — we take nothing.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "Can I use RentNest if I only have one unit?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Yes. The Starter plan at $19/month covers up to 5 units, so you're getting good value even if you only have one.",
+          },
+        },
+      ],
+    },
+  ],
+};
+
 export default function LandingPage() {
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     <div className="bg-cream text-slate-dark">
       {/* Nav */}
       <nav className="border-b border-slate-dark/10 px-6 py-4">
@@ -235,5 +318,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
