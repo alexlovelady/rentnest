@@ -27,7 +27,7 @@ const TYPE_COLOR: Record<string, string> = {
   other: "bg-gray-50 text-gray-600 border-gray-200",
 };
 
-interface Record {
+interface EvictionEvent {
   id: string;
   type: string;
   date: Date;
@@ -36,7 +36,7 @@ interface Record {
 
 interface Props {
   leaseId: string;
-  records: Record[];
+  records: EvictionEvent[];
 }
 
 export function EvictionPanel({ leaseId, records }: Props) {
