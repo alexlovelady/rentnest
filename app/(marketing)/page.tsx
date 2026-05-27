@@ -112,12 +112,12 @@ export default function LandingPage() {
       />
       <div className="bg-cream text-slate-dark">
 
-        {/* Nav — dark, sticky */}
-        <nav className="sticky top-0 z-50 bg-slate-dark border-b border-white/10 px-6 py-4">
+        {/* Nav — cream, sticky */}
+        <nav className="sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-slate-dark/10 px-6 py-4">
           <div className="max-w-5xl mx-auto flex items-center justify-between">
-            <img src="/logo.jpg" alt="RentNest" className="h-9 w-auto brightness-0 invert" />
+            <img src="/logo.jpg" alt="RentNest" className="h-9 w-auto" />
             <div className="flex items-center gap-3 sm:gap-4">
-              <Link href="/login" className="text-sm text-white/60 hover:text-white transition">Sign in</Link>
+              <Link href="/login" className="text-sm text-gray-600 hover:text-slate-dark transition">Sign in</Link>
               <Link href="/signup" className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition">
                 Start Free Trial
               </Link>
