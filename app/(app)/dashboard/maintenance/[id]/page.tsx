@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { StatusWorkflowPanel } from "./status-workflow-panel";
 import { CommentsPanel } from "./comments-panel";
+import { VendorAssign } from "./vendor-assign";
 
 const priorityColor = { emergency: "red", high: "orange", normal: "yellow", low: "gray" } as const;
 const statusColor = { open: "yellow", in_progress: "blue", scheduled: "blue", resolved: "green", closed: "gray" } as const;
@@ -15,14 +16,21 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
   const { id } = await params;
   const user = await requireServerUser();
 
-  const req = await prisma.maintenanceRequest.findFirst({
-    where: { id, landlordId: user.id },
-    include: {
-      unit: { include: { property: true } },
-      tenant: true,
-      comments: { orderBy: { createdAt: "asc" } },
-    },
-  });
+  const [req, vendors] = await Promise.all([
+    prisma.maintenanceRequest.findFirst({
+      where: { id, landlordId: user.id },
+      include: {
+        unit: { include: { property: true } },
+        tenant: true,
+        comments: { orderBy: { createdAt: "asc" } },
+      },
+    }),
+    prisma.vendor.findMany({
+      where: { landlordId: user.id, isActive: true },
+      select: { id: true, name: true, trade: true, phone: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   if (!req) notFound();
 
@@ -55,14 +63,22 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
               <div><p className="text-xs text-gray-500">Submitted</p><p>{formatDate(req.submittedAt)}</p></div>
               {req.tenant && <div><p className="text-xs text-gray-500">Submitted by</p><p>{req.tenant.name}</p></div>}
             </div>
-            {req.vendorName && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-500 mb-1">Vendor</p>
-                <p className="text-sm font-medium">{req.vendorName}</p>
-                {req.vendorPhone && <p className="text-sm text-gray-500">{req.vendorPhone}</p>}
-                {req.scheduledFor && <p className="text-sm">Scheduled: {formatDate(req.scheduledFor)}</p>}
-              </div>
-            )}
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-500 mb-2">Vendor</p>
+              {req.vendorName && (
+                <div className="mb-2">
+                  <p className="text-sm font-medium">{req.vendorName}</p>
+                  {req.vendorPhone && <p className="text-sm text-gray-500">{req.vendorPhone}</p>}
+                  {req.scheduledFor && <p className="text-sm">Scheduled: {formatDate(req.scheduledFor)}</p>}
+                </div>
+              )}
+              <VendorAssign
+                requestId={req.id}
+                currentVendorId={(req as { vendorId?: string | null }).vendorId ?? null}
+                currentVendorName={req.vendorName}
+                vendors={vendors}
+              />
+            </div>
             {(req.estimatedCost || req.actualCost) && (
               <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-2 gap-3 text-sm">
                 {req.estimatedCost && <div><p className="text-xs text-gray-500">Estimated cost</p><p>${req.estimatedCost.toFixed(2)}</p></div>}

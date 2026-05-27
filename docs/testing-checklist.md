@@ -272,6 +272,54 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ---
 
+## Security Deposit Tracking
+
+- [ ] Security deposit section visible on lease detail when `securityDeposit > 0`
+- [ ] Section hidden when deposit is $0
+- [ ] "Mark received" button sets paid date and removes button
+- [ ] Received date displays correctly after marking
+- [ ] "Add Deduction" button opens inline form with description + amount fields
+- [ ] Deduction saves and appears in list with correct amount
+- [ ] Total deducted and "to return" amount update correctly after each deduction
+- [ ] Remove (trash) button deletes a deduction and recalculates totals
+- [ ] "Mark Returned" button records return date and hides action buttons
+- [ ] Return button shows correct return amount (deposit − deductions)
+- [ ] Remove button hidden after deposit is returned
+
+---
+
+## Notification Preferences
+
+- [ ] Settings page shows 6 email notification checkboxes
+- [ ] All 6 defaults are correct (payment/maintenance/overdue/expiring all default on)
+- [ ] Saving checkboxes persists on page refresh
+- [ ] Disabling "lease expiring" → cron no longer sends lease expiry emails for that landlord
+- [ ] Disabling "insurance expiring" → cron skips insurance emails for that landlord
+- [ ] Disabling "signature" → landlord does not receive email when tenant signs
+- [ ] Enabling "signature" → landlord receives email when tenant signs
+
+---
+
+## Vendor Management
+
+- [ ] "Vendors" link visible on Maintenance page header
+- [ ] Vendors page loads with empty state when no vendors exist
+- [ ] "Add Vendor" button opens modal with all fields
+- [ ] Creating a vendor — appears in vendor grid
+- [ ] All trade options available in dropdown
+- [ ] Phone, email, website all optional and displayed correctly
+- [ ] Email field shown as mailto link; phone as tel link; website as external link
+- [ ] "Edit" button on vendor card opens pre-filled modal
+- [ ] Editing a vendor saves changes correctly
+- [ ] "Delete" button in edit modal soft-deletes vendor (removed from list)
+- [ ] Notes section shown on card when present
+- [ ] On maintenance request detail: "Assign from vendor book" button visible when vendors exist
+- [ ] Clicking assigns vendor, updates name/phone on request
+- [ ] "Change" and "Remove" options shown after vendor is assigned
+- [ ] Vendor book hidden on maintenance detail when no vendors are saved
+
+---
+
 ## General
 
 - [ ] No console errors on any page

@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
     if (days !== 60 && days !== 30) continue;
 
     const landlord = await prisma.landlord.findUnique({ where: { id: lease.landlordId } });
-    if (!landlord?.email) continue;
+    if (!landlord?.email || !landlord.notifyOnLeaseExpiring) continue;
 
     const tenantNames = lease.tenants.map((lt) => lt.tenant.name).join(", ");
     const addr = `${lease.unit.property.address}, Unit ${lease.unit.unitNumber}`;
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
   }
   for (const [landlordId, tenants] of Object.entries(landlordInsurance)) {
     const landlord = await prisma.landlord.findUnique({ where: { id: landlordId } });
-    if (!landlord?.email) continue;
+    if (!landlord?.email || !landlord.notifyOnInsuranceExpiring) continue;
     const lines = tenants.map((t) => {
       const days = Math.ceil((new Date(t.insuranceExpiresAt!).getTime() - now.getTime()) / 86400000);
       const lease = t.leases[0]?.lease;

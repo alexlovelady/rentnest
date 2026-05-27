@@ -44,7 +44,10 @@ export default async function MaintenancePage({ searchParams }: { searchParams: 
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-[#1A2332]">Maintenance</h1>
-        <NewMaintenanceModal />
+        <div className="flex gap-2">
+          <Link href="/dashboard/maintenance/vendors" className="text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg px-3 py-1.5">Vendors</Link>
+          <NewMaintenanceModal />
+        </div>
       </div>
 
       {emergencies.length > 0 && (

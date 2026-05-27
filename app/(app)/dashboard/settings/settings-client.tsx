@@ -44,6 +44,9 @@ export function SettingsClient({ user, daysLeft }: Props) {
       notifyOnPayment: fd.has("notifyOnPayment"),
       notifyOnMaintenance: fd.has("notifyOnMaintenance"),
       notifyOnOverdue: fd.has("notifyOnOverdue"),
+      notifyOnLeaseExpiring: fd.has("notifyOnLeaseExpiring"),
+      notifyOnInsuranceExpiring: fd.has("notifyOnInsuranceExpiring"),
+      notifyOnSignature: fd.has("notifyOnSignature"),
     });
     setSaving(null);
   }
@@ -238,7 +241,10 @@ export function SettingsClient({ user, daysLeft }: Props) {
             {[
               { name: "notifyOnPayment", label: "When a tenant pays rent", checked: user.notifyOnPayment },
               { name: "notifyOnMaintenance", label: "When a maintenance request is submitted", checked: user.notifyOnMaintenance },
-              { name: "notifyOnOverdue", label: "When rent is overdue", checked: user.notifyOnOverdue },
+              { name: "notifyOnOverdue", label: "When rent is overdue (daily digest)", checked: user.notifyOnOverdue },
+              { name: "notifyOnLeaseExpiring", label: "When a lease is expiring (60 and 30 days out)", checked: user.notifyOnLeaseExpiring },
+              { name: "notifyOnInsuranceExpiring", label: "When a tenant's renters insurance is expiring", checked: user.notifyOnInsuranceExpiring },
+              { name: "notifyOnSignature", label: "When a tenant signs their lease", checked: user.notifyOnSignature },
             ].map((n) => (
               <label key={n.name} className="flex items-center gap-2 text-sm cursor-pointer">
                 <input type="checkbox" name={n.name} defaultChecked={n.checked} className="accent-[#C4622D]" />

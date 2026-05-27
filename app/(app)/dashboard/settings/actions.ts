@@ -14,6 +14,9 @@ const NotificationSchema = z.object({
   notifyOnPayment: z.coerce.boolean(),
   notifyOnMaintenance: z.coerce.boolean(),
   notifyOnOverdue: z.coerce.boolean(),
+  notifyOnLeaseExpiring: z.coerce.boolean(),
+  notifyOnInsuranceExpiring: z.coerce.boolean(),
+  notifyOnSignature: z.coerce.boolean(),
 });
 
 const LateFeeSchema = z.object({

@@ -36,7 +36,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
   const addr = `${sig.lease.unit.property.address}, Unit ${sig.lease.unit.unitNumber}`;
   const landlord = await prisma.landlord.findUnique({ where: { id: sig.lease.landlordId } });
 
-  if (landlord?.email) {
+  if (landlord?.email && landlord.notifyOnSignature !== false) {
     const { resend, FROM, APP_URL } = await import("@/lib/resend");
     await resend.emails.send({
       from: FROM,

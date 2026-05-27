@@ -20,9 +20,12 @@ model Landlord {
   stripeConnectId     String?
   stripeConnectReady  Boolean  @default(false)
   feePassthrough      Boolean  @default(false)
-  notifyOnPayment     Boolean  @default(true)
-  notifyOnMaintenance Boolean  @default(true)
-  notifyOnOverdue     Boolean  @default(true)
+  notifyOnPayment          Boolean  @default(true)
+  notifyOnMaintenance      Boolean  @default(true)
+  notifyOnOverdue          Boolean  @default(true)
+  notifyOnLeaseExpiring    Boolean  @default(true)
+  notifyOnInsuranceExpiring Boolean @default(true)
+  notifyOnSignature        Boolean  @default(true)
   defaultLateFeeEnabled Boolean @default(false)
   defaultLateFeeType    String  @default("flat")
   defaultLateFeeAmount  Float   @default(50)
@@ -34,6 +37,7 @@ model Landlord {
   properties    Property[]
   expenses      Expense[]
   documents     Document[]
+  vendors       Vendor[]
 }
 
 model Property {
@@ -104,9 +108,11 @@ model Lease {
   endDate         DateTime?
   leaseType       String   @default("fixed")
   monthlyRent     Float
-  securityDeposit Float    @default(0)
-  securityDepositPaid Boolean @default(false)
-  securityDepositHeld Float @default(0)
+  securityDeposit         Float    @default(0)
+  securityDepositPaid     Boolean  @default(false)
+  securityDepositPaidAt   DateTime?
+  securityDepositHeld     Float    @default(0)
+  securityDepositReturnedAt DateTime?
   lateFeeEnabled  Boolean  @default(false)
   lateFeeType     String   @default("flat")
   lateFeeAmount   Float    @default(0)
@@ -127,6 +133,7 @@ model Lease {
   documents       Document[]
   maintenanceRequests MaintenanceRequest[]
   signatures      LeaseSignature[]
+  depositDeductions DepositDeduction[]
 }
 
 model LeaseTenant {
@@ -176,6 +183,7 @@ model MaintenanceRequest {
   priority        String   @default("normal")
   status          String   @default("open")
   scheduledFor    DateTime?
+  vendorId        String?
   vendorName      String?
   vendorPhone     String?
   estimatedCost   Float?
@@ -191,6 +199,7 @@ model MaintenanceRequest {
   unit            Unit     @relation(fields: [unitId], references: [id])
   lease           Lease?   @relation(fields: [leaseId], references: [id])
   tenant          Tenant?  @relation(fields: [tenantId], references: [id])
+  vendor          Vendor?  @relation(fields: [vendorId], references: [id])
   comments        MaintenanceComment[]
 }
 
@@ -236,6 +245,32 @@ model LeaseSignature {
 
   lease  Lease  @relation(fields: [leaseId], references: [id])
   tenant Tenant @relation(fields: [tenantId], references: [id])
+}
+
+model DepositDeduction {
+  id          String   @id @default(cuid())
+  leaseId     String
+  description String
+  amount      Float
+  createdAt   DateTime @default(now())
+
+  lease Lease @relation(fields: [leaseId], references: [id])
+}
+
+model Vendor {
+  id         String   @id @default(cuid())
+  landlordId String
+  name       String
+  trade      String   @default("general")
+  phone      String?
+  email      String?
+  website    String?
+  notes      String?
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  landlord            Landlord             @relation(fields: [landlordId], references: [id])
+  maintenanceRequests MaintenanceRequest[]
 }
 
 model Document {

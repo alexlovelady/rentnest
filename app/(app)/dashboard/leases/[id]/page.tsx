@@ -9,6 +9,7 @@ import { formatCurrency, formatDate, monthName } from "@/lib/utils";
 import { SendInviteButton } from "./send-invite-button";
 import { TerminateLeaseButton } from "./terminate-lease-button";
 import { RequestSignatureButton } from "./request-signature-button";
+import { DepositPanel } from "./deposit-panel";
 
 export default async function LeaseDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
   const { id } = await params;
@@ -23,6 +24,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
       rentPayments: { orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }] },
       documents: { orderBy: { uploadedAt: "desc" } },
       signatures: { include: { tenant: true }, orderBy: { createdAt: "desc" } },
+      depositDeductions: { orderBy: { createdAt: "asc" } },
     },
   });
 
@@ -114,6 +116,21 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
           </div>
         )}
       </div>
+
+      {lease.securityDeposit > 0 && (
+        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+          <h2 className="text-sm font-semibold mb-4">Security Deposit</h2>
+          <DepositPanel
+            leaseId={lease.id}
+            securityDeposit={lease.securityDeposit}
+            securityDepositPaid={lease.securityDepositPaid}
+            securityDepositPaidAt={lease.securityDepositPaidAt ?? null}
+            securityDepositHeld={lease.securityDepositHeld}
+            securityDepositReturnedAt={lease.securityDepositReturnedAt ?? null}
+            deductions={lease.depositDeductions}
+          />
+        </div>
+      )}
 
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <h2 className="text-sm font-semibold mb-4">Rent Ledger</h2>

@@ -14,6 +14,9 @@ Organized by category, roughly in order of priority within each section.
 - **Renters insurance tracking** — per-tenant provider, policy number, expiry; badge for expired/expiring; cron email when within 30 days
 - **In-app onboarding checklist** — dashboard checklist guides new landlords through first property → unit → tenant → lease → rent setup; disappears when all steps complete
 - **Utility tracking** — per-unit list of landlord-included utilities + optional note; shown in unit detail and tenant portal
+- **Security deposit tracking** — mark deposit received, add itemized deductions, record return amount and date; shown on lease detail
+- **Notification preferences** — granular per-event email toggles: payment, maintenance, overdue, lease expiring, insurance expiring, signature
+- **Vendor management** — contractor address book with trade/phone/email; assign vendors to maintenance requests from request detail page
 
 ## In Progress / Already Planned
 - **Tenant application & screening** — SingleKey integration, full apply-to-lease flow
@@ -35,7 +38,7 @@ Organized by category, roughly in order of priority within each section.
 
 ### Maintenance
 - **Move-in / move-out inspection** — checklist with photo documentation per room; ties to security deposit decisions
-- **Vendor / contractor management** — save preferred vendors with contact info, assign to maintenance requests, track job history per vendor
+- **Vendor / contractor management** — ~~completed, see above~~
 
 ---
 
@@ -43,7 +46,7 @@ Organized by category, roughly in order of priority within each section.
 
 ### Financial
 - **Owner statements** — auto-generated monthly PDF summary: rent collected, expenses, net income, per property
-- **Security deposit tracking** — itemized deductions at move-out, state-mandated return deadlines with alerts
+- **Security deposit tracking** — ~~completed, see above~~
 - **Accounting integrations** — QuickBooks Online and/or Wave export (beyond CSV)
 - **Bank reconciliation** — match recorded rent payments against actual bank deposits
 - **Tax document helpers** — 1099-NEC generation for contractors, Schedule E pre-fill worksheet
@@ -88,7 +91,7 @@ Organized by category, roughly in order of priority within each section.
 ---
 
 ## Quality of Life / Polish
-- **Notification preferences** — granular control over what emails/texts landlords and tenants receive
+- **Notification preferences** — ~~completed, see above~~
 - **Dark mode**
 - **Bulk import** — CSV import for landlords migrating from Cozy, TurboTenant, or spreadsheets
 - **Landlord mobile-optimized views** — current dashboard works on mobile but could be optimized further

@@ -102,6 +102,46 @@ export async function requestSignature(leaseId: string) {
   revalidatePath(`/dashboard/leases/${leaseId}`);
 }
 
+export async function markDepositReceived(leaseId: string) {
+  const user = await requireServerUser();
+  await prisma.lease.updateMany({
+    where: { id: leaseId, landlordId: user.id },
+    data: { securityDepositPaid: true, securityDepositPaidAt: new Date() },
+  });
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
+export async function addDepositDeduction(leaseId: string, description: string, amount: number) {
+  const user = await requireServerUser();
+  const lease = await prisma.lease.findFirst({ where: { id: leaseId, landlordId: user.id } });
+  if (!lease) throw new Error("Not found");
+  await prisma.depositDeduction.create({ data: { leaseId, description, amount } });
+  const deductions = await prisma.depositDeduction.aggregate({ where: { leaseId }, _sum: { amount: true } });
+  const held = Math.max(0, lease.securityDeposit - (deductions._sum.amount ?? 0));
+  await prisma.lease.update({ where: { id: leaseId }, data: { securityDepositHeld: held } });
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
+export async function removeDepositDeduction(deductionId: string, leaseId: string) {
+  const user = await requireServerUser();
+  const lease = await prisma.lease.findFirst({ where: { id: leaseId, landlordId: user.id } });
+  if (!lease) throw new Error("Not found");
+  await prisma.depositDeduction.delete({ where: { id: deductionId } });
+  const deductions = await prisma.depositDeduction.aggregate({ where: { leaseId }, _sum: { amount: true } });
+  const held = Math.max(0, lease.securityDeposit - (deductions._sum.amount ?? 0));
+  await prisma.lease.update({ where: { id: leaseId }, data: { securityDepositHeld: held } });
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
+export async function markDepositReturned(leaseId: string) {
+  const user = await requireServerUser();
+  await prisma.lease.updateMany({
+    where: { id: leaseId, landlordId: user.id },
+    data: { securityDepositReturnedAt: new Date(), securityDepositHeld: 0 },
+  });
+  revalidatePath(`/dashboard/leases/${leaseId}`);
+}
+
 export async function sendLeasePortalInvites(leaseId: string) {
   const user = await requireServerUser();
   const lease = await prisma.lease.findFirst({
