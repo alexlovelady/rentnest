@@ -6,6 +6,7 @@ import { formatCurrency, formatDate, monthName, currentPeriod } from "@/lib/util
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Wrench, FileText, Phone, Mail, MessageSquare } from "lucide-react";
+import LeaseTerminatedPage from "./lease-terminated";
 
 export default async function TenantPortalPage() {
   const session = await requireTenantUser();
@@ -25,6 +26,9 @@ export default async function TenantPortalPage() {
   });
 
   if (!lease) redirect("/tenant-portal/auth");
+  if (lease.status === "terminated") {
+    return <LeaseTerminatedPage tenant={tenant} lease={lease} />;
+  }
 
   const currentPayment = await prisma.rentPayment.findFirst({
     where: { leaseId: session.leaseId, periodMonth: month, periodYear: year },

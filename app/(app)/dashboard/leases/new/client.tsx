@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Upload } from "lucide-react";
 import { createLease } from "../actions";
 import { createTenant } from "../../tenants/actions";
 
@@ -30,6 +31,8 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [leaseFile, setLeaseFile] = useState<File | null>(null);
+  const leaseFileRef = useRef<HTMLInputElement>(null);
   const [showNewTenant, setShowNewTenant] = useState(false);
   const [newTenantForm, setNewTenantForm] = useState({ name: "", email: "", phone: "" });
   const [newTenantLoading, setNewTenantLoading] = useState(false);
@@ -107,6 +110,14 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
         petDeposit: Number(form.petDeposit) || 0,
         petRent: Number(form.petRent) || 0,
       });
+      if (leaseFile) {
+        const fd = new FormData();
+        fd.append("file", leaseFile);
+        fd.append("name", leaseFile.name.replace(/\.[^.]+$/, ""));
+        fd.append("docType", "lease");
+        fd.append("leaseId", lease.id);
+        await fetch("/api/landlord/upload-document", { method: "POST", body: fd });
+      }
       router.push(`/dashboard/leases/${lease.id}?created=1`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to create lease");
@@ -296,6 +307,27 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
               <div className="flex justify-between"><span className="text-gray-500">Start</span><span>{form.startDate}</span></div>
               <div className="flex justify-between"><span className="text-gray-500">End</span><span>{form.leaseType === "month_to_month" ? "Month-to-month" : form.endDate || "—"}</span></div>
               <div className="flex justify-between"><span className="text-gray-500">Security deposit</span><span>${Number(form.securityDeposit).toFixed(2)}</span></div>
+            </div>
+            <div className="border-t border-gray-100 pt-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Lease document <span className="text-gray-400 font-normal">(optional — required for e-signing)</span></p>
+              <input
+                ref={leaseFileRef}
+                type="file"
+                accept=".pdf,.docx"
+                className="hidden"
+                onChange={(e) => setLeaseFile(e.target.files?.[0] ?? null)}
+              />
+              <button
+                type="button"
+                onClick={() => leaseFileRef.current?.click()}
+                className="flex items-center gap-2 text-sm px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                <Upload size={14} />
+                {leaseFile ? leaseFile.name : "Attach lease PDF or DOCX…"}
+              </button>
+              {leaseFile && (
+                <button type="button" onClick={() => setLeaseFile(null)} className="text-xs text-gray-400 hover:text-red-500 mt-1 ml-1">Remove</button>
+              )}
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
           </div>

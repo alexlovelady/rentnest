@@ -16,6 +16,7 @@ Organized by category, roughly in order of priority within each section.
 - **Lease templates by state** — pre-built lease templates with required state-specific clauses
 
 ### Rent & Payments
+- **Auto-generate rent charges** — cron job creates rent charges 7 days before the due date for all active leases, eliminating the need for the landlord to do it manually
 - **Partial payments** — allow tenants to pay partial rent and track the balance owed
 - **Payment plans** — structured installment plans for overdue tenants (e.g. $200/week until caught up)
 - **ACH / bank verification** — verify tenant bank account before first payment (Plaid or Stripe micro-deposit)
