@@ -6,12 +6,12 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ## Auth
 
-- [ ] Sign up with a new email — account created, redirected to dashboard
-- [ ] Sign up with an existing email — error shown, no duplicate created
-- [ ] Log in with correct credentials — redirected to dashboard
-- [ ] Log in with wrong password — error shown
-- [ ] Unauthenticated visit to `/dashboard/*` — redirected to login
-- [ ] Session persists on page refresh
+- [May 28, 2026] Sign up with a new email — account created, redirected to dashboard
+- [May 28, 2026] Sign up with an existing email — error shown, no duplicate created
+- [May 28, 2026] Log in with correct credentials — redirected to dashboard
+- [May 28, 2026] Log in with wrong password — error shown
+- [May 28, 2026] Unauthenticated visit to `/dashboard/*` — redirected to login
+- [May 28, 2026] Session persists on page refresh
 
 ---
 

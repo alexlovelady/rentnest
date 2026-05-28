@@ -29,7 +29,7 @@ const UnitSchema = z.object({
 
 export async function createProperty(data: z.infer<typeof PropertySchema>) {
   const user = await requireServerUser();
-  const parsed = PropertySchema.parse(data);
+  const { unitBedrooms, unitBathrooms, ...parsed } = PropertySchema.parse(data);
 
   const unitCount = await prisma.unit.count({
     where: { property: { landlordId: user.id }, isActive: true },
@@ -48,8 +48,8 @@ export async function createProperty(data: z.infer<typeof PropertySchema>) {
     data: {
       propertyId: property.id,
       unitNumber: "1",
-      bedrooms: parsed.unitBedrooms ?? 1,
-      bathrooms: parsed.unitBathrooms ?? 1,
+      bedrooms: unitBedrooms ?? 1,
+      bathrooms: unitBathrooms ?? 1,
     },
   });
 
