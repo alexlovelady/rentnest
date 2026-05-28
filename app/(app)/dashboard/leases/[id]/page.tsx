@@ -14,6 +14,7 @@ import { RenewLeaseButton } from "./renew-lease-button";
 import { EvictionPanel } from "./eviction-panel";
 import { MessagesPanel } from "./messages-panel";
 import { AddendumsPanel } from "./addendums-panel";
+import { LeaseDocumentsPanel } from "./lease-documents-panel";
 
 export default async function LeaseDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
   const { id } = await params;
@@ -182,6 +183,11 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
         <Link href={`/dashboard/leases/${lease.id}/inspections`} className="inline-block mt-3">
           <Button size="sm" variant="secondary">Open Inspection Reports</Button>
         </Link>
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+        <h2 className="text-sm font-semibold mb-4">Documents</h2>
+        <LeaseDocumentsPanel leaseId={lease.id} documents={lease.documents} />
       </div>
 
       <div className="bg-white rounded-xl border border-gray-100 p-6">

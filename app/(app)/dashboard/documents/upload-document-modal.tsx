@@ -5,10 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Upload } from "lucide-react";
-import { createDocument } from "./actions";
 import { useRouter } from "next/navigation";
-import { getFirebaseStorage } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 interface Property { id: string; nickname: string }
 interface Lease { id: string; unit: { unitNumber: string; property: { address: string } }; tenants: { tenant: { name: string } }[] }
@@ -30,30 +27,26 @@ export function UploadDocumentModal({ properties, leases }: { properties: Proper
     const file = fileRef.current?.files?.[0];
 
     try {
-      let fileUrl = "";
-      let fileType = "";
+      if (!file) throw new Error("Please select a file");
 
-      if (file) {
-        setUploadProgress("Uploading file…");
-        const timestamp = Date.now();
-        const storageRef = ref(getFirebaseStorage(), `documents/${timestamp}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        fileUrl = await getDownloadURL(storageRef);
-        fileType = file.name.split(".").pop() || "";
-        setUploadProgress("");
+      setUploadProgress("Uploading file…");
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("name", fd.get("name") as string);
+      uploadData.append("docType", fd.get("docType") as string);
+      const propertyId = fd.get("propertyId") as string;
+      const leaseId = fd.get("leaseId") as string;
+      if (propertyId) uploadData.append("propertyId", propertyId);
+      if (leaseId) uploadData.append("leaseId", leaseId);
+      const notes = fd.get("notes") as string;
+      if (notes) uploadData.append("notes", notes);
+
+      const res = await fetch("/api/landlord/upload-document", { method: "POST", body: uploadData });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.error || "Upload failed");
       }
 
-      if (!fileUrl) throw new Error("Please select a file");
-
-      await createDocument({
-        name: fd.get("name") as string,
-        docType: fd.get("docType") as string,
-        fileUrl,
-        fileType,
-        propertyId: (fd.get("propertyId") as string) || null,
-        leaseId: (fd.get("leaseId") as string) || null,
-        notes: fd.get("notes") as string,
-      });
       setOpen(false);
       router.refresh();
     } catch (err: unknown) {
