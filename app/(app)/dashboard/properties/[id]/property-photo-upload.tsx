@@ -1,9 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
 import { Camera } from "lucide-react";
-import { getFirebaseStorage } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { updatePropertyPhoto } from "./actions";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -23,14 +20,17 @@ export function PropertyPhotoUpload({ propertyId, currentPhotoUrl }: Props) {
     setLoading(true);
     setError("");
     try {
-      const ext = file.name.split(".").pop() || "jpg";
-      const storageRef = ref(getFirebaseStorage(), `properties/${propertyId}/${Date.now()}.${ext}`);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      await updatePropertyPhoto(propertyId, url);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("propertyId", propertyId);
+      const res = await fetch("/api/landlord/upload-property-photo", { method: "POST", body: formData });
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}));
+        throw new Error(json.error || "Upload failed");
+      }
       router.refresh();
-    } catch {
-      setError("Upload failed. Please try again.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Upload failed. Please try again.");
     } finally {
       setLoading(false);
       e.target.value = "";
