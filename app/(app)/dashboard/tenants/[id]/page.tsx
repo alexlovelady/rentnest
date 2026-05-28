@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate, monthName } from "@/lib/utils";
 import { SendPortalLinkButton } from "./send-portal-link-button";
 import { InsuranceForm } from "./insurance-form";
+import { EditTenantModal } from "./edit-tenant-modal";
 
 export default async function TenantDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -51,9 +52,12 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               <p className="text-sm text-gray-500 flex items-center gap-1.5 mt-0.5"><Phone size={12} />{tenant.phone}</p>
             )}
           </div>
-          {activeLease && tenant.email && (
-            <SendPortalLinkButton tenantId={tenant.id} leaseId={activeLease.id} />
-          )}
+          <div className="flex items-center gap-2">
+            <EditTenantModal tenant={tenant} />
+            {activeLease && tenant.email && (
+              <SendPortalLinkButton tenantId={tenant.id} leaseId={activeLease.id} />
+            )}
+          </div>
         </div>
         {tenant.emergencyContactName && (
           <div className="mt-4 pt-4 border-t border-gray-100">

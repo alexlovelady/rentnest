@@ -17,19 +17,19 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ## Properties & Units
 
-- [ ] Create a new property — appears in properties list
-- [ ] Edit a property — changes saved and reflected
-- [ ] Add a unit to a property — unit appears on property detail page
-- [ ] Unit count shown correctly on property card
-- [ ] Inactive properties/units hidden from active flows (lease creation, etc.)
+- [May 28, 2026] Create a new property — appears in properties list
+- [May 28, 2026] Edit a property — changes saved and reflected
+- [May 28, 2026] Add a unit to a property — unit appears on property detail page
+- [May 28, 2026] Unit count shown correctly on property card
+- [May 28, 2026] Inactive properties/units hidden from active flows (lease creation, etc.)
 
 ---
 
 ## Tenants
 
-- [ ] Create a tenant with email and phone — appears in tenant list
-- [ ] Create a tenant without email — no errors, fields optional
-- [ ] Edit a tenant — changes saved
+- [May 28, 2026] Create a tenant with email and phone — appears in tenant list
+- [May 28, 2026] Create a tenant without email — no errors, fields optional
+- [May 28, 2026] Edit a tenant — changes saved
 - [ ] Send portal link — email received, link works
 - [ ] Tenant portal loads with correct name and address after auth
 

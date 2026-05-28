@@ -43,6 +43,15 @@ export async function sendPortalLink(tenantId: string, leaseId: string) {
   await sendTenantPortalInvite(tenantId, leaseId, user.id);
 }
 
+export async function deactivateTenant(id: string) {
+  const user = await requireServerUser();
+  await prisma.tenant.updateMany({
+    where: { id, landlordId: user.id },
+    data: { isActive: false },
+  });
+  revalidatePath("/dashboard/tenants");
+}
+
 export async function updateInsurance(tenantId: string, data: { insuranceProvider: string; insurancePolicyNumber: string; insuranceExpiresAt: string }) {
   const user = await requireServerUser();
   await prisma.tenant.updateMany({
