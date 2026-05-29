@@ -18,6 +18,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           id={id}
+          style={{ colorScheme: "light" }}
           className={cn(
             "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white transition",
             error && "border-red-400",

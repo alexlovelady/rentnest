@@ -120,6 +120,7 @@ export default function LandingPage() {
               <span className="font-bold text-slate-dark text-lg" style={{ fontFamily: "var(--font-lora, serif)" }}>RentNest</span>
             </div>
             <div className="flex items-center gap-3 sm:gap-4">
+              <Link href="/listings" className="hidden sm:block text-sm text-gray-600 hover:text-slate-dark transition">Browse rentals</Link>
               <Link href="/login" className="text-sm text-gray-600 hover:text-slate-dark transition">Sign in</Link>
               <Link href="/signup" className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-dark transition">
                 Start Free Trial
