@@ -24,6 +24,7 @@ export function SettingsClient({ user, daysLeft }: Props) {
   const router = useRouter();
   const [saving, setSaving] = useState<string | null>(null);
   const [connectLoading, setConnectLoading] = useState(false);
+  const [manageLoading, setManageLoading] = useState(false);
   const [billingLoading, setBillingLoading] = useState(false);
   const [checkLoading, setCheckLoading] = useState(false);
 
@@ -70,7 +71,15 @@ export function SettingsClient({ user, daysLeft }: Props) {
     const res = await fetch("/api/connect/onboard", { method: "POST" });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-    setConnectLoading(false);
+    else setConnectLoading(false);
+  }
+
+  async function manageConnect() {
+    setManageLoading(true);
+    const res = await fetch("/api/connect/manage", { method: "POST" });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else setManageLoading(false);
   }
 
   async function openBillingPortal() {
@@ -152,9 +161,12 @@ export function SettingsClient({ user, daysLeft }: Props) {
         <CardContent>
           <p className="text-sm text-gray-600 mb-4">Connect your bank account so tenants can pay rent online. RentNest takes no percentage of rent — standard Stripe processing fees only.</p>
           {user.stripeConnectReady ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <Badge variant="green">Connected</Badge>
               <p className="text-sm text-gray-500">Tenants can pay rent online.</p>
+              <Button variant="secondary" size="sm" onClick={manageConnect} disabled={manageLoading}>
+                {manageLoading ? "Loading…" : "Manage payouts & bank info"}
+              </Button>
             </div>
           ) : user.stripeConnectId ? (
             <div className="flex gap-3">
