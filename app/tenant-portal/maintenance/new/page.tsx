@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import Link from "next/link";
-import { ArrowLeft, Camera, X } from "lucide-react";
+import { Camera, X } from "lucide-react";
 
 export default function NewTenantMaintenancePage() {
   const router = useRouter();
@@ -79,10 +78,7 @@ export default function NewTenantMaintenancePage() {
 
   return (
     <div className="space-y-6">
-      <Link href="/tenant-portal/maintenance" className="text-sm text-gray-500 flex items-center gap-1">
-        <ArrowLeft size={14} /> Back
-      </Link>
-      <h1 className="text-xl font-bold text-slate-dark">Submit Maintenance Request</h1>
+      <h1 className="text-xl font-bold text-slate-dark">New Maintenance Request</h1>
       <div className="bg-white rounded-xl border border-gray-100 p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="What's the issue?" name="title" placeholder="e.g. Kitchen faucet leaking" required />

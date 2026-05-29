@@ -113,6 +113,7 @@ model Lease {
   landlordId      String
   startDate       DateTime
   endDate         DateTime?
+  rentStartDate   DateTime?
   leaseType       String   @default("fixed")
   monthlyRent     Float
   securityDeposit         Float    @default(0)

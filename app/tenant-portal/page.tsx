@@ -5,8 +5,15 @@ import Link from "next/link";
 import { formatCurrency, formatDate, monthName, currentPeriod } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Wrench, FileText, Phone, Mail, MessageSquare } from "lucide-react";
+import { Phone, Mail, Plus } from "lucide-react";
 import LeaseTerminatedPage from "./lease-terminated";
+
+function ordinal(n: number) {
+  const v = n % 100;
+  if (v >= 11 && v <= 13) return `${n}th`;
+  const s = ["th", "st", "nd", "rd"];
+  return n + (s[n % 10] || "th");
+}
 
 export default async function TenantPortalPage() {
   const session = await requireTenantUser();
@@ -34,16 +41,9 @@ export default async function TenantPortalPage() {
     where: { leaseId: session.leaseId, periodMonth: month, periodYear: year },
   });
 
-  // All unpaid charges (current + prior months)
   const allUnpaid = await prisma.rentPayment.findMany({
     where: { leaseId: session.leaseId, status: "pending" },
     orderBy: [{ periodYear: "asc" }, { periodMonth: "asc" }],
-  });
-
-  const recentPayments = await prisma.rentPayment.findMany({
-    where: { leaseId: session.leaseId },
-    orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }],
-    take: 6,
   });
 
   const openRequests = await prisma.maintenanceRequest.findMany({
@@ -55,25 +55,26 @@ export default async function TenantPortalPage() {
   const addr = `${lease.unit.property.address}, Unit ${lease.unit.unitNumber}`;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-slate-dark">Hi {tenant.name}</h1>
+        <h1 className="text-xl font-bold text-slate-dark">Hi, {tenant.name.split(" ")[0]}</h1>
         <p className="text-sm text-gray-500">{addr}</p>
       </div>
 
       {/* Current rent status */}
-      <div className={`rounded-xl p-6 ${currentPayment?.status === "paid" ? "bg-green-50 border border-green-200" : "bg-white border border-gray-100"}`}>
-        <p className="text-sm font-medium text-gray-600 mb-2">{monthName(month)} {year} Rent</p>
+      <div className={`rounded-xl p-5 ${currentPayment?.status === "paid" ? "bg-green-50 border border-green-200" : "bg-white border border-gray-100"}`}>
+        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{monthName(month)} {year} Rent</p>
         {currentPayment ? (
           <>
-            <p className="text-3xl font-bold text-slate-dark mb-2">{formatCurrency(currentPayment.totalAmount)}</p>
+            <p className="text-3xl font-bold text-slate-dark mb-3">{formatCurrency(currentPayment.totalAmount)}</p>
             {currentPayment.status === "paid" ? (
-              <div>
-                <Badge variant="green" className="text-sm px-3 py-1">Paid on {currentPayment.paidAt ? formatDate(currentPayment.paidAt) : "—"}</Badge>
-              </div>
+              <Badge variant="green" className="text-sm px-3 py-1">Paid {currentPayment.paidAt ? formatDate(currentPayment.paidAt) : ""}</Badge>
             ) : (
               <div className="space-y-3">
-                <p className="text-sm text-gray-600">Due: {formatDate(currentPayment.dueDate)}</p>
+                <p className="text-sm text-gray-500">Due {formatDate(currentPayment.dueDate)}</p>
+                {currentPayment.lateFee > 0 && (
+                  <p className="text-xs text-red-600">Includes {formatCurrency(currentPayment.lateFee)} late fee</p>
+                )}
                 {landlord?.stripeConnectReady ? (
                   currentPayment.stripePaymentUrl ? (
                     <a href={currentPayment.stripePaymentUrl} target="_blank" rel="noopener noreferrer">
@@ -87,14 +88,11 @@ export default async function TenantPortalPage() {
                 ) : (
                   <p className="text-sm text-gray-500">Contact your landlord to arrange payment.</p>
                 )}
-                {currentPayment.lateFee > 0 && (
-                  <p className="text-xs text-red-600">Includes ${currentPayment.lateFee.toFixed(2)} late fee</p>
-                )}
               </div>
             )}
           </>
         ) : (
-          <p className="text-sm text-gray-500">No rent charge found for this month. Contact your landlord.</p>
+          <p className="text-sm text-gray-500">No rent charge for this month yet. Check back soon.</p>
         )}
       </div>
 
@@ -103,17 +101,19 @@ export default async function TenantPortalPage() {
         <div className="bg-red-50 border border-red-200 rounded-xl p-5">
           <h2 className="font-semibold text-red-900 mb-3 text-sm">Outstanding Balance</h2>
           <div className="space-y-2 mb-4">
-            {allUnpaid.map((p) => (
-              <div key={p.id} className="flex justify-between text-sm">
-                <span className="text-red-800">{monthName(p.periodMonth)} {p.periodYear}</span>
-                <div className="text-right">
-                  <span className="font-medium text-red-900">{formatCurrency(p.totalAmount)}</span>
-                  {p.lateFee > 0 && (
-                    <p className="text-xs text-red-600">incl. {formatCurrency(p.lateFee)} late fee</p>
-                  )}
+            {allUnpaid
+              .filter((p) => !(p.periodMonth === month && p.periodYear === year))
+              .map((p) => (
+                <div key={p.id} className="flex justify-between text-sm">
+                  <span className="text-red-800">{monthName(p.periodMonth)} {p.periodYear}</span>
+                  <div className="text-right">
+                    <span className="font-medium text-red-900">{formatCurrency(p.totalAmount)}</span>
+                    {p.lateFee > 0 && (
+                      <p className="text-xs text-red-600">incl. {formatCurrency(p.lateFee)} late fee</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
           <div className="border-t border-red-200 pt-3 flex justify-between items-center">
             <span className="text-sm font-semibold text-red-900">Total owed</span>
@@ -124,100 +124,106 @@ export default async function TenantPortalPage() {
         </div>
       )}
 
-      {/* Payment history */}
-      {recentPayments.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <h2 className="font-semibold text-gray-900 mb-4 text-sm">Recent Payments</h2>
-          <div className="space-y-2">
-            {recentPayments.map((p) => (
-              <div key={p.id} className="flex justify-between text-sm">
-                <span className="text-gray-600">{monthName(p.periodMonth)} {p.periodYear}</span>
-                <div className="flex items-center gap-2">
-                  <span>{formatCurrency(p.totalAmount)}</span>
-                  <Badge variant={p.status === "paid" ? "green" : "yellow"}>{p.status}</Badge>
-                </div>
-              </div>
-            ))}
+      {/* Lease info */}
+      <div className="bg-white rounded-xl border border-gray-100 p-5">
+        <h2 className="font-semibold text-gray-900 mb-3 text-sm">Your Lease</h2>
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-gray-500">Started</span>
+            <span>{formatDate(lease.startDate)}</span>
           </div>
+          {lease.endDate ? (
+            <div className="flex justify-between">
+              <span className="text-gray-500">Ends</span>
+              <span>{formatDate(lease.endDate)}</span>
+            </div>
+          ) : (
+            <div className="flex justify-between">
+              <span className="text-gray-500">Type</span>
+              <span>Month-to-month</span>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <span className="text-gray-500">Rent due</span>
+            <span>{ordinal(lease.rentDueDay)} of each month</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500">Monthly rent</span>
+            <span className="font-medium">{formatCurrency(lease.monthlyRent)}</span>
+          </div>
+          {lease.securityDeposit > 0 && (
+            <div className="flex justify-between">
+              <span className="text-gray-500">Security deposit</span>
+              <span>{formatCurrency(lease.securityDeposit)}</span>
+            </div>
+          )}
         </div>
-      )}
-
-      {/* Quick links */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Link href="/tenant-portal/maintenance/new" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-primary/30 transition">
-          <Wrench size={20} className="mx-auto text-gray-400 mb-1" />
-          <p className="text-xs font-medium text-gray-700">Maintenance</p>
-        </Link>
-        <Link href="/tenant-portal/documents" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-primary/30 transition">
-          <FileText size={20} className="mx-auto text-gray-400 mb-1" />
-          <p className="text-xs font-medium text-gray-700">Documents</p>
-        </Link>
-        <Link href="/tenant-portal/messages" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-primary/30 transition">
-          <MessageSquare size={20} className="mx-auto text-gray-400 mb-1" />
-          <p className="text-xs font-medium text-gray-700">Messages</p>
-        </Link>
-        <Link href="/tenant-portal/maintenance" className="bg-white border border-gray-100 rounded-xl p-4 text-center hover:border-primary/30 transition">
-          <DollarSign size={20} className="mx-auto text-gray-400 mb-1" />
-          <p className="text-xs font-medium text-gray-700">History</p>
-        </Link>
       </div>
 
       {/* Utilities */}
       {lease.unit.utilitiesIncluded.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <h2 className="font-semibold text-gray-900 mb-3 text-sm">Utilities Included in Rent</h2>
-          <div className="flex flex-wrap gap-1.5 mb-2">
+          <h2 className="font-semibold text-gray-900 mb-3 text-sm">Utilities Included</h2>
+          <div className="flex flex-wrap gap-1.5">
             {lease.unit.utilitiesIncluded.map((u) => (
-              <span key={u} className="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">{u}</span>
+              <span key={u} className="bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full">{u}</span>
             ))}
           </div>
           {lease.unit.utilitiesNote && (
-            <p className="text-xs text-gray-500">{lease.unit.utilitiesNote}</p>
+            <p className="text-xs text-gray-500 mt-2">{lease.unit.utilitiesNote}</p>
           )}
         </div>
       )}
 
+      {/* Open maintenance requests */}
+      <div className="bg-white rounded-xl border border-gray-100 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-gray-900 text-sm">Maintenance</h2>
+          <Link href="/tenant-portal/maintenance/new">
+            <Button size="sm" variant="secondary"><Plus size={13} className="mr-1" />New request</Button>
+          </Link>
+        </div>
+        {openRequests.length === 0 ? (
+          <p className="text-sm text-gray-400">No open requests.</p>
+        ) : (
+          <div className="space-y-2">
+            {openRequests.map((req) => (
+              <Link
+                key={req.id}
+                href="/tenant-portal/maintenance"
+                className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 hover:opacity-75 transition-opacity"
+              >
+                <div>
+                  <p className="text-sm text-gray-800">{req.title}</p>
+                  <p className="text-xs text-gray-400 capitalize">{req.category} · {formatDate(req.submittedAt)}</p>
+                </div>
+                <Badge variant={req.status === "in_progress" || req.status === "scheduled" ? "blue" : "yellow"} className="capitalize shrink-0 ml-3">
+                  {req.status.replace("_", " ")}
+                </Badge>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Contact landlord */}
       {landlord && (landlord.showEmailToTenants || landlord.showPhoneToTenants) && (
         <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <h2 className="font-semibold text-gray-900 mb-3 text-sm">Contact Your Landlord</h2>
+          <h2 className="font-semibold text-gray-900 mb-3 text-sm">Contact Landlord</h2>
           <p className="text-sm text-gray-500 mb-3">{landlord.name}</p>
           <div className="flex flex-col gap-2">
             {landlord.showPhoneToTenants && landlord.phone && (
-              <a
-                href={`tel:${landlord.phone}`}
-                className="flex items-center gap-2 text-sm font-medium text-slate-dark hover:text-primary transition"
-              >
+              <a href={`tel:${landlord.phone}`} className="flex items-center gap-2 text-sm font-medium text-slate-dark hover:text-primary transition">
                 <Phone size={15} className="text-gray-400" />
                 {landlord.phone}
               </a>
             )}
             {landlord.showEmailToTenants && landlord.email && (
-              <a
-                href={`mailto:${landlord.email}`}
-                className="flex items-center gap-2 text-sm font-medium text-slate-dark hover:text-primary transition"
-              >
+              <a href={`mailto:${landlord.email}`} className="flex items-center gap-2 text-sm font-medium text-slate-dark hover:text-primary transition">
                 <Mail size={15} className="text-gray-400" />
                 {landlord.email}
               </a>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* Open maintenance */}
-      {openRequests.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-100 p-5">
-          <h2 className="font-semibold text-gray-900 mb-4 text-sm">Open Maintenance Requests</h2>
-          <div className="space-y-3">
-            {openRequests.map((req) => (
-              <div key={req.id} className="flex justify-between text-sm">
-                <span className="text-gray-700">{req.title}</span>
-                <Badge variant={req.status === "resolved" ? "green" : req.status === "in_progress" ? "blue" : "yellow"} className="capitalize">
-                  {req.status.replace("_", " ")}
-                </Badge>
-              </div>
-            ))}
           </div>
         </div>
       )}

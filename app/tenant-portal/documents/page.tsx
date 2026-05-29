@@ -19,9 +19,8 @@ export default async function TenantDocumentsPage() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <h1 className="text-xl font-bold text-slate-dark">Documents</h1>
-      <p className="text-sm text-gray-500">Documents shared by your landlord.</p>
 
       {documents.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">

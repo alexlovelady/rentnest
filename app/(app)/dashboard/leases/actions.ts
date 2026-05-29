@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireServerUser } from "@/lib/auth";
 import { z } from "zod";
+import { autoGenerateUpcomingRent } from "@/lib/rent";
 
 const LeaseSchema = z.object({
   unitId: z.string(),
@@ -10,6 +11,7 @@ const LeaseSchema = z.object({
   primaryTenantId: z.string(),
   startDate: z.string(),
   endDate: z.string().optional().nullable(),
+  rentStartDate: z.string().optional().nullable(),
   leaseType: z.enum(["fixed", "month_to_month"]),
   monthlyRent: z.coerce.number(),
   securityDeposit: z.coerce.number().default(0),
@@ -27,7 +29,7 @@ const LeaseSchema = z.object({
 
 export async function createLease(data: z.infer<typeof LeaseSchema>) {
   const user = await requireServerUser();
-  const { tenantIds, primaryTenantId, startDate, endDate, ...rest } = LeaseSchema.parse(data);
+  const { tenantIds, primaryTenantId, startDate, endDate, rentStartDate, ...rest } = LeaseSchema.parse(data);
 
   const lease = await prisma.lease.create({
     data: {
@@ -35,6 +37,7 @@ export async function createLease(data: z.infer<typeof LeaseSchema>) {
       landlordId: user.id,
       startDate: new Date(startDate),
       endDate: endDate ? new Date(endDate) : null,
+      rentStartDate: rentStartDate ? new Date(rentStartDate) : null,
       tenants: {
         create: tenantIds.map((tid) => ({
           tenantId: tid,
@@ -43,6 +46,8 @@ export async function createLease(data: z.infer<typeof LeaseSchema>) {
       },
     },
   });
+
+  await autoGenerateUpcomingRent(user.id);
 
   // Mark any active listing for this unit as rented
   await prisma.listing.updateMany({

@@ -34,14 +34,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
 
   await prisma.addendumSignature.update({
     where: { token },
-    data: { status: "signed", signerName: signerName.trim(), signedAt: new Date() },
+    data: { status: "signed", signerName: signerName.trim(), signerIp: ip, signedAt: new Date() },
   });
 
   const { addendum } = sig;
   const addr = `${addendum.lease.unit.property.address}, Unit ${addendum.lease.unit.unitNumber}`;
   const landlord = await prisma.landlord.findUnique({ where: { id: addendum.landlordId } });
 
-  if (landlord?.email) {
+  if (landlord?.email && landlord.notifyOnSignature !== false) {
     const { resend, FROM, APP_URL } = await import("@/lib/resend");
     const { emailBase, greeting, detailTable, alertBox, btn } = await import("@/lib/email");
     await resend.emails.send({

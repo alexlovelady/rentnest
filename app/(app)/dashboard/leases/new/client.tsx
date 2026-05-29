@@ -44,6 +44,7 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
     primaryTenantId: "",
     startDate: "",
     endDate: "",
+    rentStartDate: "",
     leaseType: "fixed" as "fixed" | "month_to_month",
     monthlyRent: "",
     securityDeposit: "",
@@ -102,6 +103,7 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
       const lease = await createLease({
         ...form,
         endDate: form.leaseType === "month_to_month" ? null : form.endDate || null,
+        rentStartDate: form.rentStartDate || null,
         monthlyRent: Number(form.monthlyRent),
         securityDeposit: Number(form.securityDeposit) || 0,
         rentDueDay: Number(form.rentDueDay),
@@ -116,7 +118,11 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
         fd.append("name", leaseFile.name.replace(/\.[^.]+$/, ""));
         fd.append("docType", "lease");
         fd.append("leaseId", lease.id);
-        await fetch("/api/landlord/upload-document", { method: "POST", body: fd });
+        const uploadRes = await fetch("/api/landlord/upload-document", { method: "POST", body: fd });
+        if (!uploadRes.ok) {
+          const data = await uploadRes.json().catch(() => ({}));
+          throw new Error(data.error || "Lease created but document upload failed — you can upload it from the lease page.");
+        }
       }
       router.push(`/dashboard/leases/${lease.id}?created=1`);
     } catch (err: unknown) {
@@ -264,6 +270,10 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
             {form.leaseType === "fixed" && form.leaseDuration && form.leaseDuration !== "custom" && form.endDate && (
               <p className="text-xs text-gray-500">End date: {new Date(form.endDate + "T00:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
             )}
+            <div>
+              <Input label="Rent start date (optional)" type="date" value={form.rentStartDate} onChange={(e) => setForm((f) => ({ ...f, rentStartDate: e.target.value }))} />
+              <p className="text-xs text-gray-400 mt-1">Leave blank to match the lease start date. Set this later if you&apos;re offering free months.</p>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <Input label="Monthly rent ($)" type="number" value={form.monthlyRent} onChange={(e) => setForm((f) => ({ ...f, monthlyRent: e.target.value }))} required />
               <Input label="Security deposit ($)" type="number" value={form.securityDeposit} onChange={(e) => setForm((f) => ({ ...f, securityDeposit: e.target.value }))} />
@@ -306,6 +316,7 @@ export function NewLeaseClient({ defaults }: { defaults?: LateFeeDefaults }) {
               <div className="flex justify-between"><span className="text-gray-500">Rent</span><span>${Number(form.monthlyRent).toFixed(2)}/mo</span></div>
               <div className="flex justify-between"><span className="text-gray-500">Start</span><span>{form.startDate}</span></div>
               <div className="flex justify-between"><span className="text-gray-500">End</span><span>{form.leaseType === "month_to_month" ? "Month-to-month" : form.endDate || "—"}</span></div>
+              {form.rentStartDate && <div className="flex justify-between"><span className="text-gray-500">Rent starts</span><span>{form.rentStartDate}</span></div>}
               <div className="flex justify-between"><span className="text-gray-500">Security deposit</span><span>${Number(form.securityDeposit).toFixed(2)}</span></div>
             </div>
             <div className="border-t border-gray-100 pt-4">

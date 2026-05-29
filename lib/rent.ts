@@ -21,8 +21,10 @@ export async function autoGenerateUpcomingRent(landlordId: string, lookaheadDays
       const month = d.getMonth() + 1;
       const year = d.getFullYear();
 
-      // Only generate if the due date falls within our horizon
+      // Only generate if the due date falls within our horizon and on/after rent start
       if (d > horizon) continue;
+      const chargeStart = lease.rentStartDate ?? lease.startDate;
+      if (d < chargeStart) continue;
 
       const existing = await prisma.rentPayment.findFirst({
         where: { leaseId: lease.id, periodMonth: month, periodYear: year },
