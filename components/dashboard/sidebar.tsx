@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   Home, Building2, Users, FileText, DollarSign, Wrench,
-  Receipt, FolderOpen, BarChart3, Settings, LogOut, Menu, X, Sun, Moon, ClipboardList, Megaphone,
+  Receipt, FolderOpen, BarChart3, Settings, LogOut, Menu, X, Sun, Moon, ClipboardList, Megaphone, MessageSquare,
 } from "lucide-react";
 
 const nav = [
@@ -14,6 +14,7 @@ const nav = [
   { href: "/dashboard/tenants", label: "Tenants", icon: Users },
   { href: "/dashboard/leases", label: "Leases", icon: FileText },
   { href: "/dashboard/rent", label: "Rent", icon: DollarSign },
+  { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
   { href: "/dashboard/maintenance", label: "Maintenance", icon: Wrench },
   { href: "/dashboard/expenses", label: "Expenses", icon: Receipt },
   { href: "/dashboard/documents", label: "Documents", icon: FolderOpen },
