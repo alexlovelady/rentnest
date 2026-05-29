@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, Plus } from "lucide-react";
 import LeaseTerminatedPage from "./lease-terminated";
+import { PayDepositButton } from "./pay-deposit-button";
 
 function ordinal(n: number) {
   const v = n % 100;
@@ -15,9 +16,10 @@ function ordinal(n: number) {
   return n + (s[n % 10] || "th");
 }
 
-export default async function TenantPortalPage() {
+export default async function TenantPortalPage({ searchParams }: { searchParams: Promise<{ deposit_paid?: string }> }) {
   const session = await requireTenantUser();
   const { month, year } = currentPeriod();
+  const { deposit_paid } = await searchParams;
 
   const tenant = await prisma.tenant.findUnique({ where: { id: session.tenantId } });
   if (!tenant) redirect("/tenant-portal/auth");
@@ -121,6 +123,28 @@ export default async function TenantPortalPage() {
               {formatCurrency(allUnpaid.reduce((s, p) => s + p.totalAmount, 0))}
             </span>
           </div>
+        </div>
+      )}
+
+      {/* Security deposit */}
+      {lease.securityDeposit > 0 && (
+        <div className={`rounded-xl p-5 ${lease.securityDepositPaid ? "bg-green-50 border border-green-200" : "bg-white border border-gray-100"}`}>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Security Deposit</p>
+          <p className="text-2xl font-bold text-slate-dark mb-3">{formatCurrency(lease.securityDeposit)}</p>
+          {deposit_paid && (
+            <div className="mb-3">
+              <Badge variant="green" className="text-sm px-3 py-1">Payment received — thank you!</Badge>
+            </div>
+          )}
+          {lease.securityDepositPaid ? (
+            <Badge variant="green" className="text-sm px-3 py-1">
+              Received {lease.securityDepositPaidAt ? formatDate(lease.securityDepositPaidAt) : ""}
+            </Badge>
+          ) : landlord?.stripeConnectReady ? (
+            <PayDepositButton />
+          ) : (
+            <p className="text-sm text-gray-500">Contact your landlord to arrange payment.</p>
+          )}
         </div>
       )}
 

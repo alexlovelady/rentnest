@@ -130,6 +130,7 @@ model Lease {
   petDeposit      Float    @default(0)
   petRent         Float    @default(0)
   status          String   @default("active")
+  stripeDepositUrl String?
   terminatedAt    DateTime?
   terminationReason String?
   notes           String?

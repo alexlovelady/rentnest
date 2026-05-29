@@ -15,23 +15,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Rent payment webhook (from Stripe Connect)
+  // Rent + deposit webhooks (from Stripe Connect)
   if (connectAccountId) {
     if (event.type === "payment_intent.succeeded") {
       const pi = event.data.object as Stripe.PaymentIntent;
+
+      // Rent payment
       const rentPaymentId = pi.metadata?.rentPaymentId;
       if (rentPaymentId) {
         const payment = await prisma.rentPayment.update({
           where: { id: rentPaymentId },
-          data: {
-            status: "paid",
-            paidAt: new Date(),
-            stripePaymentId: pi.id,
-          },
+          data: { status: "paid", paidAt: new Date(), stripePaymentId: pi.id },
           include: { lease: { include: { unit: { include: { property: true } } } }, tenant: true },
         });
 
-        // Send receipt to tenant
         if (payment.tenant?.email) {
           const { resend, FROM } = await import("@/lib/resend");
           const { emailBase, greeting, ep, detailTable, alertBox } = await import("@/lib/email");
@@ -46,6 +43,41 @@ export async function POST(req: NextRequest) {
               ep(`This confirms your rent payment for <strong>${addr}</strong>.`) +
               detailTable([
                 ["Amount paid", `$${payment.totalAmount.toFixed(2)}`],
+                ["Property", addr],
+                ["Date", new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+              ])
+            ),
+          });
+        }
+      }
+
+      // Security deposit payment
+      const depositLeaseId = pi.metadata?.depositLeaseId;
+      if (depositLeaseId) {
+        const lease = await prisma.lease.update({
+          where: { id: depositLeaseId },
+          data: { securityDepositPaid: true, securityDepositPaidAt: new Date() },
+          include: {
+            unit: { include: { property: true } },
+            tenants: { where: { isPrimary: true }, include: { tenant: true } },
+          },
+        });
+
+        const primaryTenant = lease.tenants[0]?.tenant;
+        if (primaryTenant?.email) {
+          const { resend, FROM } = await import("@/lib/resend");
+          const { emailBase, greeting, ep, detailTable, alertBox } = await import("@/lib/email");
+          const addr = `${lease.unit.property.address}, Unit ${lease.unit.unitNumber}`;
+          await resend.emails.send({
+            from: FROM,
+            to: primaryTenant.email,
+            subject: `Security deposit received — ${addr}`,
+            html: emailBase(
+              alertBox("Your security deposit has been received. Thank you!", "success") +
+              greeting(primaryTenant.name) +
+              ep(`This confirms your security deposit payment for <strong>${addr}</strong>.`) +
+              detailTable([
+                ["Amount paid", `$${lease.securityDeposit.toFixed(2)}`],
                 ["Property", addr],
                 ["Date", new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
               ])
