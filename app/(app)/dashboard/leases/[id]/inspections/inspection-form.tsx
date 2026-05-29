@@ -58,7 +58,7 @@ export function InspectionForm({ leaseId, onCancel }: Props) {
     <form onSubmit={handleSubmit} className="border border-gray-100 rounded-xl p-5 space-y-5 bg-gray-50">
       <h3 className="font-semibold text-slate-dark">New Inspection</h3>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select label="Type" value={type} onChange={(e) => setType(e.target.value)}>
           <option value="move_in">Move-In</option>
           <option value="move_out">Move-Out</option>

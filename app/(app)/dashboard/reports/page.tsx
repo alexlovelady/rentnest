@@ -315,7 +315,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                 <DownloadCSVButton data={statementsCsv} filename={`statements-${MONTHS[month - 1]}-${year}.csv`} />
               </div>
               {/* Portfolio summary */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-green-50 border border-green-200 rounded-xl p-5">
                   <p className="text-sm text-green-700">Total Income</p>
                   <p className="text-2xl font-bold text-green-800">{formatCurrency(stmtByProperty.reduce((s, p) => s + p.income, 0))}</p>
@@ -340,7 +340,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                     </div>
                     <span className={`text-sm font-bold ${net >= 0 ? "text-green-700" : "text-red-600"}`}>{net >= 0 ? "+" : ""}{formatCurrency(net)} net</span>
                   </div>
-                  <div className="px-6 py-4 grid grid-cols-2 gap-4 text-sm border-b border-gray-50">
+                  <div className="px-6 py-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm border-b border-gray-50">
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Rent collected</p>
                       <p className="font-semibold text-green-700">{formatCurrency(income)}</p>

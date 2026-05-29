@@ -25,7 +25,7 @@ export function TenantNav() {
               className={`flex-1 flex flex-col items-center py-2.5 gap-0.5 transition-colors ${active ? "text-primary" : "text-gray-400 hover:text-gray-600"}`}
             >
               <Icon size={20} />
-              <span className="text-[10px] font-medium">{label}</span>
+              <span className="text-xs font-medium">{label}</span>
             </Link>
           );
         })}

@@ -46,8 +46,8 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-6">
-        <div className="col-span-2 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-xl border border-gray-100 p-6">
             <div className="flex items-start justify-between mb-4">
               <h1 className="text-xl font-bold text-slate-dark">{req.title}</h1>
@@ -66,7 +66,7 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
                 ))}
               </div>
             )}
-            <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <div><p className="text-xs text-gray-500">Property</p><p>{req.unit.property.address}, Unit {req.unit.unitNumber}</p></div>
               <div><p className="text-xs text-gray-500">Category</p><p className="capitalize">{req.category}</p></div>
               <div><p className="text-xs text-gray-500">Submitted</p><p>{formatDate(req.submittedAt)}</p></div>

@@ -28,7 +28,7 @@ export function TenantAuthClient() {
   if (error) {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-md w-full text-center">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 max-w-md w-full text-center">
           <p className="text-red-600 font-medium mb-2">Link expired or invalid</p>
           <p className="text-sm text-gray-500">{error}</p>
         </div>

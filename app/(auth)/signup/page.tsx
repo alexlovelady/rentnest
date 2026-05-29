@@ -40,7 +40,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-dark mb-1">Start your free trial</h1>
         <p className="text-sm text-gray-500">14 days free, no credit card required</p>

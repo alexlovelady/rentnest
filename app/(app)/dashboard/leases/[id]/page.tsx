@@ -64,7 +64,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
           <Badge variant={statusColor as "green" | "red" | "gray"}>{lease.status}</Badge>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 text-sm mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm mb-4">
           <div><p className="text-xs text-gray-500">Monthly rent</p><p className="font-semibold">{formatCurrency(lease.monthlyRent)}</p></div>
           <div><p className="text-xs text-gray-500">Start</p><p>{formatDate(lease.startDate)}</p></div>
           <div><p className="text-xs text-gray-500">End</p><p>{lease.endDate ? formatDate(lease.endDate) : "Month-to-month"}</p></div>

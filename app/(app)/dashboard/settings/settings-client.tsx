@@ -128,7 +128,7 @@ export function SettingsClient({ user, daysLeft }: Props) {
             )}
           </div>
           {user.plan === "trial" || user.plan === "cancelled" ? (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {PLANS.map(p => (
                 <div key={p.id} className="border border-gray-200 rounded-xl p-4 text-center">
                   <p className="font-bold text-slate-dark">{p.label}</p>
