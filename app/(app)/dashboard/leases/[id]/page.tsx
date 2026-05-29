@@ -118,6 +118,7 @@ export default async function LeaseDetailPage({ params, searchParams }: { params
                 allSigned={lease.tenants.length > 0 && lease.tenants.every((lt) =>
                   lease.signatures.some((s) => s.tenantId === lt.tenantId && s.status === "signed")
                 )}
+                hasDocument={lease.documents.some((d) => d.docType === "lease")}
               />
               {lease.endDate && (
                 <RenewLeaseButton

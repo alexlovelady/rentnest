@@ -244,16 +244,17 @@ model Expense {
 }
 
 model LeaseSignature {
-  id         String    @id @default(cuid())
-  leaseId    String
-  tenantId   String
-  token      String    @unique
-  status     String    @default("pending")
-  signerName String?
-  signerIp   String?
-  signedAt   DateTime?
-  expiresAt  DateTime?
-  createdAt  DateTime  @default(now())
+  id                String    @id @default(cuid())
+  leaseId           String
+  tenantId          String
+  token             String    @unique
+  status            String    @default("pending")
+  signerName        String?
+  signerIp          String?
+  signedAt          DateTime?
+  expiresAt         DateTime?
+  signedDocumentUrl String?
+  createdAt         DateTime  @default(now())
 
   lease  Lease  @relation(fields: [leaseId], references: [id])
   tenant Tenant @relation(fields: [tenantId], references: [id])

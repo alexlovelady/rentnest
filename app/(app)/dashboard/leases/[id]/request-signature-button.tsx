@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FileSignature, Check, RefreshCw } from "lucide-react";
 import { requestSignature } from "../actions";
 
-export function RequestSignatureButton({ leaseId, allSigned }: { leaseId: string; allSigned: boolean }) {
+export function RequestSignatureButton({ leaseId, allSigned, hasDocument }: { leaseId: string; allSigned: boolean; hasDocument: boolean }) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
@@ -26,6 +26,17 @@ export function RequestSignatureButton({ leaseId, allSigned }: { leaseId: string
     return (
       <div className="flex items-center gap-1.5 text-sm text-green-600 font-medium">
         <Check size={14} /> All tenants have signed
+      </div>
+    );
+  }
+
+  if (!hasDocument) {
+    return (
+      <div className="flex items-center gap-2">
+        <Button size="sm" variant="secondary" disabled>
+          <FileSignature size={12} /> Request Signature
+        </Button>
+        <p className="text-xs text-amber-600">Upload a lease document first</p>
       </div>
     );
   }

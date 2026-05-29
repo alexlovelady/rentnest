@@ -13,7 +13,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     where: { token },
     include: {
       tenant: true,
-      lease: { include: { unit: { include: { property: true } } } },
+      lease: {
+        include: {
+          unit: { include: { property: true } },
+          documents: { where: { docType: "lease" }, orderBy: { uploadedAt: "desc" }, take: 1 },
+        },
+      },
     },
   });
 
@@ -28,12 +33,46 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
     req.headers.get("x-real-ip") ||
     "unknown";
 
+  const signedAt = new Date();
+  const addr = `${sig.lease.unit.property.address}, Unit ${sig.lease.unit.unitNumber}`;
+
+  // Generate signed PDF if a lease document exists
+  let signedDocumentUrl: string | null = null;
+  const leaseDoc = sig.lease.documents[0];
+  if (leaseDoc?.fileUrl) {
+    try {
+      const { appendSignaturePage } = await import("@/lib/sign-pdf");
+      const { admin } = await import("@/lib/firebase-admin");
+
+      const pdfRes = await fetch(leaseDoc.fileUrl);
+      if (pdfRes.ok) {
+        const originalBytes = new Uint8Array(await pdfRes.arrayBuffer());
+        const signedBytes = await appendSignaturePage(originalBytes, {
+          tenantName: sig.tenant.name,
+          signerName: signerName.trim(),
+          signerIp: ip,
+          signedAt,
+          address: addr,
+          leaseId: sig.leaseId,
+        });
+
+        const bucket = admin().storage().bucket(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
+        const filename = `signed-leases/${sig.lease.landlordId}/${sig.leaseId}_${sig.tenantId}_${Date.now()}.pdf`;
+        const fileRef = bucket.file(filename);
+        await fileRef.save(Buffer.from(signedBytes), { contentType: "application/pdf" });
+        await fileRef.makePublic();
+        signedDocumentUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
+      }
+    } catch {
+      // PDF generation is best-effort — signature is still recorded if it fails
+    }
+  }
+
   await prisma.leaseSignature.update({
     where: { token },
-    data: { status: "signed", signerName: signerName.trim(), signerIp: ip, signedAt: new Date() },
+    data: { status: "signed", signerName: signerName.trim(), signerIp: ip, signedAt, signedDocumentUrl },
   });
 
-  const addr = `${sig.lease.unit.property.address}, Unit ${sig.lease.unit.unitNumber}`;
   const landlord = await prisma.landlord.findUnique({ where: { id: sig.lease.landlordId } });
 
   if (landlord?.email && landlord.notifyOnSignature !== false) {
@@ -50,12 +89,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ tok
           ["Tenant", sig.tenant.name],
           ["Property", addr],
           ["Signed as", signerName],
-          ["Date signed", new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+          ["Date signed", signedAt.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })],
+          ...(signedDocumentUrl ? [["Signed document", "Attached below"] as [string, string]] : []),
         ]) +
+        (signedDocumentUrl ? btn("Download Signed Lease →", signedDocumentUrl) : ep("Note: no lease document was attached, so no signed PDF was generated.")) +
         btn("View Lease →", `${APP_URL}/dashboard/leases/${sig.leaseId}`)
       ),
     });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, signedDocumentUrl });
 }

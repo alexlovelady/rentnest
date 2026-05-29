@@ -19,6 +19,7 @@ export function SignClient({ token, tenantName, address, monthlyRent, startDate,
   const [consented, setConsented] = useState(false);
   const [loading, setLoading] = useState(false);
   const [signed, setSigned] = useState(false);
+  const [signedDocumentUrl, setSignedDocumentUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   async function handleSign() {
@@ -30,10 +31,9 @@ export function SignClient({ token, tenantName, address, monthlyRent, startDate,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ signerName: typedName }),
       });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to submit signature");
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to submit signature");
+      setSignedDocumentUrl(data.signedDocumentUrl ?? null);
       setSigned(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -44,12 +44,26 @@ export function SignClient({ token, tenantName, address, monthlyRent, startDate,
 
   if (signed) {
     return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="text-center py-10 space-y-4">
+        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
           <Check size={32} className="text-green-600" />
         </div>
-        <h2 className="text-xl font-bold text-slate-dark mb-2">Lease signed</h2>
-        <p className="text-gray-500 text-sm">Your signature has been recorded. Your landlord has been notified.</p>
+        <div>
+          <h2 className="text-xl font-bold text-slate-dark mb-1">Lease signed</h2>
+          <p className="text-gray-500 text-sm">Your signature has been recorded. Your landlord has been notified.</p>
+        </div>
+        {signedDocumentUrl ? (
+          <a
+            href={signedDocumentUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block border border-primary text-primary rounded-xl px-5 py-2.5 text-sm font-medium hover:bg-primary/5 transition"
+          >
+            Download Signed Lease PDF →
+          </a>
+        ) : (
+          <p className="text-xs text-gray-400">Signature recorded digitally. No PDF was attached to this lease.</p>
+        )}
       </div>
     );
   }
