@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { resend, FROM, APP_URL } from "@/lib/resend";
-import { applyLateFees, generateMonthlyRent } from "@/lib/rent";
+import { applyLateFees, autoGenerateUpcomingRent } from "@/lib/rent";
 import { signTenantToken } from "@/lib/tenant-auth";
 import { addDays, isAfter, differenceInDays } from "date-fns";
 import { emailBase, greeting, ep, detailTable, emailList, alertBox, btn } from "@/lib/email";
@@ -14,12 +14,10 @@ export async function POST(req: NextRequest) {
 
   const now = new Date();
 
-  // 0a. Auto-generate monthly charges for all active landlords (idempotent — skips existing records)
+  // 0a. Auto-generate upcoming rent charges (7-day lookahead — idempotent)
   const activeLandlords = await prisma.landlord.findMany({ where: { plan: { not: "cancelled" } }, select: { id: true } });
-  const currentMonth = now.getMonth() + 1;
-  const currentYear = now.getFullYear();
   for (const l of activeLandlords) {
-    await generateMonthlyRent(l.id, currentMonth, currentYear);
+    await autoGenerateUpcomingRent(l.id);
   }
 
   // 0b. Apply late fees for all landlords with overdue payments

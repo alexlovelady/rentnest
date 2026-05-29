@@ -30,32 +30,32 @@ Manual QA checklist. Run through each section after making changes to a feature 
 - [May 28, 2026] Create a tenant with email and phone — appears in tenant list
 - [May 28, 2026] Create a tenant without email — no errors, fields optional
 - [May 28, 2026] Edit a tenant — changes saved
-- [ ] Send portal link — email received, link works
-- [ ] Tenant portal loads with correct name and address after auth
+- [May 28, 2026] Send portal link — email received, link works
+- [May 28, 2026] Tenant portal loads with correct name and address after auth
 
 ---
 
 ## Leases
 
-- [ ] Create a lease for a unit with a tenant — lease appears in list and on unit
-- [ ] Lease detail page shows rent, dates, tenants, late fee settings
-- [ ] Month-to-month lease shows "Month-to-month" (no end date)
-- [ ] Terminate a lease — status changes to "terminated", no longer active
-- [ ] Lease with multiple tenants — all names shown, all get portal invites
+- [May 28, 2026] Create a lease for a unit with a tenant — lease appears in list and on unit
+- [May 28, 2026] Lease detail page shows rent, dates, tenants, late fee settings
+- [May 28, 2026] Month-to-month lease shows "Month-to-month" (no end date)
+- [May 28, 2026] Terminate a lease — status changes to "terminated", no longer active
+- [May 28, 2026] Lease with multiple tenants — all names shown, all get portal invites
 
 ### Lease Signing
-- [ ] "Request Signature" button sends email to tenant(s)
-- [ ] Signing link opens `/sign/[token]` with correct lease details shown
-- [ ] Lease document link shown if a document is attached to the lease
-- [ ] Typing the wrong name keeps Sign button disabled
-- [ ] Typing the exact name (case-insensitive) enables Sign button
-- [ ] Consent checkbox required before signing
-- [ ] Submitting signature → success screen shown, landlord receives email
-- [ ] Revisiting the signed link shows "Already signed" message
-- [ ] Expired link (past 30 days) shows "Link expired" message
-- [ ] Signature status appears on lease detail page for each tenant
-- [ ] "All tenants have signed" shown when all signatures are complete
-- [ ] Resend button re-sends the signing email
+- [May 28, 2026] "Request Signature" button sends email to tenant(s)
+- [May 28, 2026] Signing link opens `/sign/[token]` with correct lease details shown
+- [May 28, 2026] Lease document link shown if a document is attached to the lease
+- [May 28, 2026] Typing the wrong name keeps Sign button disabled
+- [May 28, 2026] Typing the exact name (case-insensitive) enables Sign button
+- [May 28, 2026] Consent checkbox required before signing
+- [May 28, 2026] Submitting signature → success screen shown, landlord receives email
+- [May 28, 2026] Revisiting the signed link shows "Already signed" message
+- [May 28, 2026] Expired link (past 30 days) shows "Link expired" message
+- [May 28, 2026] Signature status appears on lease detail page for each tenant
+- [May 28, 2026] "All tenants have signed" shown when all signatures are complete
+- [May 28, 2026] Resend button re-sends the signing email
 
 ---
 
