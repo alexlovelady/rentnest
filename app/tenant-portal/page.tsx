@@ -2,12 +2,13 @@ import { requireTenantUser } from "@/lib/tenant-auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { formatCurrency, formatDate, monthName, currentPeriod } from "@/lib/utils";
+import { formatCurrency, formatDate, monthName } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, Plus } from "lucide-react";
 import LeaseTerminatedPage from "./lease-terminated";
 import { PayDepositButton } from "./pay-deposit-button";
+import { PayRentButton } from "./pay-rent-button";
 
 function ordinal(n: number) {
   const v = n % 100;
@@ -18,7 +19,6 @@ function ordinal(n: number) {
 
 export default async function TenantPortalPage({ searchParams }: { searchParams: Promise<{ deposit_paid?: string }> }) {
   const session = await requireTenantUser();
-  const { month, year } = currentPeriod();
   const { deposit_paid } = await searchParams;
 
   const tenant = await prisma.tenant.findUnique({ where: { id: session.tenantId } });
@@ -39,14 +39,26 @@ export default async function TenantPortalPage({ searchParams }: { searchParams:
     return <LeaseTerminatedPage tenant={tenant} lease={lease} />;
   }
 
-  const currentPayment = await prisma.rentPayment.findFirst({
-    where: { leaseId: session.leaseId, periodMonth: month, periodYear: year },
+  const now = new Date();
+
+  // Most recent paid charge (for "last paid" context)
+  const lastPaid = await prisma.rentPayment.findFirst({
+    where: { leaseId: session.leaseId, status: "paid" },
+    orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }],
   });
 
   const allUnpaid = await prisma.rentPayment.findMany({
     where: { leaseId: session.leaseId, status: "pending" },
-    orderBy: [{ periodYear: "asc" }, { periodMonth: "asc" }],
+    orderBy: [{ dueDate: "asc" }],
   });
+
+  // Featured = earliest pending charge (upcoming or overdue)
+  const featuredPayment = allUnpaid[0] ?? null;
+  // Remaining pending charges beyond the featured one
+  const otherUnpaid = allUnpaid.slice(1);
+  // Split others into overdue vs upcoming
+  const otherOverdue = otherUnpaid.filter((p) => new Date(p.dueDate) < now);
+  const otherUpcoming = otherUnpaid.filter((p) => new Date(p.dueDate) >= now);
 
   const openRequests = await prisma.maintenanceRequest.findMany({
     where: { tenantId: session.tenantId, status: { not: "resolved" } },
@@ -63,66 +75,84 @@ export default async function TenantPortalPage({ searchParams }: { searchParams:
         <p className="text-sm text-gray-500">{addr}</p>
       </div>
 
-      {/* Current rent status */}
-      <div className={`rounded-xl p-5 ${currentPayment?.status === "paid" ? "bg-green-50 border border-green-200" : "bg-white border border-gray-100"}`}>
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{monthName(month)} {year} Rent</p>
-        {currentPayment ? (
-          <>
-            <p className="text-3xl font-bold text-slate-dark mb-3">{formatCurrency(currentPayment.totalAmount)}</p>
-            {currentPayment.status === "paid" ? (
-              <Badge variant="green" className="text-sm px-3 py-1">Paid {currentPayment.paidAt ? formatDate(currentPayment.paidAt) : ""}</Badge>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-sm text-gray-500">Due {formatDate(currentPayment.dueDate)}</p>
-                {currentPayment.lateFee > 0 && (
-                  <p className="text-xs text-red-600">Includes {formatCurrency(currentPayment.lateFee)} late fee</p>
-                )}
-                {landlord?.stripeConnectReady ? (
-                  currentPayment.stripePaymentUrl ? (
-                    <a href={currentPayment.stripePaymentUrl} target="_blank" rel="noopener noreferrer">
-                      <Button className="w-full" size="lg">Pay Now</Button>
-                    </a>
-                  ) : (
-                    <Link href="/tenant-portal/pay">
-                      <Button className="w-full" size="lg">Pay Online</Button>
-                    </Link>
-                  )
-                ) : (
-                  <p className="text-sm text-gray-500">Contact your landlord to arrange payment.</p>
-                )}
-              </div>
+      {/* Featured rent charge — earliest pending, or last paid if all caught up */}
+      {featuredPayment ? (
+        <div className={`rounded-xl p-5 ${new Date(featuredPayment.dueDate) < now ? "bg-red-50 border border-red-200" : "bg-white border border-gray-100"}`}>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+            {monthName(featuredPayment.periodMonth)} {featuredPayment.periodYear} Rent
+          </p>
+          <p className="text-3xl font-bold text-slate-dark mb-3">{formatCurrency(featuredPayment.totalAmount)}</p>
+          <div className="space-y-3">
+            <p className={`text-sm ${new Date(featuredPayment.dueDate) < now ? "text-red-600 font-medium" : "text-gray-500"}`}>
+              {new Date(featuredPayment.dueDate) < now ? "Overdue — was due" : "Due"} {formatDate(featuredPayment.dueDate)}
+            </p>
+            {featuredPayment.lateFee > 0 && (
+              <p className="text-xs text-red-600">Includes {formatCurrency(featuredPayment.lateFee)} late fee</p>
             )}
-          </>
-        ) : (
-          <p className="text-sm text-gray-500">No rent charge for this month yet. Check back soon.</p>
-        )}
-      </div>
+            {landlord?.stripeConnectReady ? (
+              featuredPayment.stripePaymentUrl ? (
+                <a href={featuredPayment.stripePaymentUrl} target="_blank" rel="noopener noreferrer">
+                  <Button className="w-full" size="lg">Pay Now</Button>
+                </a>
+              ) : (
+                <PayRentButton rentPaymentId={featuredPayment.id} />
+              )
+            ) : (
+              <p className="text-sm text-gray-500">Contact your landlord to arrange payment.</p>
+            )}
+          </div>
+        </div>
+      ) : lastPaid ? (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+            {monthName(lastPaid.periodMonth)} {lastPaid.periodYear} Rent
+          </p>
+          <p className="text-3xl font-bold text-slate-dark mb-3">{formatCurrency(lastPaid.totalAmount)}</p>
+          <Badge variant="green" className="text-sm px-3 py-1">
+            Paid {lastPaid.paidAt ? formatDate(lastPaid.paidAt) : ""}
+          </Badge>
+        </div>
+      ) : (
+        <div className="bg-white border border-gray-100 rounded-xl p-5">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Rent</p>
+          <p className="text-sm text-gray-500 mt-2">No rent charges yet. Check back soon.</p>
+        </div>
+      )}
 
-      {/* Outstanding balance — prior unpaid months */}
-      {allUnpaid.filter((p) => !(p.periodMonth === month && p.periodYear === year)).length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-5">
-          <h2 className="font-semibold text-red-900 mb-3 text-sm">Outstanding Balance</h2>
-          <div className="space-y-2 mb-4">
-            {allUnpaid
-              .filter((p) => !(p.periodMonth === month && p.periodYear === year))
-              .map((p) => (
-                <div key={p.id} className="flex justify-between text-sm">
-                  <span className="text-red-800">{monthName(p.periodMonth)} {p.periodYear}</span>
-                  <div className="text-right">
-                    <span className="font-medium text-red-900">{formatCurrency(p.totalAmount)}</span>
-                    {p.lateFee > 0 && (
-                      <p className="text-xs text-red-600">incl. {formatCurrency(p.lateFee)} late fee</p>
-                    )}
-                  </div>
+      {/* Other overdue charges */}
+      {otherOverdue.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-5 space-y-3">
+          <h2 className="font-semibold text-red-900 text-sm">Also Past Due</h2>
+          {otherOverdue.map((p) => (
+            <div key={p.id} className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-red-900">{monthName(p.periodMonth)} {p.periodYear}</p>
+                <p className="text-xs text-red-600">{formatCurrency(p.totalAmount)}{p.lateFee > 0 ? ` (incl. ${formatCurrency(p.lateFee)} late fee)` : ""}</p>
+              </div>
+              {landlord?.stripeConnectReady && (
+                <div className="shrink-0 w-28">
+                  <PayRentButton rentPaymentId={p.id} label="Pay" />
                 </div>
-              ))}
+              )}
+            </div>
+          ))}
+          <div className="border-t border-red-200 pt-3 flex justify-between">
+            <span className="text-sm font-semibold text-red-900">Total overdue</span>
+            <span className="font-bold text-red-900">{formatCurrency(otherOverdue.reduce((s, p) => s + p.totalAmount, 0))}</span>
           </div>
-          <div className="border-t border-red-200 pt-3 flex justify-between items-center">
-            <span className="text-sm font-semibold text-red-900">Total owed</span>
-            <span className="text-lg font-bold text-red-900">
-              {formatCurrency(allUnpaid.reduce((s, p) => s + p.totalAmount, 0))}
-            </span>
-          </div>
+        </div>
+      )}
+
+      {/* Upcoming charges beyond the featured one */}
+      {otherUpcoming.length > 0 && (
+        <div className="bg-white border border-gray-100 rounded-xl p-5 space-y-2">
+          <h2 className="font-semibold text-gray-900 text-sm">Upcoming</h2>
+          {otherUpcoming.map((p) => (
+            <div key={p.id} className="flex justify-between text-sm">
+              <span className="text-gray-600">{monthName(p.periodMonth)} {p.periodYear}</span>
+              <span className="text-gray-500">Due {formatDate(p.dueDate)} · {formatCurrency(p.totalAmount)}</span>
+            </div>
+          ))}
         </div>
       )}
 
