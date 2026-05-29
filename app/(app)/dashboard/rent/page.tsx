@@ -12,8 +12,8 @@ export default async function RentPage() {
   const user = await requireServerUser();
   const { month, year } = currentPeriod();
 
-  // Current month
-  const payments = await prisma.rentPayment.findMany({
+  // Current month charges (all statuses — for collected/outstanding stats)
+  const currentMonthPayments = await prisma.rentPayment.findMany({
     where: { landlordId: user.id, periodMonth: month, periodYear: year },
     include: {
       lease: { include: { unit: { include: { property: true } } } },
@@ -22,7 +22,24 @@ export default async function RentPage() {
     orderBy: { dueDate: "asc" },
   });
 
-  // Prior unpaid charges (any month before current)
+  // Upcoming pending charges (future months — e.g. lease starting next month)
+  const upcomingPayments = await prisma.rentPayment.findMany({
+    where: {
+      landlordId: user.id,
+      status: "pending",
+      OR: [
+        { periodYear: { gt: year } },
+        { periodYear: year, periodMonth: { gt: month } },
+      ],
+    },
+    include: {
+      lease: { include: { unit: { include: { property: true } } } },
+      tenant: true,
+    },
+    orderBy: [{ periodYear: "asc" }, { periodMonth: "asc" }],
+  });
+
+  // Prior unpaid charges (months before current)
   const priorUnpaid = await prisma.rentPayment.findMany({
     where: {
       landlordId: user.id,
@@ -39,9 +56,12 @@ export default async function RentPage() {
     orderBy: [{ periodYear: "asc" }, { periodMonth: "asc" }],
   });
 
-  const paid = payments.filter((p) => p.status === "paid");
-  const pending = payments.filter((p) => p.status === "pending" && new Date(p.dueDate) >= new Date());
-  const overdue = payments.filter((p) => p.status === "pending" && new Date(p.dueDate) < new Date());
+  // All charges shown in the main table = current month + upcoming
+  const payments = [...currentMonthPayments, ...upcomingPayments];
+
+  const paid = currentMonthPayments.filter((p) => p.status === "paid");
+  const pending = currentMonthPayments.filter((p) => p.status === "pending" && new Date(p.dueDate) >= new Date());
+  const overdue = currentMonthPayments.filter((p) => p.status === "pending" && new Date(p.dueDate) < new Date());
 
   const totalPaid = paid.reduce((s, p) => s + p.totalAmount, 0);
   const totalPending = [...pending, ...overdue].reduce((s, p) => s + p.totalAmount, 0);
@@ -137,7 +157,7 @@ export default async function RentPage() {
         </div>
       )}
 
-      {/* Current month charges */}
+      {/* Current month + upcoming charges */}
       {payments.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
           <p className="text-gray-500 mb-3">No rent charges for this month yet.</p>
@@ -159,7 +179,13 @@ export default async function RentPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {payments.map((p) => <PaymentRow key={p.id} p={p} />)}
+                {payments.map((p) => (
+                  <PaymentRow
+                    key={p.id}
+                    p={p}
+                    showPeriod={!(p.periodMonth === month && p.periodYear === year)}
+                  />
+                ))}
               </tbody>
             </table>
           </div>
