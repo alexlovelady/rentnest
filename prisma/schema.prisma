@@ -368,6 +368,7 @@ model AddendumSignature {
   token      String    @unique
   status     String    @default("pending")
   signerName String?
+  signerIp   String?
   signedAt   DateTime?
   expiresAt  DateTime?
   createdAt  DateTime  @default(now())
