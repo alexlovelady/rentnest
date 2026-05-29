@@ -30,23 +30,22 @@ export default async function TenantMaintenancePage() {
       ) : (
         <div className="space-y-3">
           {requests.map((req) => (
-            <div key={req.id} className="bg-white rounded-xl border border-gray-100 p-4">
+            <Link key={req.id} href={`/tenant-portal/maintenance/${req.id}`} className="block bg-white rounded-xl border border-gray-100 p-4 hover:border-primary/30 hover:shadow-sm transition">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="font-medium text-gray-900">{req.title}</p>
                   <p className="text-xs text-gray-400 capitalize">{req.category} · {formatDate(req.submittedAt)}</p>
                 </div>
-                <Badge variant={req.status === "resolved" ? "green" : req.status === "in_progress" || req.status === "scheduled" ? "blue" : "yellow"} className="capitalize">
+                <Badge variant={req.status === "resolved" ? "green" : req.status === "in_progress" || req.status === "scheduled" ? "blue" : "yellow"} className="capitalize shrink-0 ml-2">
                   {req.status.replace("_", " ")}
                 </Badge>
               </div>
-              <p className="text-sm text-gray-600 mt-2">{req.description}</p>
-              {req.resolutionNotes && (
-                <div className="mt-3 pt-3 border-t border-gray-100">
-                  <p className="text-xs text-gray-500">Resolution: {req.resolutionNotes}</p>
-                </div>
+              {req.resolutionNotes ? (
+                <p className="text-xs text-gray-500 mt-2 line-clamp-1">Resolution: {req.resolutionNotes}</p>
+              ) : (
+                <p className="text-sm text-gray-500 mt-2 line-clamp-2">{req.description}</p>
               )}
-            </div>
+            </Link>
           ))}
         </div>
       )}
