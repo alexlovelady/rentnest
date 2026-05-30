@@ -357,13 +357,22 @@ const PLANS = [
   { id: "portfolio", name: "Portfolio", price: "$99", units: "Unlimited units", desc: "No unit cap, ever", highlight: false },
 ];
 
-const FAQS = [
+const LANDLORD_FAQS = [
   { q: "Does RentNest take a percentage of my rent?", a: "No, never. Flat monthly subscription. That's it." },
   { q: "Is there a free trial? Do I need a credit card?", a: "Every account gets a 14-day free trial with no credit card required. Trial accounts support up to 3 units." },
   { q: "What does my tenant need to use the portal?", a: "Just an email address. You send them a link — no app to download, no account to create." },
   { q: "How does online rent collection work?", a: "Stripe processes the payment. Funds hit your bank within 2 business days. Standard card fees apply (2.9% + $0.30) — we take nothing." },
   { q: "What if my tenant pays by check or cash?", a: "No problem. Record offline payments manually. Online payment is available but never required." },
   { q: "Can I cancel anytime?", a: "Yes. Cancel from account settings — no contracts, no cancellation fees." },
+];
+
+const TENANT_FAQS = [
+  { q: "How do I get access to my tenant portal?", a: "Your landlord sends you a unique link by email. Just click it — no account to create, no password to set up." },
+  { q: "Do I need to download an app?", a: "No. The portal works entirely in your browser on any device. Bookmark the link and you're set." },
+  { q: "How do I pay rent online?", a: "Once your landlord has connected their bank account, you'll see a Pay button in your portal. Enter your card details and you're done — takes about 30 seconds." },
+  { q: "What payment methods are accepted?", a: "Credit and debit cards via Stripe. Your landlord may also pass the small processing fee (2.9% + $0.30) through to you, or absorb it themselves — that's their call." },
+  { q: "How do I submit a maintenance request?", a: "Go to Maintenance in your portal, hit New Request, describe the issue and attach photos if you have them. Your landlord gets notified right away." },
+  { q: "Can I see my payment history?", a: "Yes — your full payment history is in the Payments tab, including dates, amounts, and receipts for every charge." },
 ];
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -426,17 +435,13 @@ export function LandingClient() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pb-0">
               {/* Left */}
               <div>
-                <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/50 text-xs px-3 py-1.5 rounded-full mb-6">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
-                  No percentage of rent. No per-lease fees. Ever.
-                </div>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6" style={{ fontFamily: "var(--font-lora, serif)" }}>
                   The landlord software that{" "}
                   <span className="text-primary">actually works</span>{" "}
                   for you.
                 </h1>
                 <p className="text-lg text-white/50 mb-8 leading-relaxed max-w-lg">
-                  Collect rent online, track maintenance, store leases, and give your tenants a portal — all for $19 a month. No cuts. No surprises.
+                  Collect rent online, track maintenance, store leases, and give your tenants a portal — all for $19 a month. No percentage of rent. No per-lease fees. Ever.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 mb-8">
                   <Link href="/signup" className="bg-primary text-white px-7 py-3.5 rounded-xl font-semibold hover:bg-primary-dark transition shadow-lg text-center">
@@ -464,16 +469,12 @@ export function LandingClient() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center pb-0">
               {/* Left */}
               <div>
-                <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/50 text-xs px-3 py-1.5 rounded-full mb-6">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
-                  No app to download. No account to create.
-                </div>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6" style={{ fontFamily: "var(--font-lora, serif)" }}>
                   Renting made{" "}
                   <span className="text-primary">refreshingly simple.</span>
                 </h1>
                 <p className="text-lg text-white/50 mb-8 leading-relaxed max-w-lg">
-                  Pay rent, submit maintenance requests, and stay connected with your landlord — all from a single link your landlord sends you.
+                  Pay rent, submit maintenance requests, and stay connected with your landlord — all from a single link. No app to download, no account to create.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 mb-8">
                   <Link href="/listings" className="bg-primary text-white px-7 py-3.5 rounded-xl font-semibold hover:bg-primary-dark transition shadow-lg text-center">
@@ -676,7 +677,7 @@ export function LandingClient() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-center mb-14" style={{ fontFamily: "var(--font-lora, serif)" }}>Questions</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-14 gap-y-8">
-            {FAQS.map((faq) => (
+            {(isLandlord ? LANDLORD_FAQS : TENANT_FAQS).map((faq) => (
               <div key={faq.q} className="border-t border-white/5 pt-6">
                 <h3 className="font-semibold mb-2">{faq.q}</h3>
                 <p className="text-sm text-white/40 leading-relaxed">{faq.a}</p>
