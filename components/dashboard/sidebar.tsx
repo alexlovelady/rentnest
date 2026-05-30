@@ -7,6 +7,7 @@ import {
   Home, Building2, Users, FileText, DollarSign, Wrench,
   Receipt, FolderOpen, BarChart3, Settings, LogOut, Menu, X, Sun, Moon, ClipboardList, Megaphone, MessageSquare, CalendarDays,
 } from "lucide-react";
+import { SupportButton } from "./support-button";
 
 const nav = [
   { href: "/dashboard", label: "Overview", icon: Home },
@@ -70,6 +71,7 @@ export function Sidebar() {
         })}
       </nav>
       <div className="px-2 py-4 border-t border-white/10 space-y-0.5">
+        <SupportButton />
         <button
           onClick={toggleDark}
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/10 w-full transition-colors"

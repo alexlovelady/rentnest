@@ -16,15 +16,27 @@ export async function POST(req: NextRequest) {
     if (!landlord) {
       const trialEndsAt = new Date();
       trialEndsAt.setDate(trialEndsAt.getDate() + 14);
+      const landlordName = name || decoded.name || decoded.email!.split("@")[0];
       landlord = await prisma.landlord.create({
         data: {
           firebaseUid: decoded.uid,
           email: decoded.email!,
-          name: name || decoded.name || decoded.email!.split("@")[0],
+          name: landlordName,
           plan: "trial",
           trialEndsAt,
         },
       });
+
+      // Fire-and-forget — don't block session creation if Airtable is unavailable
+      import("@/lib/airtable").then(({ airtableCreate, today }) =>
+        airtableCreate("Trial Signups", {
+          Product: "RentNest",
+          Name: landlordName,
+          Email: decoded.email!,
+          Date: today(),
+          "Trial End Date": trialEndsAt.toISOString().split("T")[0],
+        })
+      ).catch(err => console.error("[session] Airtable trial log failed:", err));
     }
 
     const expiresIn = 60 * 60 * 24 * 14 * 1000;

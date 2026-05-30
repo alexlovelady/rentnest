@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Rent + deposit webhooks (from Stripe Connect)
+  // ── Rent + deposit webhooks (from Stripe Connect accounts) ────────────────
   if (connectAccountId) {
     if (event.type === "payment_intent.succeeded") {
       const pi = event.data.object as Stripe.PaymentIntent;
@@ -89,7 +89,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // SaaS billing webhooks
+  // ── SaaS billing webhooks (platform account) ─────────────────────────────
+
   if (event.type === "customer.subscription.updated") {
     const sub = event.data.object as Stripe.Subscription;
     const stripeId = sub.customer as string;
@@ -110,8 +111,38 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session;
     const stripeId = session.customer as string;
     const landlordId = session.metadata?.landlordId;
+
     if (landlordId && stripeId) {
-      await prisma.landlord.update({ where: { id: landlordId }, data: { stripeId } });
+      const landlord = await prisma.landlord.update({ where: { id: landlordId }, data: { stripeId } });
+
+      // Determine plan from price ID
+      const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 1 });
+      const priceId = lineItems.data[0]?.price?.id;
+      let plan = "starter";
+      if (priceId === process.env.STRIPE_PRICE_ID_GROW) plan = "grow";
+      if (priceId === process.env.STRIPE_PRICE_ID_PORTFOLIO) plan = "portfolio";
+
+      // Airtable conversion tracking (fire-and-forget)
+      ;(async () => {
+        try {
+          const { airtableFindByEmail, airtablePatch, airtableCreate, today } = await import("@/lib/airtable");
+          const recordId = await airtableFindByEmail("Trial Signups", landlord.email);
+          if (recordId) {
+            await airtablePatch("Trial Signups", recordId, { "Converted Date": today(), Plan: plan });
+          } else {
+            await airtableCreate("Trial Signups", {
+              Product: "RentNest",
+              Name: landlord.name,
+              Email: landlord.email,
+              Date: today(),
+              "Converted Date": today(),
+              Plan: plan,
+            });
+          }
+        } catch (err) {
+          console.error("[webhook] Airtable conversion log failed:", err);
+        }
+      })();
     }
   }
 
