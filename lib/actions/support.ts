@@ -9,10 +9,8 @@ export async function submitSupport(type: string, message: string) {
   await airtableCreate("Customer Feedback", {
     Product: "RentNest",
     Type: type,
-    Message: message.trim(),
+    Message: `[${user.name} — ${user.email}]\n\n${message.trim()}`,
     Source: "Support Form",
-    Name: user.name,
-    Email: user.email,
     Date: today(),
   });
 }
