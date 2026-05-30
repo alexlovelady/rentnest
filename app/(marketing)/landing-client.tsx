@@ -744,8 +744,8 @@ export function LandingClient() {
               <div className="px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">For former Cozy users</p>
-                  <h3 className="text-xl font-bold mb-1" style={{ fontFamily: "var(--font-lora, serif)" }}>Used Cozy before Apartments.com changed it?</h3>
-                  <p className="text-white/40 text-sm">You'll feel right at home — same simplicity, no ads, no upsells, no one trying to list your properties.</p>
+                  <h3 className="text-xl font-bold mb-1" style={{ fontFamily: "var(--font-lora, serif)" }}>Loved Cozy before it became part of Apartments.com?</h3>
+                  <p className="text-white/40 text-sm">RentNest brings back the simple landlord tools: no ads, no upsells, no listing pressure.</p>
                 </div>
                 <Link href="/signup" className="shrink-0 bg-primary text-white px-5 py-2.5 rounded-xl font-medium hover:bg-primary-dark transition text-sm whitespace-nowrap">
                   Try RentNest Free →
@@ -850,6 +850,9 @@ export function LandingClient() {
           </div>
           <span>© 2026 RentNest. All rights reserved.</span>
         </div>
+        <p className="max-w-6xl mx-auto mt-4 text-xs text-white/20 text-center sm:text-left px-0">
+          RentNest is not affiliated with or endorsed by Apartments.com or CoStar.
+        </p>
       </footer>
     </div>
   );
