@@ -23,7 +23,7 @@ export function IncomeExpenseChart({ data }: { data: MonthlyData[] }) {
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
           <YAxis tickFormatter={formatK} tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} width={42} />
           <Tooltip
-            formatter={(v: number, name: string) => [`$${v.toLocaleString()}`, name === "income" ? "Income" : name === "expenses" ? "Expenses" : "Net"]}
+            formatter={(v, name) => [`$${Number(v).toLocaleString()}`, name === "income" ? "Income" : name === "expenses" ? "Expenses" : "Net"]}
             contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #f3f4f6" }}
           />
           <Bar dataKey="income" fill="#C4622D" radius={[3, 3, 0, 0]} name="income" />
@@ -50,7 +50,7 @@ export function NetIncomeChart({ data }: { data: MonthlyData[] }) {
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
           <YAxis tickFormatter={formatK} tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} width={42} />
           <Tooltip
-            formatter={(v: number) => [`$${v.toLocaleString()}`, "Net income"]}
+            formatter={(v) => [`$${Number(v).toLocaleString()}`, "Net income"]}
             contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #f3f4f6" }}
           />
           <Area type="monotone" dataKey="net" stroke="#C4622D" strokeWidth={2} fill="url(#netGrad)" dot={{ r: 3, fill: "#C4622D" }} />
@@ -81,7 +81,7 @@ export function ExpensePieChart({ data }: { data: CategoryData[] }) {
             ))}
           </Pie>
           <Tooltip
-            formatter={(v: number, name: string) => [`$${v.toLocaleString()}`, name]}
+            formatter={(v, name) => [`$${Number(v).toLocaleString()}`, name]}
             contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #f3f4f6" }}
           />
           <Legend

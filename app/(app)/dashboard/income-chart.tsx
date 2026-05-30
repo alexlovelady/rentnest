@@ -23,7 +23,7 @@ export function IncomeChart({ data }: { data: MonthData[] }) {
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
           <YAxis tickFormatter={formatK} tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} width={40} />
           <Tooltip
-            formatter={(value: number, name: string) => [`$${value.toLocaleString()}`, name === "income" ? "Income" : "Expenses"]}
+            formatter={(value, name) => [`$${Number(value).toLocaleString()}`, name === "income" ? "Income" : "Expenses"]}
             contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #f3f4f6", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)" }}
           />
           <Bar dataKey="income" fill="#C4622D" radius={[4, 4, 0, 0]} name="income" />
