@@ -25,23 +25,23 @@ h1, h2, h3 {
 @variant dark (&:where(.dark, .dark *));
 
 .dark {
-  /* Remap grays so text-gray-900 → near-white, text-gray-500 → muted, etc. */
-  --color-gray-900: #f4f4f6;
-  --color-gray-800: #e2e2e8;
-  --color-gray-700: #c4c4d0;
-  --color-gray-600: #8888a0;
-  --color-gray-500: #707088;
-  --color-gray-400: #60607a;
-  --color-gray-300: #3a3a52;
-  /* Sidebar + top-level brand surface gets deepest dark */
   --color-slate-dark: #0a0a12;
-  /* Cream pages (marketing) get the dark bg too when dark mode is on */
   --color-cream: #080810;
   color-scheme: dark;
 }
 
+/* ── Gray text overrides (CSS vars unreliable in Tailwind v4 OKLCH) */
+.dark .text-gray-900 { color: #f0f0f4; }
+.dark .text-gray-800 { color: #dcdce8; }
+.dark .text-gray-700 { color: #c0c0d0; }
+.dark .text-gray-600 { color: #9898b4; }
+.dark .text-gray-500 { color: #8080a0; }
+.dark .text-gray-400 { color: #9090b8; }
+.dark .text-gray-300 { color: rgba(255,255,255,0.25); }
+.dark .text-gray-200 { color: rgba(255,255,255,0.15); }
+
 /* ── Surface overrides ─────────────────────────────── */
-.dark .text-slate-dark  { color: #f4f4f6; }
+.dark .text-slate-dark  { color: #f0f0f4; }
 .dark .bg-white         { background-color: #12121e; }
 .dark .bg-gray-50       { background-color: #080810; }
 .dark .bg-gray-100      { background-color: #0d0d18; }
