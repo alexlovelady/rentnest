@@ -32,6 +32,7 @@ model Landlord {
   defaultLateFeeGraceDays Int   @default(5)
   showEmailToTenants    Boolean @default(false)
   showPhoneToTenants    Boolean @default(false)
+  onboardingDismissed   Boolean @default(false)
   createdAt     DateTime @default(now())
 
   properties       Property[]

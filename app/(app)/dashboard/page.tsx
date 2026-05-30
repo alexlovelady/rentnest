@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IncomeChart } from "./income-chart";
 import { subMonths, startOfMonth, endOfMonth } from "date-fns";
+import { dismissOnboarding } from "./actions";
 
 export default async function DashboardPage() {
   const user = await requireServerUser();
@@ -83,6 +84,7 @@ export default async function DashboardPage() {
   const activeLeaseCount = await prisma.lease.count({ where: { landlordId: user.id, status: "active" } });
   const onboardingDone =
     propertyCount > 0 && allUnits.length > 0 && tenantCount > 0 && activeLeaseCount > 0 && rentPayments.length > 0;
+  const onboardingDismissed = user.onboardingDismissed;
 
   // Last 6 months income + expenses for chart
   const chartMonths = Array.from({ length: 6 }, (_, i) => {
@@ -133,10 +135,15 @@ export default async function DashboardPage() {
       )}
 
       {/* Onboarding checklist */}
-      {!onboardingDone && (
+      {!onboardingDismissed && !onboardingDone && (
         <Card className="mb-8 border-primary/20 bg-orange-50/30">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Get started with RentNest</CardTitle>
+            <form action={dismissOnboarding}>
+              <button type="submit" className="text-xs text-gray-400 hover:text-gray-600 transition">
+                Dismiss
+              </button>
+            </form>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
