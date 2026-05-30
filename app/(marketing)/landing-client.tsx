@@ -5,7 +5,7 @@ import { Check, ArrowRight, Building2, Key, CreditCard, Wrench, FileText, BarCha
 
 // ─── Mini product mockups ────────────────────────────────────────────────────
 
-function BrowserFrame({ children, url = "rentnest.app/dashboard" }: { children: React.ReactNode; url?: string }) {
+function BrowserFrame({ children, url = "rentnest.us/dashboard" }: { children: React.ReactNode; url?: string }) {
   return (
     <div className="rounded-xl border border-white/10 overflow-hidden shadow-2xl bg-[#0d0d14]">
       <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#080810] border-b border-white/5">
@@ -19,60 +19,185 @@ function BrowserFrame({ children, url = "rentnest.app/dashboard" }: { children: 
   );
 }
 
+const NAV_ITEMS = ["Overview", "Rent", "Maintenance", "Leases", "Tenants", "Reports"] as const;
+type NavItem = typeof NAV_ITEMS[number];
+
+const NAV_URLS: Record<NavItem, string> = {
+  Overview: "rentnest.us/dashboard",
+  Rent: "rentnest.us/dashboard/rent",
+  Maintenance: "rentnest.us/dashboard/maintenance",
+  Leases: "rentnest.us/dashboard/leases",
+  Tenants: "rentnest.us/dashboard/tenants",
+  Reports: "rentnest.us/dashboard/reports",
+};
+
+function DashboardContent({ active }: { active: NavItem }) {
+  if (active === "Overview") return (
+    <div className="flex-1 p-3 overflow-hidden">
+      <p className="text-white/40 text-[9px] mb-2">May 2026 — Overview</p>
+      <div className="grid grid-cols-3 gap-1.5 mb-3">
+        {[{ label: "Collected", val: "$8,400", color: "text-emerald-400" }, { label: "Outstanding", val: "$1,650", color: "text-amber-400" }, { label: "Overdue", val: "$0", color: "text-red-400" }].map((s) => (
+          <div key={s.label} className="bg-white/5 rounded-lg p-2 border border-white/5">
+            <p className="text-white/40 text-[8px] mb-0.5">{s.label}</p>
+            <p className={`font-bold ${s.color}`}>{s.val}</p>
+          </div>
+        ))}
+      </div>
+      <div className="bg-white/5 rounded-lg border border-white/5 overflow-hidden">
+        <div className="px-2 py-1.5 border-b border-white/5 text-white/40 text-[8px] font-medium">Recent payments</div>
+        {[{ name: "Sarah M.", addr: "Unit 2A", amt: "$1,850", status: "paid", c: "bg-emerald-500/20 text-emerald-400" }, { name: "James T.", addr: "Unit 1B", amt: "$1,400", status: "paid", c: "bg-emerald-500/20 text-emerald-400" }, { name: "Amy K.", addr: "Unit 3C", amt: "$1,650", status: "pending", c: "bg-amber-500/20 text-amber-400" }].map((r) => (
+          <div key={r.name} className="flex items-center justify-between px-2 py-1.5 border-b border-white/5 last:border-0">
+            <div><p className="text-white/70 font-medium">{r.name}</p><p className="text-white/30 text-[8px]">{r.addr}</p></div>
+            <div className="text-right"><p className="text-white/70 font-medium">{r.amt}</p><span className={`text-[7px] px-1.5 py-0.5 rounded-full font-medium ${r.c}`}>{r.status}</span></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (active === "Rent") return (
+    <div className="flex-1 p-3 overflow-hidden">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-white/80 font-semibold text-[10px]">Rent Collection</p>
+        <div className="bg-primary text-white px-2 py-0.5 rounded text-[8px]">+ Record</div>
+      </div>
+      <div className="grid grid-cols-3 gap-1 mb-2">
+        {[{ l: "Collected", v: "$8,400", c: "text-emerald-400" }, { l: "Outstanding", v: "$1,650", c: "text-amber-400" }, { l: "Prior unpaid", v: "$0", c: "text-red-400" }].map((s) => (
+          <div key={s.l} className="bg-white/5 rounded p-1.5 border border-white/5"><p className="text-white/30 text-[7px]">{s.l}</p><p className={`font-bold text-[10px] ${s.c}`}>{s.v}</p></div>
+        ))}
+      </div>
+      <div className="bg-white/5 rounded-lg border border-white/5 overflow-hidden">
+        <div className="grid grid-cols-4 px-2 py-1 border-b border-white/5 text-white/25 text-[7px] font-medium">
+          <span>Tenant</span><span>Unit</span><span className="text-right">Amount</span><span className="text-right">Status</span>
+        </div>
+        {[{ n: "Sarah M.", u: "2A", a: "$1,850", s: "paid", c: "text-emerald-400" }, { n: "James T.", u: "1B", a: "$1,400", s: "paid", c: "text-emerald-400" }, { n: "Amy K.", u: "3C", a: "$1,650", s: "pending", c: "text-amber-400" }].map((r) => (
+          <div key={r.n} className="grid grid-cols-4 px-2 py-1.5 border-b border-white/5 last:border-0 text-[8px]">
+            <span className="text-white/60">{r.n}</span><span className="text-white/40">{r.u}</span><span className="text-right text-white/70 font-medium">{r.a}</span><span className={`text-right font-medium ${r.c}`}>{r.s}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (active === "Maintenance") return (
+    <div className="flex-1 p-3 overflow-hidden space-y-1.5">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-white/80 font-semibold text-[10px]">Maintenance</p>
+        <div className="bg-primary text-white px-2 py-0.5 rounded text-[8px]">+ New</div>
+      </div>
+      {[
+        { t: "Kitchen faucet leaking", u: "Unit 2A", cat: "Plumbing", s: "in progress", sc: "text-blue-400", p: "high", pc: "text-red-400" },
+        { t: "HVAC not cooling", u: "Unit 3C", cat: "HVAC", s: "open", sc: "text-amber-400", p: "normal", pc: "text-white/30" },
+        { t: "Broken window latch", u: "Unit 1B", cat: "Structural", s: "scheduled", sc: "text-blue-400", p: "normal", pc: "text-white/30" },
+      ].map((r) => (
+        <div key={r.t} className="bg-white/5 rounded-lg border border-white/5 px-2.5 py-2 flex items-center justify-between gap-2">
+          <div className="min-w-0"><p className="text-white/70 font-medium truncate">{r.t}</p><p className="text-white/30 text-[7px]">{r.u} · {r.cat}</p></div>
+          <div className="flex gap-1 shrink-0"><span className={`text-[7px] px-1.5 py-0.5 rounded-full bg-white/5 ${r.pc}`}>{r.p}</span><span className={`text-[7px] px-1.5 py-0.5 rounded-full bg-white/5 ${r.sc}`}>{r.s}</span></div>
+        </div>
+      ))}
+    </div>
+  );
+
+  if (active === "Leases") return (
+    <div className="flex-1 p-3 overflow-hidden">
+      <p className="text-white/80 font-semibold text-[10px] mb-2">Leases</p>
+      <div className="space-y-1.5">
+        {[
+          { n: "Sarah Mitchell", u: "Oak St · Unit 2A", r: "$1,850/mo", s: "active", e: "Dec 31, 2026" },
+          { n: "James Thompson", u: "Oak St · Unit 1B", r: "$1,400/mo", s: "active", e: "Jun 30, 2026" },
+          { n: "Amy K.", u: "Elm Ave · Unit 3C", r: "$1,650/mo", s: "active", e: "Mar 31, 2027" },
+        ].map((l) => (
+          <div key={l.n} className="bg-white/5 rounded-lg border border-white/5 px-2.5 py-2 flex items-center justify-between">
+            <div><p className="text-white/70 font-medium">{l.n}</p><p className="text-white/30 text-[7px]">{l.u}</p></div>
+            <div className="text-right"><p className="text-white/60 text-[8px] font-medium">{l.r}</p><p className="text-white/30 text-[7px]">Ends {l.e}</p></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (active === "Tenants") return (
+    <div className="flex-1 p-3 overflow-hidden">
+      <p className="text-white/80 font-semibold text-[10px] mb-2">Tenants</p>
+      <div className="space-y-1.5">
+        {[
+          { n: "Sarah Mitchell", e: "sarah@email.com", u: "Unit 2A", ins: true },
+          { n: "James Thompson", e: "james@email.com", u: "Unit 1B", ins: true },
+          { n: "Amy K.", e: "amy@email.com", u: "Unit 3C", ins: false },
+        ].map((t) => (
+          <div key={t.n} className="bg-white/5 rounded-lg border border-white/5 px-2.5 py-2 flex items-center justify-between">
+            <div>
+              <p className="text-white/70 font-medium">{t.n}</p>
+              <p className="text-white/30 text-[7px]">{t.e}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-white/40 text-[7px] mb-0.5">{t.u}</p>
+              <span className={`text-[7px] px-1.5 py-0.5 rounded-full ${t.ins ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}`}>{t.ins ? "insured" : "no insurance"}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (active === "Reports") {
+    const bars = [38, 52, 44, 61, 55, 72, 68, 80];
+    const months = ["Oct","Nov","Dec","Jan","Feb","Mar","Apr","May"];
+    return (
+      <div className="flex-1 p-3 overflow-hidden">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-white/80 font-semibold text-[10px]">Reports</p>
+          <div className="bg-white/10 text-white/50 px-2 py-0.5 rounded text-[7px]">Export CSV</div>
+        </div>
+        <div className="grid grid-cols-3 gap-1 mb-2.5">
+          {[{ l: "Income", v: "$54,200", c: "text-emerald-400" }, { l: "Expenses", v: "$12,800", c: "text-red-400" }, { l: "Net", v: "$41,400", c: "text-blue-400" }].map((s) => (
+            <div key={s.l} className="bg-white/5 rounded p-1.5 border border-white/5"><p className="text-white/30 text-[7px]">{s.l}</p><p className={`font-bold text-[9px] ${s.c}`}>{s.v}</p></div>
+          ))}
+        </div>
+        <div className="bg-white/5 rounded-lg border border-white/5 p-2">
+          <p className="text-white/30 text-[7px] mb-2">Monthly rent collected</p>
+          <div className="flex items-end gap-1 h-14">
+            {bars.map((h, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                <div className="w-full rounded-sm" style={{ height: `${h}%`, background: i === 7 ? "#e07843" : "rgba(255,255,255,0.12)" }} />
+                <span className="text-white/20 text-[6px]">{months[i]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
 function DashboardMockup() {
+  const [active, setActive] = useState<NavItem>("Overview");
+
   return (
-    <BrowserFrame>
-      <div className="flex h-[340px] text-[10px]">
+    <BrowserFrame url={NAV_URLS[active]}>
+      <div className="flex h-[360px] text-[10px]">
         {/* Sidebar */}
         <div className="w-28 bg-[#12121e] border-r border-white/5 flex flex-col py-3 px-2 shrink-0">
-          <div className="flex items-center gap-1.5 mb-5 px-1">
+          <div className="flex items-center gap-1.5 mb-4 px-1">
             <div className="w-5 h-5 rounded bg-primary/80 flex items-center justify-center">
               <Building2 size={10} className="text-white" />
             </div>
             <span className="text-white/80 font-bold text-[9px]">RentNest</span>
           </div>
-          {["Overview", "Properties", "Tenants", "Leases", "Rent", "Maintenance", "Reports"].map((item, i) => (
-            <div key={item} className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md mb-0.5 text-[9px] ${i === 0 ? "bg-primary text-white" : "text-white/40 hover:text-white/60"}`}>
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item}
+              onClick={() => setActive(item)}
+              className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md mb-0.5 text-[9px] w-full text-left transition-colors cursor-pointer ${active === item ? "bg-primary text-white" : "text-white/40 hover:bg-white/5 hover:text-white/70"}`}
+            >
               {item}
-            </div>
+            </button>
           ))}
         </div>
         {/* Content */}
-        <div className="flex-1 p-3 overflow-hidden">
-          <p className="text-white/40 text-[9px] mb-2">May 2026</p>
-          <div className="grid grid-cols-3 gap-1.5 mb-3">
-            {[
-              { label: "Collected", val: "$8,400", color: "text-emerald-400" },
-              { label: "Outstanding", val: "$1,650", color: "text-amber-400" },
-              { label: "Overdue", val: "$0", color: "text-red-400" },
-            ].map((s) => (
-              <div key={s.label} className="bg-white/5 rounded-lg p-2 border border-white/5">
-                <p className="text-white/40 text-[8px] mb-0.5">{s.label}</p>
-                <p className={`font-bold ${s.color}`}>{s.val}</p>
-              </div>
-            ))}
-          </div>
-          {/* Mini payments list */}
-          <div className="bg-white/5 rounded-lg border border-white/5 overflow-hidden">
-            <div className="px-2 py-1.5 border-b border-white/5 text-white/40 text-[8px] font-medium">Recent payments</div>
-            {[
-              { name: "Sarah M.", addr: "Unit 2A", amt: "$1,850", status: "paid", color: "bg-emerald-500/20 text-emerald-400" },
-              { name: "James T.", addr: "Unit 1B", amt: "$1,400", status: "paid", color: "bg-emerald-500/20 text-emerald-400" },
-              { name: "Amy K.", addr: "Unit 3C", amt: "$1,650", status: "pending", color: "bg-amber-500/20 text-amber-400" },
-            ].map((r) => (
-              <div key={r.name} className="flex items-center justify-between px-2 py-1.5 border-b border-white/5 last:border-0">
-                <div>
-                  <p className="text-white/70 font-medium">{r.name}</p>
-                  <p className="text-white/30 text-[8px]">{r.addr}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-white/70 font-medium">{r.amt}</p>
-                  <span className={`text-[7px] px-1.5 py-0.5 rounded-full font-medium ${r.color}`}>{r.status}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <DashboardContent active={active} />
       </div>
     </BrowserFrame>
   );
@@ -80,7 +205,7 @@ function DashboardMockup() {
 
 function RentMockup() {
   return (
-    <BrowserFrame url="rentnest.app/dashboard/rent">
+    <BrowserFrame url="rentnest.us/dashboard/rent">
       <div className="p-4 text-[10px]">
         <div className="flex items-center justify-between mb-3">
           <div>
@@ -137,7 +262,7 @@ function RentMockup() {
 
 function MaintenanceMockup() {
   return (
-    <BrowserFrame url="rentnest.app/dashboard/maintenance">
+    <BrowserFrame url="rentnest.us/dashboard/maintenance">
       <div className="p-4 text-[10px] space-y-2.5">
         <div className="flex items-center justify-between mb-2">
           <p className="text-white font-bold text-sm">Maintenance</p>
@@ -173,7 +298,7 @@ function MaintenanceMockup() {
 
 function DocumentsMockup() {
   return (
-    <BrowserFrame url="rentnest.app/dashboard/leases/lease_01">
+    <BrowserFrame url="rentnest.us/dashboard/leases/lease_01">
       <div className="p-4 text-[10px]">
         <div className="flex items-center justify-between mb-3">
           <div>
@@ -218,7 +343,7 @@ function ReportsMockup() {
   const bars = [38, 52, 44, 61, 55, 72, 68, 80, 74, 88, 82, 95];
   const months = ["J","F","M","A","M","J","J","A","S","O","N","D"];
   return (
-    <BrowserFrame url="rentnest.app/dashboard/reports">
+    <BrowserFrame url="rentnest.us/dashboard/reports">
       <div className="p-4 text-[10px]">
         <div className="flex items-center justify-between mb-3">
           <div>
