@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
           } else {
             await airtableCreate("Trial Signups", {
               Product: "RentNest",
-              Name: landlord.name,
+              "Owner Name": landlord.name,
               Email: landlord.email,
               Date: today(),
               "Converted Date": today(),

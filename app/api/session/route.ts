@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       import("@/lib/airtable").then(({ airtableCreate, today }) =>
         airtableCreate("Trial Signups", {
           Product: "RentNest",
-          Name: landlordName,
+          "Owner Name": landlordName,
           Email: decoded.email!,
           Date: today(),
           "Trial End Date": trialEndsAt.toISOString().split("T")[0],
