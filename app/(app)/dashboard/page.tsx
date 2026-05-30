@@ -5,6 +5,8 @@ import Link from "next/link";
 import { AlertTriangle, DollarSign, Building2, CheckCircle2, Circle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { IncomeChart } from "./income-chart";
+import { subMonths, startOfMonth, endOfMonth } from "date-fns";
 
 export default async function DashboardPage() {
   const user = await requireServerUser();
@@ -81,6 +83,27 @@ export default async function DashboardPage() {
   const activeLeaseCount = await prisma.lease.count({ where: { landlordId: user.id, status: "active" } });
   const onboardingDone =
     propertyCount > 0 && allUnits.length > 0 && tenantCount > 0 && activeLeaseCount > 0 && rentPayments.length > 0;
+
+  // Last 6 months income + expenses for chart
+  const chartMonths = Array.from({ length: 6 }, (_, i) => {
+    const d = subMonths(now, 5 - i);
+    return { start: startOfMonth(d), end: endOfMonth(d), label: d.toLocaleString("en-US", { month: "short" }) };
+  });
+  const [chartIncome, chartExpenses] = await Promise.all([
+    prisma.rentPayment.findMany({
+      where: { landlordId: user.id, status: "paid", paidAt: { gte: chartMonths[0].start, lte: chartMonths[5].end } },
+      select: { paidAt: true, totalAmount: true },
+    }),
+    prisma.expense.findMany({
+      where: { landlordId: user.id, date: { gte: chartMonths[0].start, lte: chartMonths[5].end } },
+      select: { date: true, amount: true },
+    }),
+  ]);
+  const chartData = chartMonths.map(({ start, end, label }) => ({
+    month: label,
+    income: chartIncome.filter((p) => p.paidAt && p.paidAt >= start && p.paidAt <= end).reduce((s, p) => s + p.totalAmount, 0),
+    expenses: chartExpenses.filter((e) => e.date >= start && e.date <= end).reduce((s, e) => s + e.amount, 0),
+  }));
 
   // Trial notice
   const trialDaysLeft = user.trialEndsAt
@@ -160,7 +183,9 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <IncomeChart data={chartData} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Overdue rent list */}
         {overdue.length > 0 && (
           <Card>

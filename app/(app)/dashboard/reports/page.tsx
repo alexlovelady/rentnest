@@ -4,6 +4,7 @@ import { formatCurrency, formatDate, monthName } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { DownloadCSVButton } from "./download-csv-button";
 import { ReportYearSelect } from "./report-year-select";
+import { IncomeExpenseChart, NetIncomeChart, ExpensePieChart } from "./report-charts";
 
 export default async function ReportsPage({ searchParams }: { searchParams: Promise<{ year?: string; month?: string; report?: string }> }) {
   const { year: yearStr, month: monthStr, report = "rent-roll" } = await searchParams;
@@ -111,6 +112,23 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   }).filter((s) => s.income > 0 || s.expenseTotal > 0);
 
   const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  // Monthly chart data for the selected year
+  const monthlyChartData = MONTHS.map((label, i) => {
+    const m = i + 1;
+    const income = paidPayments
+      .filter((p) => p.paidAt && new Date(p.paidAt).getMonth() + 1 === m)
+      .reduce((s, p) => s + p.totalAmount, 0);
+    const exp = expenses
+      .filter((e) => new Date(e.date).getMonth() + 1 === m)
+      .reduce((s, e) => s + e.amount, 0);
+    return { month: label, income, expenses: exp, net: income - exp };
+  });
+
+  const expensePieData = Object.entries(expensesByCategory)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
 
   const rentRollCsv = [
     ["Property", "Unit", "Tenant", "Monthly Rent", "Lease Start", "Lease End", "Status"],
@@ -235,6 +253,30 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
 
       {report === "income" && (
         <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <IncomeExpenseChart data={monthlyChartData} />
+            <NetIncomeChart data={monthlyChartData} />
+          </div>
+          {expensePieData.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <ExpensePieChart data={expensePieData} />
+              <div className="bg-white rounded-xl border border-gray-100 p-5">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Year Summary</h3>
+                <div className="space-y-3">
+                  {[
+                    { label: "Total income", val: totalIncome, color: "text-green-700" },
+                    { label: "Total expenses", val: totalExpenses, color: "text-red-600" },
+                    { label: "Net income", val: netIncome, color: netIncome >= 0 ? "text-primary" : "text-red-600" },
+                  ].map((s) => (
+                    <div key={s.label} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
+                      <span className="text-sm text-gray-500">{s.label}</span>
+                      <span className={`text-lg font-bold ${s.color}`}>${s.val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex justify-end">
             <DownloadCSVButton data={incomeCsv} filename={`income-expense-${year}.csv`} />
           </div>

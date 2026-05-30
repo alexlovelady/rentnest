@@ -61,13 +61,13 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ## Rent Collection
 
-- [ ] Generate rent charges — one charge created per active lease
-- [ ] Generating again for same month — no duplicates created
-- [ ] Rent page shows Collected / Outstanding / Overdue totals correctly
-- [ ] Overdue payments highlighted in red
-- [ ] Record payment modal opens and loads leases
-- [ ] Selecting a lease auto-fills the amount with monthly rent
-- [ ] Recording a payment marks it as paid, updates totals
+- [May 29, 2026] Generate rent charges — one charge created per active lease
+- [May 29, 2026] Generating again for same month — no duplicates created
+- [May 29, 2026] Rent page shows Collected / Outstanding / Overdue totals correctly
+- [May 29, 2026] Overdue payments highlighted in red
+- [May 29, 2026] Record payment modal opens and loads leases
+- [May 29, 2026] Selecting a lease auto-fills the amount with monthly rent
+- [May 29, 2026] Recording a payment marks it as paid, updates totals
 - [ ] Recording a payment with days late beyond grace period — late fee auto-calculated
 - [ ] Late fee field is manually editable (overrides auto-calculation)
 - [ ] Total shown correctly as rent + late fee when late fee > 0
@@ -86,63 +86,63 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ## Maintenance Requests
 
-- [ ] Tenant submits maintenance request from portal — appears in landlord dashboard
-- [ ] Landlord receives email notification for new request
-- [ ] Landlord can update status (open → in progress → resolved)
-- [ ] Tenant can see status update in portal
-- [ ] Unacknowledged requests trigger cron email after 24 hours
-- [ ] Resolved requests show in history with resolution notes
+- [May 29, 2026] Tenant submits maintenance request from portal — appears in landlord dashboard
+- [May 29, 2026] Landlord receives email notification for new request
+- [May 29, 2026] Landlord can update status (open → in progress → resolved)
+- [May 29, 2026] Tenant can see status update in portal
+- [May 29, 2026] Unacknowledged requests trigger cron email after 24 hours
+- [May 29, 2026] Resolved requests show in history with resolution notes
 
 ---
 
 ## Documents
 
-- [ ] Upload a document to a property — appears in document list
-- [ ] Upload a document to a lease — appears on lease detail page
-- [ ] Document link opens the file correctly
-- [ ] Tenant can view documents shared to their lease from the portal
+- [May 29, 2026] Upload a document to a property — appears in document list
+- [May 29, 2026] Upload a document to a lease — appears on lease detail page
+- [May 29, 2026] Document link opens the file correctly
+- [May 29, 2026] Tenant can view documents shared to their lease from the portal
 
 ---
 
 ## Expenses
 
-- [ ] Add an expense with category and amount — appears in expense list
-- [ ] Associate expense with a property — filtered correctly in reports
-- [ ] CSV export downloads with correct data
+- [May 29, 2026] Add an expense with category and amount — appears in expense list
+- [May 29, 2026] Associate expense with a property — filtered correctly in reports
+- [May 29, 2026] CSV export downloads with correct data
 
 ---
 
 ## Reports
 
-- [ ] Reports page loads with correct income and expense totals
-- [ ] Filtering by property works
-- [ ] CSV export produces a valid file with all rows
+- [May 29, 2026] Reports page loads with correct income and expense totals
+- [May 29, 2026] Filtering by property works
+- [May 29, 2026] CSV export produces a valid file with all rows
 
 ---
 
 ## Tenant Portal
 
-- [ ] Tenant auth via portal link — session created, correct name shown
-- [ ] Current month rent shown with correct total amount
-- [ ] "Includes $X late fee" notice shown when late fee > 0
-- [ ] Pay Now / Pay Online button present when rent is unpaid
-- [ ] Stripe payment link opens and shows correct amount
+- [May 29, 2026] Tenant auth via portal link — session created, correct name shown
+- [May 29, 2026] Current month rent shown with correct total amount
+- [May 29, 2026] "Includes $X late fee" notice shown when late fee > 0
+- [May 29, 2026] Pay Now / Pay Online button present when rent is unpaid
+- [May 29, 2026] Stripe payment link opens and shows correct amount
 - [ ] After payment, status updates to paid
 - [ ] Payment history shows last 6 months
-- [ ] Maintenance requests submittable from portal
-- [ ] Open maintenance requests shown on portal home
-- [ ] Documents page shows lease documents
+- [May 29, 2026] Maintenance requests submittable from portal
+- [May 29, 2026] Open maintenance requests shown on portal home
+- [May 29, 2026] Documents page shows lease documents
 
 ---
 
 ## Billing & Stripe Connect
 
-- [ ] Landlord can initiate Stripe Connect onboarding
-- [ ] Stripe Connect status shows as ready after onboarding
-- [ ] Tenant payment charge reaches landlord's connected account
-- [ ] Fee passthrough option adds Stripe fee to tenant's amount
-- [ ] Stripe webhook marks payment as paid when completed
-- [ ] Subscription upgrade/downgrade via billing portal
+- [May 29, 2026] Landlord can initiate Stripe Connect onboarding
+- [May 29, 2026] Stripe Connect status shows as ready after onboarding
+- [May 29, 2026] Tenant payment charge reaches landlord's connected account
+- [May 29, 2026] Fee passthrough option adds Stripe fee to tenant's amount
+- [May 29, 2026] Stripe webhook marks payment as paid when completed
+- [May 29, 2026] Subscription upgrade/downgrade via billing portal
 
 ---
 
@@ -159,85 +159,85 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ## Settings
 
-- [ ] Landlord can update name, email, phone
-- [ ] Default late fee settings save and apply to new leases
-- [ ] Notification toggles (payment, maintenance, overdue) save correctly
-- [ ] Timezone setting saves
+- [May 29, 2026] Landlord can update name, email, phone
+- [May 29, 2026] Default late fee settings save and apply to new leases
+- [May 29, 2026] Notification toggles (payment, maintenance, overdue) save correctly
+- [May 29, 2026] Timezone setting saves
 
 ---
 
 ## Branding & Favicon
 
-- [ ] Browser tab shows the house logo favicon on all pages
-- [ ] Mobile bookmark icon shows the logo (Apple touch icon)
-- [ ] Landing page header shows logo image (not text)
-- [ ] Landing page footer shows logo image
-- [ ] `/listings` header shows logo image
-- [ ] `/listings/[id]` header shows logo image
-- [ ] `/apply/[quizId]` header shows logo image
-- [ ] Thank-you page shows faded logo at the bottom
+- [May 29, 2026] Browser tab shows the house logo favicon on all pages
+- [May 29, 2026] Mobile bookmark icon shows the logo (Apple touch icon)
+- [May 29, 2026] Landing page header shows logo image (not text)
+- [May 29, 2026] Landing page footer shows logo image
+- [May 29, 2026] `/listings` header shows logo image
+- [May 29, 2026] `/listings/[id]` header shows logo image
+- [May 29, 2026] `/apply/[quizId]` header shows logo image
+- [May 29, 2026] Thank-you page shows faded logo at the bottom
 
 ---
 
 ## Marketing / Public Pages
 
-- [ ] Landing page loads and is readable on mobile
-- [ ] "Start Free Trial" and "Sign in" links work
-- [ ] Pricing section shows correct plan names and prices
-- [ ] Cozy callout section displays correctly
-- [ ] FAQ answers are all accurate and up to date
+- [May 29, 2026] Landing page loads and is readable on mobile
+- [May 29, 2026] "Start Free Trial" and "Sign in" links work
+- [May 29, 2026] Pricing section shows correct plan names and prices
+- [May 29, 2026] Cozy callout section displays correctly
+- [May 29, 2026] FAQ answers are all accurate and up to date
 
 ---
 
 ## Tenant Contact Info
 
-- [ ] Settings page shows "Tenant Contact Info" section
-- [ ] Both toggles default to off for existing landlords
-- [ ] Enabling email toggle → tenant portal shows landlord email as mailto link
-- [ ] Enabling phone toggle → tenant portal shows landlord phone as tel link
-- [ ] Both enabled → both shown in portal
-- [ ] Both disabled → contact section hidden entirely in portal
-- [ ] Phone toggle shows note "add a phone number in Account first" when no phone is set
-- [ ] Saving toggles persists correctly on page refresh
+- [May 29, 2026] Settings page shows "Tenant Contact Info" section
+- [May 29, 2026] Both toggles default to off for existing landlords
+- [May 29, 2026] Enabling email toggle → tenant portal shows landlord email as mailto link
+- [May 29, 2026] Enabling phone toggle → tenant portal shows landlord phone as tel link
+- [May 29, 2026] Both enabled → both shown in portal
+- [May 29, 2026] Both disabled → contact section hidden entirely in portal
+- [May 29, 2026] Phone toggle shows note "add a phone number in Account first" when no phone is set
+- [May 29, 2026] Saving toggles persists correctly on page refresh
 
 ---
 
 ## Occupancy Dashboard
 
-- [ ] Occupancy section visible on dashboard Overview when units exist
-- [ ] Total / occupied / vacant counts are correct
-- [ ] Occupancy % calculates correctly (occupied ÷ total)
-- [ ] Per-property progress bars shown when more than one property exists
-- [ ] Bar widths reflect actual occupancy per property
-- [ ] Section hidden when landlord has no units yet
+- [May 29, 2026] Occupancy section visible on dashboard Overview when units exist
+- [May 29, 2026] Total / occupied / vacant counts are correct
+- [May 29, 2026] Occupancy % calculates correctly (occupied ÷ total)
+- [May 29, 2026] Per-property progress bars shown when more than one property exists
+- [May 29, 2026] Bar widths reflect actual occupancy per property
+- [May 29, 2026] Section hidden when landlord has no units yet
 
 ---
 
 ## Bulk Messaging
 
-- [ ] "Message Tenants" button visible on Tenants page
-- [ ] Button shows correct recipient count (only tenants with email + active lease)
-- [ ] Modal opens with subject and message fields
-- [ ] Sending with empty fields blocked by required validation
-- [ ] Tenants without email addresses excluded from send
-- [ ] Tenants without active leases excluded from send
-- [ ] Success screen shows after sending, with correct sent count
-- [ ] Tenant receives email with correct subject and message body
-- [ ] Email includes landlord's "sent via RentNest" footer
-- [ ] "Message Tenants" button disabled (or shows 0) when no eligible tenants exist
+- [May 29, 2026] "Message Tenants" button visible on Tenants page
+- [May 29, 2026] Button shows correct recipient count (only tenants with email + active lease)
+- [May 29, 2026] Modal opens with subject and message fields
+- [May 29, 2026] Sending with empty fields blocked by required validation
+- [May 29, 2026] Tenants without email addresses excluded from send
+- [May 29, 2026] Tenants without active leases excluded from send
+- [May 29, 2026] Success screen shows after sending, with correct sent count
+- [May 29, 2026] Tenant receives email with correct subject and message body
+- [May 29, 2026] Email includes landlord's "sent via RentNest" footer
+- [May 29, 2026] "Message Tenants" button disabled (or shows 0) when no eligible tenants exist
 
 ---
 
 ## Maintenance Cost Reporting
 
-- [ ] "Maintenance Costs" tab visible on Reports page
-- [ ] Total spent, avg per job, and property count cards show correct values
-- [ ] "Cost by Property" table shows correct totals and job counts
-- [ ] "Cost by Category" table shows correct totals
-- [ ] "All Jobs with Costs" table lists jobs with vendor name and cost
-- [ ] Jobs without `actualCost` set are excluded
-- [ ] Empty state shown when no jobs have costs recorded
-- [ ] Totals row in jobs table matches sum of individual rows
+- [May 29, 2026] "Maintenance Costs" tab visible on Reports page
+- [May 29, 2026] Total spent, avg per job, and property count cards show correct values
+- [May 29, 2026] "Cost by Property" table shows correct totals and job counts
+- [May 29, 2026] "Cost by Category" table shows correct totals
+- [May 29, 2026] "All Jobs with Costs" table lists jobs with vendor name and cost
+- [May 29, 2026] Jobs without `actualCost` set are excluded
+- [May 29, 2026] Empty state shown when no jobs have costs recorded
+- [May 29, 2026] Totals row in jobs table matches sum of individual rows
 
 ---
 
@@ -257,59 +257,59 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ## In-App Onboarding Checklist
 
-- [ ] Checklist card visible on dashboard when account has no data
-- [ ] "Add your first property" step marked complete after property is created
-- [ ] "Add a unit" step marked complete after unit exists
-- [ ] "Add a tenant" step marked complete after tenant is created
-- [ ] "Create a lease" step marked complete after an active lease exists
-- [ ] "Set up rent payments" step marked complete after rent charges are generated
-- [ ] Completed steps show strikethrough text and green check icon
-- [ ] Incomplete steps are clickable links to the relevant page
-- [ ] Completed steps are not clickable
-- [ ] Entire checklist card hidden once all 5 steps are complete
+- [May 29, 2026] Checklist card visible on dashboard when account has no data
+- [May 29, 2026] "Add your first property" step marked complete after property is created
+- [May 29, 2026] "Add a unit" step marked complete after unit exists
+- [May 29, 2026] "Add a tenant" step marked complete after tenant is created
+- [May 29, 2026] "Create a lease" step marked complete after an active lease exists
+- [May 29, 2026] "Set up rent payments" step marked complete after rent charges are generated
+- [May 29, 2026] Completed steps show strikethrough text and green check icon
+- [May 29, 2026] Incomplete steps are clickable links to the relevant page
+- [May 29, 2026] Completed steps are not clickable
+- [May 29, 2026] Entire checklist card hidden once all 5 steps are complete
 
 ---
 
 ## Utility Tracking
 
-- [ ] "Utilities Included in Rent" section visible on unit detail page
-- [ ] "No utilities included" shown when list is empty
-- [ ] "Add" button opens edit form; "Edit" button shown when utilities exist
-- [ ] All 9 utility options displayed as toggles in edit mode
-- [ ] Selecting utilities highlights them; deselecting removes highlight
-- [ ] Optional note field saves and displays correctly
-- [ ] Saving with no utilities selected clears the list and shows empty state
-- [ ] Tenant portal shows utilities card when unit has utilities included
-- [ ] Tenant portal utilities card hidden when no utilities are set
-- [ ] Optional note shown in tenant portal when present
+- [May 29, 2026] "Utilities Included in Rent" section visible on unit detail page
+- [May 29, 2026] "No utilities included" shown when list is empty
+- [May 29, 2026] "Add" button opens edit form; "Edit" button shown when utilities exist
+- [May 29, 2026] All 9 utility options displayed as toggles in edit mode
+- [May 29, 2026] Selecting utilities highlights them; deselecting removes highlight
+- [May 29, 2026] Optional note field saves and displays correctly
+- [May 29, 2026] Saving with no utilities selected clears the list and shows empty state
+- [May 29, 2026] Tenant portal shows utilities card when unit has utilities included
+- [May 29, 2026] Tenant portal utilities card hidden when no utilities are set
+- [May 29, 2026] Optional note shown in tenant portal when present
 
 ---
 
 ## Security Deposit Tracking
 
-- [ ] Security deposit section visible on lease detail when `securityDeposit > 0`
-- [ ] Section hidden when deposit is $0
-- [ ] "Mark received" button sets paid date and removes button
-- [ ] Received date displays correctly after marking
-- [ ] "Add Deduction" button opens inline form with description + amount fields
-- [ ] Deduction saves and appears in list with correct amount
-- [ ] Total deducted and "to return" amount update correctly after each deduction
-- [ ] Remove (trash) button deletes a deduction and recalculates totals
-- [ ] "Mark Returned" button records return date and hides action buttons
-- [ ] Return button shows correct return amount (deposit − deductions)
-- [ ] Remove button hidden after deposit is returned
+- [May 29, 2026] Security deposit section visible on lease detail when `securityDeposit > 0`
+- [May 29, 2026] Section hidden when deposit is $0
+- [May 29, 2026] "Mark received" button sets paid date and removes button
+- [May 29, 2026] Received date displays correctly after marking
+- [May 29, 2026] "Add Deduction" button opens inline form with description + amount fields
+- [May 29, 2026] Deduction saves and appears in list with correct amount
+- [May 29, 2026] Total deducted and "to return" amount update correctly after each deduction
+- [May 29, 2026] Remove (trash) button deletes a deduction and recalculates totals
+- [May 29, 2026] "Mark Returned" button records return date and hides action buttons
+- [May 29, 2026] Return button shows correct return amount (deposit − deductions)
+- [May 29, 2026] Remove button hidden after deposit is returned
 
 ---
 
 ## Notification Preferences
 
-- [ ] Settings page shows 6 email notification checkboxes
-- [ ] All 6 defaults are correct (payment/maintenance/overdue/expiring all default on)
-- [ ] Saving checkboxes persists on page refresh
-- [ ] Disabling "lease expiring" → cron no longer sends lease expiry emails for that landlord
-- [ ] Disabling "insurance expiring" → cron skips insurance emails for that landlord
-- [ ] Disabling "signature" → landlord does not receive email when tenant signs
-- [ ] Enabling "signature" → landlord receives email when tenant signs
+- [May 29, 2026] Settings page shows 6 email notification checkboxes
+- [May 29, 2026] All 6 defaults are correct (payment/maintenance/overdue/expiring all default on)
+- [May 29, 2026] Saving checkboxes persists on page refresh
+- [May 29, 2026] Disabling "lease expiring" → cron no longer sends lease expiry emails for that landlord
+- [May 29, 2026] Disabling "insurance expiring" → cron skips insurance emails for that landlord
+- [May 29, 2026] Disabling "signature" → landlord does not receive email when tenant signs
+- [May 29, 2026] Enabling "signature" → landlord receives email when tenant signs
 
 ---
 
@@ -380,17 +380,17 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ## Tenant Messaging
 
-- [ ] "Messages" section visible on lease detail page
-- [ ] "No messages yet" shown when empty
-- [ ] Landlord can type and send a message
-- [ ] Message appears in the thread bubble (right-aligned, orange)
-- [ ] Tenant receives email notification with message body
-- [ ] Tenant portal shows "Messages" quick link on home page
-- [ ] Tenant messages page loads with full thread
-- [ ] Tenant can send a message from the portal
-- [ ] Tenant message appears in thread (left-aligned, gray)
-- [ ] Landlord receives email notification when tenant sends a message
-- [ ] Messages display in chronological order
+- [May 29, 2026] "Messages" section visible on lease detail page
+- [May 29, 2026] "No messages yet" shown when empty
+- [May 29, 2026] Landlord can type and send a message
+- [May 29, 2026] Message appears in the thread bubble (right-aligned, orange)
+- [May 29, 2026] Tenant receives email notification with message body
+- [May 29, 2026] Tenant portal shows "Messages" quick link on home page
+- [May 29, 2026] Tenant messages page loads with full thread
+- [May 29, 2026] Tenant can send a message from the portal
+- [May 29, 2026] Tenant message appears in thread (left-aligned, gray)
+- [May 29, 2026] Landlord receives email notification when tenant sends a message
+- [May 29, 2026] Messages display in chronological order
 
 ---
 
@@ -417,68 +417,68 @@ Manual QA checklist. Run through each section after making changes to a feature 
 
 ## Digital Addendums
 
-- [ ] "Addendums" section visible on lease detail page
-- [ ] "No addendums yet" shown when empty
-- [ ] "+ Add Addendum" opens inline form with Title and Body fields
-- [ ] Creating an addendum saves and appears in list
-- [ ] Addendum body text displays in the card
-- [ ] "Request Signatures" button sends emails to all tenants with email
-- [ ] Signing email contains addendum title and sign link
-- [ ] Sign link opens `/sign/addendum/[token]` with correct addendum title and body shown
-- [ ] Name matching logic works (case-insensitive, must be exact)
-- [ ] Consent checkbox required before signing
-- [ ] Submitting signature → success screen shown, landlord receives email
-- [ ] Revisiting signed link shows "Already signed" message
-- [ ] Expired link shows "Link expired" message
-- [ ] Signature status updates on lease detail page after signing
-- [ ] Trash icon deletes addendum from list
-- [ ] "Request Signatures" button hidden when lease has no tenants
+- [May 29, 2026] "Addendums" section visible on lease detail page
+- [May 29, 2026] "No addendums yet" shown when empty
+- [May 29, 2026] "+ Add Addendum" opens inline form with Title and Body fields
+- [May 29, 2026] Creating an addendum saves and appears in list
+- [May 29, 2026] Addendum body text displays in the card
+- [May 29, 2026] "Request Signatures" button sends emails to all tenants with email
+- [May 29, 2026] Signing email contains addendum title and sign link
+- [May 29, 2026] Sign link opens `/sign/addendum/[token]` with correct addendum title and body shown
+- [May 29, 2026] Name matching logic works (case-insensitive, must be exact)
+- [May 29, 2026] Consent checkbox required before signing
+- [May 29, 2026] Submitting signature → success screen shown, landlord receives email
+- [May 29, 2026] Revisiting signed link shows "Already signed" message
+- [May 29, 2026] Expired link shows "Link expired" message
+- [May 29, 2026] Signature status updates on lease detail page after signing
+- [May 29, 2026] Trash icon deletes addendum from list
+- [May 29, 2026] "Request Signatures" button hidden when lease has no tenants
 
 ---
 
 ## Listings & Marketplace
 
 ### Dashboard (landlord)
-- [ ] "Listings" link visible in sidebar navigation
-- [ ] Listings dashboard page loads with empty state when no listings exist
-- [ ] "New Listing" button opens modal with unit selector, rent, date, description, quiz fields
-- [ ] Unit selector shows only vacant units (no active lease, no active listing)
-- [ ] Title auto-fills based on selected unit (e.g. "2BD/1BA — Oak Street Duplex")
-- [ ] Creating a listing shows it on the dashboard with status dropdown
-- [ ] Status dropdown cycles: Active → Inactive (hidden) → Rented
-- [ ] "Copy link" copies the `/listings/[id]` URL to clipboard
-- [ ] "View public listing" opens the listing in a new tab
-- [ ] "Remove" button deletes the listing after confirmation prompt
-- [ ] Cancelled account — "New Listing" replaced with "Upgrade to list units" link
-- [ ] Unit detail page (vacant) shows "Listed on marketplace · Manage listing" when active listing exists
-- [ ] Unit detail page (vacant) shows "List unit" button when no active listing
-- [ ] Creating a lease for a listed unit auto-sets that listing to "rented"
+- [May 29, 2026] "Listings" link visible in sidebar navigation
+- [May 29, 2026] Listings dashboard page loads with empty state when no listings exist
+- [May 29, 2026] "New Listing" button opens modal with unit selector, rent, date, description, quiz fields
+- [May 29, 2026] Unit selector shows only vacant units (no active lease, no active listing)
+- [May 29, 2026] Title auto-fills based on selected unit (e.g. "2BD/1BA — Oak Street Duplex")
+- [May 29, 2026] Creating a listing shows it on the dashboard with status dropdown
+- [May 29, 2026] Status dropdown cycles: Active → Inactive (hidden) → Rented
+- [May 29, 2026] "Copy link" copies the `/listings/[id]` URL to clipboard
+- [May 29, 2026] "View public listing" opens the listing in a new tab
+- [May 29, 2026] "Remove" button deletes the listing after confirmation prompt
+- [May 29, 2026] Cancelled account — "New Listing" replaced with "Upgrade to list units" link
+- [May 29, 2026] Unit detail page (vacant) shows "Listed on marketplace · Manage listing" when active listing exists
+- [May 29, 2026] Unit detail page (vacant) shows "List unit" button when no active listing
+- [May 29, 2026] Creating a lease for a listed unit auto-sets that listing to "rented"
 
 ### Public marketplace (`/listings`)
-- [ ] Logo image appears in header; clicking navigates to landing page
-- [ ] All active listings shown as cards with photo, city/state, rent, beds/baths
-- [ ] Counter shows "X of Y units shown" when filters narrow the results
-- [ ] Location text input filters by city, state, or zip (case-insensitive, partial match)
-- [ ] City chips appear below location input when ≤ 8 distinct locations exist; clicking fills input and filters
-- [ ] Clear ✕ button inside location input clears the location filter
-- [ ] Bed filter buttons (Any / 1bd / 2bd / 3+bd) highlight active selection and filter results
-- [ ] "3+ bd" shows units with 3 or more bedrooms
-- [ ] Max rent input filters out listings above the entered value (applies on blur or Enter)
-- [ ] Sort dropdown: Newest / Rent low→high / Rent high→low / Most bedrooms all work correctly
-- [ ] "Clear all" button appears when any filter is active; clicking resets all filters
-- [ ] Filters are reflected in the URL (shareable/bookmarkable)
-- [ ] "No listings match your filters" empty state shown when filters eliminate everything
-- [ ] Listing card links to `/listings/[id]` detail page
+- [May 29, 2026] Logo image appears in header; clicking navigates to landing page
+- [May 29, 2026] All active listings shown as cards with photo, city/state, rent, beds/baths
+- [May 29, 2026] Counter shows "X of Y units shown" when filters narrow the results
+- [May 29, 2026] Location text input filters by city, state, or zip (case-insensitive, partial match)
+- [May 29, 2026] City chips appear below location input when ≤ 8 distinct locations exist; clicking fills input and filters
+- [May 29, 2026] Clear ✕ button inside location input clears the location filter
+- [May 29, 2026] Bed filter buttons (Any / 1bd / 2bd / 3+bd) highlight active selection and filter results
+- [May 29, 2026] "3+ bd" shows units with 3 or more bedrooms
+- [May 29, 2026] Max rent input filters out listings above the entered value (applies on blur or Enter)
+- [May 29, 2026] Sort dropdown: Newest / Rent low→high / Rent high→low / Most bedrooms all work correctly
+- [May 29, 2026] "Clear all" button appears when any filter is active; clicking resets all filters
+- [May 29, 2026] Filters are reflected in the URL (shareable/bookmarkable)
+- [May 29, 2026] "No listings match your filters" empty state shown when filters eliminate everything
+- [May 29, 2026] Listing card links to `/listings/[id]` detail page
 
 ### Public listing detail (`/listings/[id]`)
-- [ ] Logo in header; "← All listings" link navigates back
-- [ ] Photo banner shown when property has a photo
-- [ ] Full address, property type, beds/baths/sqft shown
-- [ ] Asking rent and available date shown in sticky apply card
-- [ ] "Apply Now" button present when quiz attached; links to `/apply/[quizId]`
-- [ ] Contact message shown instead when no quiz attached
-- [ ] Inactive or rented listings return 404
-- [ ] Browser tab shows listing title and rent (via metadata)
+- [May 29, 2026] Logo in header; "← All listings" link navigates back
+- [May 29, 2026] Photo banner shown when property has a photo
+- [May 29, 2026] Full address, property type, beds/baths/sqft shown
+- [May 29, 2026] Asking rent and available date shown in sticky apply card
+- [May 29, 2026] "Apply Now" button present when quiz attached; links to `/apply/[quizId]`
+- [May 29, 2026] Contact message shown instead when no quiz attached
+- [May 29, 2026] Inactive or rented listings return 404
+- [May 29, 2026] Browser tab shows listing title and rent (via metadata)
 
 ---
 

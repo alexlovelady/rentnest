@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   Home, Building2, Users, FileText, DollarSign, Wrench,
-  Receipt, FolderOpen, BarChart3, Settings, LogOut, Menu, X, Sun, Moon, ClipboardList, Megaphone, MessageSquare,
+  Receipt, FolderOpen, BarChart3, Settings, LogOut, Menu, X, Sun, Moon, ClipboardList, Megaphone, MessageSquare, CalendarDays,
 } from "lucide-react";
 
 const nav = [
   { href: "/dashboard", label: "Overview", icon: Home },
+  { href: "/dashboard/calendar", label: "Calendar", icon: CalendarDays },
   { href: "/dashboard/properties", label: "Properties", icon: Building2 },
   { href: "/dashboard/tenants", label: "Tenants", icon: Users },
   { href: "/dashboard/leases", label: "Leases", icon: FileText },
