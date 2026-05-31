@@ -6,14 +6,14 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rentnest.app";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const activeListings = await prisma.listing.findMany({
     where: { status: "active" },
-    select: { id: true, updatedAt: true },
-    orderBy: { updatedAt: "desc" },
+    select: { id: true, createdAt: true },
+    orderBy: { createdAt: "desc" },
     take: 1000,
   });
 
   const listingUrls: MetadataRoute.Sitemap = activeListings.map((l) => ({
     url: `${APP_URL}/listings/${l.id}`,
-    lastModified: l.updatedAt,
+    lastModified: l.createdAt,
     changeFrequency: "weekly",
     priority: 0.7,
   }));
