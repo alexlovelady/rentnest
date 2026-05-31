@@ -5,16 +5,55 @@ import { MapPin, Home, Calendar, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rentnest.app";
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const listing = await prisma.listing.findFirst({
     where: { id, status: "active" },
-    select: { title: true, askingRent: true },
+    select: {
+      title: true,
+      askingRent: true,
+      description: true,
+      unit: {
+        select: {
+          bedrooms: true,
+          bathrooms: true,
+          squareFeet: true,
+          property: { select: { city: true, state: true, photoUrl: true } },
+        },
+      },
+    },
   });
   if (!listing) return { title: "Listing Not Found" };
+
+  const { unit } = listing;
+  const description =
+    listing.description?.slice(0, 155) ||
+    `${unit.bedrooms}BR/${unit.bathrooms}BA rental in ${unit.property.city}, ${unit.property.state}. ${formatCurrency(listing.askingRent)}/mo. Listed on RentNest.`;
+
+  const ogImages = unit.property.photoUrl
+    ? [{ url: unit.property.photoUrl, width: 1200, height: 630, alt: listing.title }]
+    : [{ url: "/opengraph-image", width: 1200, height: 630, alt: "RentNest — Simple Landlord Software" }];
+
   return {
     title: `${listing.title} — ${formatCurrency(listing.askingRent)}/mo`,
+    description,
     robots: { index: true, follow: true },
+    openGraph: {
+      type: "website",
+      siteName: "RentNest",
+      title: `${listing.title} — ${formatCurrency(listing.askingRent)}/mo`,
+      description,
+      url: `${APP_URL}/listings/${id}`,
+      images: ogImages,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${listing.title} — ${formatCurrency(listing.askingRent)}/mo`,
+      description,
+      images: ogImages.map((i) => i.url),
+    },
   };
 }
 
@@ -51,8 +90,34 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
   const { property } = unit;
   const hasQuiz = !!listing.quiz;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Apartment",
+    name: listing.title,
+    description: listing.description ?? undefined,
+    url: `${APP_URL}/listings/${id}`,
+    numberOfRooms: unit.bedrooms,
+    floorSize: unit.squareFeet ? { "@type": "QuantitativeValue", value: unit.squareFeet, unitCode: "FTK" } : undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: property.address,
+      addressLocality: property.city,
+      addressRegion: property.state,
+      postalCode: property.zip,
+      addressCountry: "US",
+    },
+    offers: {
+      "@type": "Offer",
+      price: listing.askingRent,
+      priceCurrency: "USD",
+      priceSpecification: { "@type": "UnitPriceSpecification", price: listing.askingRent, priceCurrency: "USD", unitText: "MON" },
+    },
+    ...(property.photoUrl ? { image: property.photoUrl } : {}),
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Header */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 py-5 flex items-center justify-between">

@@ -6,10 +6,27 @@ import { ListingFilters } from "./listing-filters";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rentnest.app";
+
 export const metadata: Metadata = {
   title: "Rental Listings",
-  description: "Browse available rental units listed on RentNest.",
+  description: "Browse available rental listings on RentNest. Filter by bedrooms, rent, and location. No account needed to apply.",
   robots: { index: true, follow: true },
+  alternates: { canonical: `${APP_URL}/listings` },
+  openGraph: {
+    type: "website",
+    siteName: "RentNest",
+    title: "Available Rental Listings — RentNest",
+    description: "Browse available rental listings on RentNest. Filter by bedrooms, rent, and location. No account needed to apply.",
+    url: `${APP_URL}/listings`,
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "RentNest — Simple Landlord Software" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Available Rental Listings — RentNest",
+    description: "Browse available rental listings on RentNest. Filter by bedrooms, rent, and location.",
+    images: ["/opengraph-image"],
+  },
 };
 
 interface SearchParams { beds?: string; maxRent?: string; sort?: string; location?: string }
