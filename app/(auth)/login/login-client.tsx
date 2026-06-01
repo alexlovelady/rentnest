@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ export function LoginClient() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,6 +38,23 @@ export function LoginClient() {
     }
   }
 
+  async function handleForgotPassword() {
+    if (!email) {
+      setError("Enter your email address above, then click Forgot password.");
+      return;
+    }
+    setError("");
+    setResetLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetSent(true);
+    } catch {
+      setError("Could not send reset email. Check the address and try again.");
+    } finally {
+      setResetLoading(false);
+    }
+  }
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
       <div className="mb-8">
@@ -44,7 +63,22 @@ export function LoginClient() {
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="Email" id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
-        <Input label="Password" id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
+        <div>
+          <Input label="Password" id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
+          <div className="flex justify-end mt-1">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={resetLoading}
+              className="text-xs text-gray-400 hover:text-primary transition-colors disabled:opacity-50"
+            >
+              {resetLoading ? "Sending…" : "Forgot password?"}
+            </button>
+          </div>
+        </div>
+        {resetSent && (
+          <p className="text-sm text-green-600">Password reset email sent — check your inbox.</p>
+        )}
         {error && <p className="text-sm text-red-600">{error}</p>}
         <Button type="submit" disabled={loading} className="w-full" size="lg">
           {loading ? "Signing in…" : "Sign in"}
