@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RentNest
 
-## Getting Started
+A property-management web app for small landlords: track properties, units, tenants and leases, collect rent, handle maintenance, and screen applicants, with a separate portal for tenants.
 
-First, run the development server:
+Built with Next.js (App Router), TypeScript, Tailwind CSS 4, Prisma (PostgreSQL), Firebase Auth, Stripe (including Connect), and Resend for email. This is a portfolio project and is not a hosted product.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## What it covers
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Portfolio:** landlords, properties and units, tenants, leases with co-tenants
+- **Money:** rent payments, expenses, security-deposit deductions, reports
+- **Leases:** generated PDFs, e-signature links, lease addenda with their own signatures
+- **Maintenance:** requests and comments, vendor management
+- **Tenant portal:** separate tenant login, documents, messages, maintenance requests
+- **Screening and listings:** public listings, applicant screening quizzes with co-applicants, move-in/move-out inspection reports
+- **Compliance records:** eviction records and tenant-visibility controls
+- **Background jobs:** cron endpoints and Stripe webhooks under `app/api`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The data model lives in `prisma/schema.prisma`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Running it locally
 
-## Learn More
+1. Install dependencies: `npm install`
+2. Create a `.env.local` with your own Firebase, Stripe, Resend and PostgreSQL settings. No keys are included in this repository.
+3. Apply the schema: `npx prisma migrate dev`
+4. Start the dev server: `npm run dev`
 
-To learn more about Next.js, take a look at the following resources:
+Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`docs/testing-checklist.md` lists the manual test flows. `CLAUDE.md` and `AGENTS.md` describe how AI coding agents were used on this codebase.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+By Alexander Lovelady, [alexanderlovelady.com/portfolio](https://alexanderlovelady.com/portfolio).
